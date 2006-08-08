@@ -58,13 +58,14 @@ class ViewNovedit
     @appbar.push(@appbar_context_id, "Line: #{iter.line + 1}, Column: #{iter.line_offset + 1}")
   end
 
-  def initialize(model)
+  def initialize(controler, model)
+    @controler = controler
     @model = model
     
     @tab_docs = Array.new
     
     @pathglade = File.dirname($0) + "/novedit.glade"
-    @glade = GladeXML.new(path) {|handler| method(handler)}
+    @glade = GladeXML.new(@pathglade) {|handler| method(handler)}
     @appwindow = @glade.get_widget("appwindow")
     @appbar = @glade.get_widget("statusbar")
     @appbar_context_id = @appbar.get_context_id('status_context')
@@ -298,8 +299,6 @@ class ViewNovedit
     @about_dialog.show
   end
 end
-
-ViewNovedit.new()
 
 
 

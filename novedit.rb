@@ -14,7 +14,7 @@ require "controlerNovedit"
 require "modelNovedit"
 
 Gtk.init
-model = ModelNovedit.new
+model = NoveditModel.new
 ControlerNovedit.new(model)
 Gtk.main
 

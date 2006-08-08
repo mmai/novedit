@@ -10,7 +10,7 @@ class ControlerNovedit
   
   def initialize(model)
     @model = model
-    @view = ViewNovedit.new(this, model)    
+    @view = ViewNovedit.new(self, model)    
   end
 
 end
