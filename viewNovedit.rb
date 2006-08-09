@@ -40,6 +40,20 @@ class NoveditDocument
           main_app.update_appbar
         end
     end
+    
+  # Edit textbuffer
+  def on_clear()
+    @buffer.set_text("")
+  end
+  def on_cut(widget)
+     @textview.signal_emit("cut_clipboard")
+  end
+  def on_paste(widget)
+     @textview.signal_emit("paste_clipboard")
+  end
+  def on_copy(widget)
+     @textview.signal_emit("copy_clipboard")
+  end
 end
 
 class ViewNovedit
@@ -64,7 +78,8 @@ class ViewNovedit
     
     @tab_docs = Array.new
     
-    @pathglade = File.dirname($0) + "/novedit.glade"
+    @pathglade = File.dirname($0) + "/noveditBase.glade"
+    @pathgladeDocument = File.dirname($0) + "/noveditDocument.glade"
     @glade = GladeXML.new(@pathglade) {|handler| method(handler)}
     @appwindow = @glade.get_widget("appwindow")
     @appbar = @glade.get_widget("statusbar")
@@ -75,25 +90,12 @@ class ViewNovedit
     @about_dialog = @glade.get_widget("aboutdialog1")
     @tabs = @glade.get_widget('notebook1')
     
+    add_document()
     #Onglet    par dfaut
-    @currentDocument = NoveditDocument.new(@glade.get_widget('textview'), self)
-    @tab_docs << @currentDocument
+    #@currentDocument = NoveditDocument.new(@glade.get_widget('textview'), self)
+    #@tab_docs << @currentDocument
 
     update_appbar
-  end
-
-  # Edit textbuffer
-  def on_clear(widget)
-    @buffer.set_text("")
-  end
-  def on_cut(widget)
-     @textview.signal_emit("cut_clipboard")
-  end
-  def on_paste(widget)
-     @textview.signal_emit("paste_clipboard")
-  end
-  def on_copy(widget)
-     @textview.signal_emit("copy_clipboard")
   end
 
   def on_quit(*widget)
@@ -154,12 +156,7 @@ class ViewNovedit
             if @currentDocument.filename.nil?
                 undoc = @glade.get_widget("scrolledwindow")
             else
-                glade_doc = GladeXML.new(@pathglade, 'scrolledwindow') {|handler| method(handler)}
-                undoc = glade_doc.get_widget('scrolledwindow')
-                @tabs.append_page(undoc)
-                @currentDocument = NoveditDocument.new(glade_doc.get_widget('textview'), self)
-                @tab_docs << @currentDocument 
-                @tabs.page=@tab_docs.index(@currentDocument)
+              add_document
             end
             
             @currentDocument.filename = filename
@@ -173,9 +170,18 @@ class ViewNovedit
     @currentDocument.textview.has_focus = true
   end
 
+  def add_document
+    glade_doc = GladeXML.new(@pathgladeDocument, 'scrolledwindow') {|handler| method(handler)}
+    undoc = glade_doc.get_widget('scrolledwindow')
+    @tabs.append_page(undoc)
+    @currentDocument = NoveditDocument.new(glade_doc.get_widget('textview'), self)
+    @tab_docs << @currentDocument 
+    @tabs.page=@tab_docs.index(@currentDocument)
+    return @currentDocument
+  end
+
   def on_new_file(widget)
-    @currentDocument.filename = nil
-    on_clear(widget)
+    @controler.new_file(widget)
   end
 
   def on_save_as_file(widget)
@@ -190,7 +196,19 @@ class ViewNovedit
       on_save_as_file(widget)
     end
   end
-
+  
+  def on_clear(widget)
+    @currentDocument.on_clear
+  end
+  def on_cut(widget)
+     @currentDocument.on_cut(widget)
+  end
+  def on_paste(widget)
+     @currentDocument.on_paste(widget)
+  end
+  def on_copy(widget)
+     @currentDocument.on_copy(widget)
+  end
   #
   # Unfo, Redo
   #

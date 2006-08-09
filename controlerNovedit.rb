@@ -12,7 +12,12 @@ class ControlerNovedit
     @model = model
     @view = ViewNovedit.new(self, model)    
   end
-
+  
+  def new_file(widget)
+    modelDocument = @model.add_document
+    viewDocument = @view.add_document
+    viewDocument.on_clear()
+  end
 end
 
 

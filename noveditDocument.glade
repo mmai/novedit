@@ -1,0 +1,40 @@
+<?xml version="1.0" standalone="no"?> <!--*- mode: xml -*-->
+<!DOCTYPE glade-interface SYSTEM "http://glade.gnome.org/glade-2.0.dtd">
+
+<glade-interface>
+    <widget class="GtkScrolledWindow" id="scrolledwindow">
+      <property name="visible">True</property>
+      <property name="can_focus">True</property>
+      <property name="has_focus">True</property>
+      <property name="hscrollbar_policy">GTK_POLICY_NEVER</property>
+      <property name="vscrollbar_policy">GTK_POLICY_ALWAYS</property>
+      <property name="shadow_type">GTK_SHADOW_NONE</property>
+      <property name="window_placement">GTK_CORNER_TOP_LEFT</property>
+      <child>
+        <widget class="GtkTextView" id="textview">
+          <property name="visible">True</property>
+          <property name="can_default">True</property>
+          <property name="has_default">True</property>
+          <property name="can_focus">True</property>
+          <property name="has_focus">True</property>
+          <property name="editable">True</property>
+          <property name="overwrite">False</property>
+          <property name="accepts_tab">True</property>
+          <property name="justification">GTK_JUSTIFY_LEFT</property>
+          <property name="wrap_mode">GTK_WRAP_WORD</property>
+          <property name="cursor_visible">True</property>
+          <property name="pixels_above_lines">0</property>
+          <property name="pixels_below_lines">0</property>
+          <property name="pixels_inside_wrap">0</property>
+          <property name="left_margin">0</property>
+          <property name="right_margin">0</property>
+          <property name="indent">0</property>
+          <property name="text" translatable="yes"></property>
+        </widget>
+      </child>
+    </widget>
+    <packing>
+      <property name="tab_expand">False</property>
+      <property name="tab_fill">True</property>
+    </packing>
+</glade-interface>

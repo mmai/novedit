@@ -25,6 +25,12 @@ class NoveditModel
   def initialize()
     @tab_docs = Array.new  
   end
+  
+  def add_document()
+    newdoc = NoveditDocumentModel.new
+    @tab_docs << newdoc
+    return newdoc
+  end
     
   #
   # File access
