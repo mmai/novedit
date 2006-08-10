@@ -2,36 +2,19 @@
 # Novedit model
 #
 
-class NoveditDocumentModel
-    attr_accessor :filename, :undopool, :redopool, :buffer
-    def initialize()
-        @filename = nil
-        @undopool = Array.new
-        @redopool = Array.new
-    end
-    
-    def appendUndo(action, iter, text)    
-        if (action==:insert_text) 
-          @undopool <<  [action, iter.offset, iter.offset + text.scan(/./).size, text]
-          @redopool.clear
-        elsif (action == :delete_range)
-          #text = @buffer.get_text(start_iter, end_iter)
-          #@undopool <<  [action, start_iter.offset, end_iter.offset, text]
-        end
-     end
-end
+require 'observer'
 
-class NoveditModel
-  def initialize()
-    @tab_docs = Array.new  
-  end
+class NoveditDocumentModel
+  include Observable
   
-  def add_document()
-    newdoc = NoveditDocumentModel.new
-    @tab_docs << newdoc
-    return newdoc
+  attr_accessor :filename, :undopool, :redopool, :buffer, :text
+  def initialize(filename)
+      @filename = filename
+      @undopool = Array.new
+      @redopool = Array.new
+      read_file
   end
-    
+   
   #
   # File access
   #
@@ -42,7 +25,44 @@ class NoveditModel
   end
 
   def read_file
-    File.open(@currentDocument.filename){|f| ret = f.readlines.join }
+    File.open(@filename){|f| @text = f.readlines.join } if not @filename.nil?
+  end
+  
+  def appendUndo(action, iter, text)    
+      if (action==:insert_text) 
+        @undopool <<  [action, iter.offset, iter.offset + text.scan(/./).size, text]
+        @redopool.clear
+      elsif (action == :delete_range)
+        #text = @buffer.get_text(start_iter, end_iter)
+        #@undopool <<  [action, start_iter.offset, end_iter.offset, text]
+      end
+   end
+end
+
+class NoveditModel
+  include Observable
+  
+  def initialize()
+    @tab_docs = Array.new  
+  end
+  
+  def add_document(filename = nil)
+    newdoc = NoveditDocumentModel.new(filename)
+    @tab_docs << newdoc
+    @currentDocument = newdoc   
+    notify_observers(@currentDocument)
+  end
+    
+  def open_file(filename)
+    #Le fichier est-il dj ouvert ?
+    if doc = @tab_docs.find { |doc| doc.filename == filename}
+        @currentDocument = doc 
+        notify_observers()
+    else
+        add_document(filename) unless @currentDocument.filename.nil?
+        notify_observers
+        @currentDocument.notify_observers
+    end
   end
 
   #

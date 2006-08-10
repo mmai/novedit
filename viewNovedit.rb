@@ -6,41 +6,47 @@ require 'libglade2'
 
 
 class NoveditDocument
-    attr_accessor :textview, :filename, :undopool, :redopool, :buffer
-    def initialize(textviewWidget, main_app)
-        @textview = textviewWidget
-        @filename = nil
-        @undopool = Array.new
-        @redopool = Array.new
-        
-        @buffer = @textview.buffer
-        @buffer.signal_connect("insert_text") do |w, iter, text, length|
-          if @user_action
-            @undopool <<  ["insert_text", iter.offset, iter.offset + text.scan(/./).size, text]
-            @redopool.clear
-          end
+  attr_accessor :textview, :filename, :undopool, :redopool, :buffer
+  def initialize(textviewWidget, main_app)
+      @textview = textviewWidget
+      @filename = nil
+      @undopool = Array.new
+      @redopool = Array.new
+      
+      @buffer = @textview.buffer
+      @buffer.signal_connect("insert_text") do |w, iter, text, length|
+        if @user_action
+          @undopool <<  ["insert_text", iter.offset, iter.offset + text.scan(/./).size, text]
+          @redopool.clear
         end
-        @buffer.signal_connect("delete_range") do |w, start_iter, end_iter|
-          text = @buffer.get_text(start_iter, end_iter)
-          @undopool <<  ["delete_range", start_iter.offset, end_iter.offset, text] if @user_action
-        end
-        @buffer.signal_connect("begin_user_action") do
-          @user_action = true
-        end
-        @buffer.signal_connect("end_user_action") do
-          @user_action = false
-        end
-        @buffer.signal_connect("changed") do |w|
-          main_app.update_appbar
-        end
-        @buffer.signal_connect("mark-set") do |w, iter, mark|
-          main_app.update_appbar
-        end
-        @textview.signal_connect("move-cursor") do
-          main_app.update_appbar
-        end
-    end
+      end
+      @buffer.signal_connect("delete_range") do |w, start_iter, end_iter|
+        text = @buffer.get_text(start_iter, end_iter)
+        @undopool <<  ["delete_range", start_iter.offset, end_iter.offset, text] if @user_action
+      end
+      @buffer.signal_connect("begin_user_action") do
+        @user_action = true
+      end
+      @buffer.signal_connect("end_user_action") do
+        @user_action = false
+      end
+      @buffer.signal_connect("changed") do |w|
+        main_app.update_appbar
+      end
+      @buffer.signal_connect("mark-set") do |w, iter, mark|
+        main_app.update_appbar
+      end
+      @textview.signal_connect("move-cursor") do
+        main_app.update_appbar
+      end
+  end
     
+  def update
+    @appwindow.set_title(@filename + " - " + TITLE)
+    @tabs.set_tab_label(self, Gtk::Label.new(File.basename(@filename)))
+    @buffer.set_text(@model.text)
+  end
+  
   # Edit textbuffer
   def on_clear()
     @buffer.set_text("")
@@ -75,6 +81,7 @@ class ViewNovedit
   def initialize(controler, model)
     @controler = controler
     @model = model
+    @model.add_observer(self)
     
     @tab_docs = Array.new
     
@@ -89,6 +96,14 @@ class ViewNovedit
     #Onglet    par dfaut
     #@currentDocument = NoveditDocument.new(@glade.get_widget('textview'), self)
     #@tab_docs << @currentDocument
+  end
+
+  def update
+    @tabs.page = @tab_docs.find { |doc| doc.model == @model.currentDocument} 
+    if @tabs.page.nil?
+      add_document
+      @model.currentDocument.add_observer(@currentDocument)
+    end
   end
 
   def on_quit(*widget)

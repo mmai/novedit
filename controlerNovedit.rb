@@ -23,54 +23,10 @@ class ControlerNovedit
     @about_dialog = gladeDialogs.get_widget("aboutdialog1")
   end
   
-  def on_find_quit(widget)
-    @find_dialog.hide
-  end
-  def on_find_execute(widget)
-    find_and_select("find_entry", "backwards_checkbutton", @find_dialog)
-  end
-  
-    def on_replace_quit(widget)
-    @replace_dialog.hide
-  end
-  def on_replace_execute(widget)
-    iter = @currentDocument.buffer.get_iter_at_mark(@buffer.get_mark("insert"))
-    sel_bound = @currentDocument.buffer.get_iter_at_mark(@buffer.get_mark("selection_bound"))
-    unless iter == sel_bound
-      replace_selected_text(@glade.get_widget("replace_replace_entry").text, 
-                            iter, sel_bound)
-    end
-    find_and_select("replace_find_entry", 
-                    "replace_backwards_checkbutton", @replace_dialog)
-  end
-  
-  def new_file(widget)
-    modelDocument = @model.add_document
-    viewDocument = @view.add_document
-    viewDocument.on_clear()
-  end
-  
   def open_file()
     filename = select_file
     if filename
-        #Le fichier est-il dj ouvert ?
-        if doc = @tab_docs.find { |doc| doc.filename == filename}
-            @currentDocument = doc 
-            @tabs.page=@tab_docs.index(@currentDocument)
-        else
-            #Premier onglet vide ?
-            if @currentDocument.filename.nil?
-                undoc = @glade.get_widget("scrolledwindow")
-            else
-              add_document
-            end
-            
-            @currentDocument.filename = filename
-            @appwindow.set_title(filename + " - " + TITLE)
-            @tabs.set_tab_label(undoc, Gtk::Label.new(File.basename(filename)))
-            text = read_file
-            @currentDocument.buffer.set_text(text)
-        end
+      @model.open_file(filename)
     end
     @currentDocument.buffer.place_cursor(@currentDocument.buffer.start_iter)
     @currentDocument.textview.has_focus = true
@@ -99,8 +55,37 @@ class ControlerNovedit
     end
     return filename
   end
+  
+  def new_file(widget)
+    modelDocument = @model.add_document
+    viewDocument = @view.add_document
+    viewDocument.on_clear()
+  end
+  
+  private
+  
+  #Find Dialog
+  def on_find_quit(widget)
+    @find_dialog.hide
+  end
+  def on_find_execute(widget)
+    find_and_select("find_entry", "backwards_checkbutton", @find_dialog)
+  end
+  
+  #Replace Dialog
+  def on_replace_quit(widget)
+    @replace_dialog.hide
+  end
+  def on_replace_execute(widget)
+    iter = @currentDocument.buffer.get_iter_at_mark(@buffer.get_mark("insert"))
+    sel_bound = @currentDocument.buffer.get_iter_at_mark(@buffer.get_mark("selection_bound"))
+    unless iter == sel_bound
+      replace_selected_text(@glade.get_widget("replace_replace_entry").text, iter, sel_bound)
+    end
+    find_and_select("replace_find_entry", "replace_backwards_checkbutton", @replace_dialog)
+  end
+  
 end
-
 
 
 
