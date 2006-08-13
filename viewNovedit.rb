@@ -6,7 +6,7 @@ require 'libglade2'
 
 
 class NoveditDocument
-  attr_accessor :textview, :filename, :undopool, :redopool, :buffer
+  attr_accessor :textview, :undopool, :redopool, :buffer, :model
   def initialize(textviewWidget, main_app)
       @textview = textviewWidget
       @filename = nil
@@ -42,8 +42,6 @@ class NoveditDocument
   end
     
   def update
-    @appwindow.set_title(@filename + " - " + TITLE)
-    @tabs.set_tab_label(self, Gtk::Label.new(File.basename(@filename)))
     @buffer.set_text(@model.text)
   end
   
@@ -63,7 +61,8 @@ class NoveditDocument
 end
 
 class ViewNovedit
-
+  attr_accessor :currentDocument
+  
   #
   # Common
   #
@@ -99,11 +98,16 @@ class ViewNovedit
   end
 
   def update
-    @tabs.page = @tab_docs.find { |doc| doc.model == @model.currentDocument} 
-    if @tabs.page.nil?
+    numPage = @tab_docs.find { |doc| doc.model == @model.currentDocument}
+    if numPage.nil?
       add_document
+      @currentDocument.model = @model.currentDocument
       @model.currentDocument.add_observer(@currentDocument)
+    else
+      @tabs.page = numPage
     end
+    @appwindow.set_title(@currentDocument.model.filename + " - " )
+    @tabs.set_tab_label(@tabs.children[@tabs.page], Gtk::Label.new(File.basename(@currentDocument.model.filename)))
   end
 
   def on_quit(*widget)
@@ -127,11 +131,7 @@ class ViewNovedit
   def read_file
     File.open(@currentDocument.filename){|f| ret = f.readlines.join }
   end
-
-  def on_open_file(widget) 
-    @controler.open_file
-  end
-
+  
   def add_document
     glade_doc = GladeXML.new(@pathgladeDocument, 'scrolledwindow') {|handler| method(handler)}
     undoc = glade_doc.get_widget('scrolledwindow')
@@ -140,6 +140,12 @@ class ViewNovedit
     @tab_docs << @currentDocument 
     @tabs.page=@tab_docs.index(@currentDocument)
     return @currentDocument
+  end
+  
+  private
+
+  def on_open_file(widget) 
+    @controler.open_file
   end
 
   def on_new_file(widget)

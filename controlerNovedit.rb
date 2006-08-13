@@ -28,8 +28,8 @@ class ControlerNovedit
     if filename
       @model.open_file(filename)
     end
-    @currentDocument.buffer.place_cursor(@currentDocument.buffer.start_iter)
-    @currentDocument.textview.has_focus = true
+    @view.currentDocument.buffer.place_cursor(@view.currentDocument.buffer.start_iter)
+    @view.currentDocument.textview.has_focus = true
   end
   
   def select_file

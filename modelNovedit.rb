@@ -42,6 +42,8 @@ end
 class NoveditModel
   include Observable
   
+  attr_reader :currentDocument
+  
   def initialize()
     @tab_docs = Array.new  
   end
@@ -50,17 +52,19 @@ class NoveditModel
     newdoc = NoveditDocumentModel.new(filename)
     @tab_docs << newdoc
     @currentDocument = newdoc   
-    notify_observers(@currentDocument)
   end
     
   def open_file(filename)
     #Le fichier est-il dj ouvert ?
     if doc = @tab_docs.find { |doc| doc.filename == filename}
         @currentDocument = doc 
+        changed
         notify_observers()
     else
-        add_document(filename) unless @currentDocument.filename.nil?
+        add_document(filename) unless filename.nil?
+        changed
         notify_observers
+        @currentDocument.changed
         @currentDocument.notify_observers
     end
   end
