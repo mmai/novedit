@@ -11,8 +11,9 @@ class ControlerNovedit
   def initialize(model)
     @model = model
     @view = ViewNovedit.new(self, model) 
-    @view.add_document
-    @view.update_appbar 
+    new_file
+    #@view.add_document
+    #@view.update_appbar 
      
     #Boites de dialogues
     pathgladeDialogs = File.dirname($0) + "/noveditDialogs.glade"
@@ -56,10 +57,19 @@ class ControlerNovedit
     return filename
   end
   
-  def new_file(widget)
+  def new_file()
     modelDocument = @model.add_document
-    viewDocument = @view.add_document
+    viewDocument = @view.add_document(modelDocument)
     viewDocument.on_clear()
+  end
+  
+  def on_save_file
+    if @view.currentDocument.buffer.modified?
+      @model.currentDocument.text = @view.currentDocument.buffer.text
+      @model.currentDocument.filename = select_file() unless @model.currentDocument.filename
+      @model.currentDocument.save_file if @model.currentDocument.filename
+      @view.currentDocument.buffer.modified=false
+    end
   end
   
   private

@@ -7,8 +7,10 @@ require 'libglade2'
 
 class NoveditDocument
   attr_accessor :textview, :undopool, :redopool, :buffer, :model
-  def initialize(textviewWidget, main_app)
+  def initialize(textviewWidget, main_app, model)
       @textview = textviewWidget
+      @model = model
+      @model.add_observer(self)
       @filename = nil
       @undopool = Array.new
       @redopool = Array.new
@@ -132,11 +134,11 @@ class ViewNovedit
     File.open(@currentDocument.filename){|f| ret = f.readlines.join }
   end
   
-  def add_document
+  def add_document(model)
     glade_doc = GladeXML.new(@pathgladeDocument, 'scrolledwindow') {|handler| method(handler)}
     undoc = glade_doc.get_widget('scrolledwindow')
     @tabs.append_page(undoc)
-    @currentDocument = NoveditDocument.new(glade_doc.get_widget('textview'), self)
+    @currentDocument = NoveditDocument.new(glade_doc.get_widget('textview'), self, model)
     @tab_docs << @currentDocument 
     @tabs.page=@tab_docs.index(@currentDocument)
     return @currentDocument
@@ -154,15 +156,11 @@ class ViewNovedit
 
   def on_save_as_file(widget)
     select_file
-    save_file if @currentDocument.filename
+    @controler.save_file(self) if @currentDocument.model.filename
   end
 
   def on_save_file(widget)
-    if @currentDocument.filename
-      save_file
-    else
-      on_save_as_file(widget)
-    end
+    @controler.on_save_file()
   end
   
   def on_clear(widget)

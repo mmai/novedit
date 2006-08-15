@@ -20,7 +20,7 @@ class NoveditDocumentModel
   #
   def save_file
     File.open(@filename, "w"){|f| 
-      f.write(@buffer.get_text(*@buffer.bounds)) 
+      f.write(@text) 
     }
   end
 
