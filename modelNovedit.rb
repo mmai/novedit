@@ -25,7 +25,9 @@ class NoveditDocumentModel
   end
 
   def read_file
-    File.open(@filename){|f| @text = f.readlines.join } if not @filename.nil?
+    if not @filename.nil?
+      File.open(@filename){|f| @text = f.readlines.join } if File.exists?(@filename)
+    end
   end
   
   def appendUndo(action, iter, text)    
