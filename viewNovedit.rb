@@ -102,7 +102,7 @@ class ViewNovedit
   def update
     numPage = @tab_docs.find { |doc| doc.model == @model.currentDocument}
     if numPage.nil?
-      add_document
+      add_document(@model.currentDocument)
       @currentDocument.model = @model.currentDocument
       @model.currentDocument.add_observer(@currentDocument)
     else
