@@ -151,7 +151,7 @@ class ViewNovedit
   end
 
   def on_new_file(widget)
-    @controler.new_file(widget)
+    @controler.new_file()
   end
 
   def on_save_as_file(widget)
