@@ -72,6 +72,11 @@ class ControlerNovedit
     end
   end
   
+  #About Dialog
+  def on_about()
+    @about_dialog.show
+  end
+  
   private
   
   #Find Dialog

@@ -261,7 +261,7 @@ class ViewNovedit
   # Misc
   #
   def on_about(widget)
-    @about_dialog.show
+    @controler.on_about
   end
 end
 
