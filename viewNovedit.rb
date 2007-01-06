@@ -22,21 +22,46 @@ class ViewNovedit
   end
 
   def initialize(controler, model)
+    #Liaison MVC
     @controler = controler
     @model = model
     @model.add_observer(self)
     
+    #Construction de l'interface à partir du modèle Glade
     @pathglade = File.dirname($0) + "/noveditBase.glade"
     @glade = GladeXML.new(@pathglade) {|handler| method(handler)}
     @appwindow = @glade.get_widget("appwindow")
     @appbar = @glade.get_widget("statusbar")
     @appbar_context_id = @appbar.get_context_id('status_context')
-    @treeview = @glade.get_widget('treeview')
-    @tabs = @glade.get_widget('notebook1')
     
+    #Arbre - composé de noeuds texte éditables
+    @treeview = @glade.get_widget('treeview')
+    cellrenderer = Gtk::CellRendererText.new
+    cellrenderer.editable=true
+    cellrenderer.signal_connect("edited"){ |cell, path, newtext| @controler.on_cell_edited(path, newtext) }
+    col = Gtk::TreeViewColumn.new("élements", cellrenderer, :text=>0)
+    @treeview.append_column(col)
+    
+    #Menu contextuel sur l'arbre
+    tree_context_menu = Gtk::Menu.new
+    item = Gtk::MenuItem.new("Insert element")
+    item.signal_connect("activate") { @controler.on_insert }
+    tree_context_menu.append(item)
+    tree_context_menu.show_all
+    # Popup the menu on right click
+    @treeview.signal_connect("button_press_event") do |widget, event|
+      if event.kind_of? Gdk::EventButton and event.button == 3
+        tree_context_menu.popup(nil, nil, event.button, event.time)
+      end
+    end
+    # Popup the menu on Shift-F10
+    @treeview.signal_connect("popup_menu") { tree_context_menu.popup(nil, nil, 0, Gdk::Event::CURRENT_TIME) }
+    
+    #Tabs document
+    @tabs = @glade.get_widget('notebook1')
     undoc = @glade.get_widget('scrolledwindow')
-#    @tabs.append_page(undoc)
     @textview = @glade.get_widget('textview')
+    
     @filename = nil
     @undopool = Array.new
     @redopool = Array.new

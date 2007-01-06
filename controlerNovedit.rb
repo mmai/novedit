@@ -17,14 +17,12 @@ class ControlerNovedit
     @treestore = Gtk::TreeStore.new(String)
     @view.treeview.model = @treestore
     
-    cellrenderer = Gtk::CellRendererText.new
-    col = Gtk::TreeViewColumn.new("élements", cellrenderer, :text=>0)
-    @view.treeview.append_column(col)
-    
     treeparent = @treestore.append(nil)
+    treeparent[0] = "Base"
     iter = @treestore.append(treeparent)
-    iter[0] = "Base"
-    
+    iter[0] = "item1"
+    iter = @treestore.append(treeparent)
+    iter[0] = "item2"
     
     new_file
     #@view.add_document
@@ -88,6 +86,22 @@ class ControlerNovedit
   #About Dialog
   def on_about()
     @about_dialog.show
+  end
+  
+  ##############################
+  # Évènements sur l'arbre
+  #############################
+ 
+  #Insertion d'un nouvel élément dans l'arbre
+  def on_insert()
+    iter = @treestore.append(@view.treeview.selection.selected)
+    iter[0] = "new item"
+    @view.treeview.set_cursor(iter.path, @view.treeview.get_column(0), true)
+  end
+  
+  #Édition d'un élément de l'arbre
+  def on_cell_edited(path, newtext)
+    @treestore.get_iter(path)[0] = newtext
   end
   
   private
