@@ -4,7 +4,7 @@
 
 require 'observer'
 
-class NoveditDocumentModel
+class NoveditModel
   include Observable
   
   attr_accessor :filename, :undopool, :redopool, :buffer, :text
@@ -39,35 +39,12 @@ class NoveditDocumentModel
         #@undopool <<  [action, start_iter.offset, end_iter.offset, text]
       end
    end
-end
-
-class NoveditModel
-  include Observable
-  
-  attr_reader :currentDocument
-  
-  def initialize()
-    @tab_docs = Array.new  
-  end
-  
-  def add_document(filename = nil)
-    newdoc = NoveditDocumentModel.new(filename)
-    @tab_docs << newdoc
-    @currentDocument = newdoc   
-  end
     
   def open_file(filename)
-    #Le fichier est-il dj ouvert ?
-    if doc = @tab_docs.find { |doc| doc.filename == filename}
-        @currentDocument = doc 
-        changed
-        notify_observers()
-    else
-        add_document(filename) unless filename.nil?
+    if @filename != filename
+        initialize(filename)
         changed
         notify_observers
-        @currentDocument.changed
-        @currentDocument.notify_observers
     end
   end
 
@@ -75,35 +52,35 @@ class NoveditModel
   # Undo, Redo
   #
   def on_undo()
-    return if @currentDocument.undopool.size == 0
-    action = @currentDocument.undopool.pop 
+    return if @undopool.size == 0
+    action = @undopool.pop 
     case action[0]
     when "insert_text"
-      start_iter = @currentDocument.buffer.get_iter_at_offset(action[1])
-      end_iter = @currentDocument.buffer.get_iter_at_offset(action[2])
-      @currentDocument.buffer.delete(start_iter, end_iter)
+      start_iter = @buffer.get_iter_at_offset(action[1])
+      end_iter = @buffer.get_iter_at_offset(action[2])
+      @buffer.delete(start_iter, end_iter)
     when "delete_range"
-      start_iter = @currentDocument.buffer.get_iter_at_offset(action[1])
-      @currentDocument.buffer.insert(start_iter, action[3])
+      start_iter = @buffer.get_iter_at_offset(action[1])
+      @buffer.insert(start_iter, action[3])
     end
     iter_on_screen(start_iter, "insert")
-    @currentDocument.redopool << action
+    @redopool << action
   end
 
   def on_redo()
-    return if @currentDocument.redopool.size == 0
-    action = @currentDocument.redopool.pop 
+    return if @redopool.size == 0
+    action = @redopool.pop 
     case action[0]
     when "insert_text"
-      start_iter = @currentDocument.buffer.get_iter_at_offset(action[1])
-      end_iter = @currentDocument.buffer.get_iter_at_offset(action[2])
-      @currentDocument.buffer.insert(start_iter, action[3])
+      start_iter = @buffer.get_iter_at_offset(action[1])
+      end_iter = @buffer.get_iter_at_offset(action[2])
+      @buffer.insert(start_iter, action[3])
     when "delete_range"
-      start_iter = @currentDocument.buffer.get_iter_at_offset(action[1])
-      end_iter = @currentDocument.buffer.get_iter_at_offset(action[2])
-      @currentDocument.buffer.delete(start_iter, end_iter)
+      start_iter = @buffer.get_iter_at_offset(action[1])
+      end_iter = @buffer.get_iter_at_offset(action[2])
+      @buffer.delete(start_iter, end_iter)
     end
     iter_on_screen(start_iter, "insert")
-    @currentDocument.undopool << action
+    @undopool << action
   end    
 end

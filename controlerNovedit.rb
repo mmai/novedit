@@ -7,10 +7,25 @@ require "viewNovedit.rb"
 class ControlerNovedit
   @model
   @view
+  @treemodel
   
   def initialize(model)
     @model = model
-    @view = ViewNovedit.new(self, model) 
+    @view = ViewNovedit.new(self, model)
+    
+    #Initialisation de l'arbre 
+    @treestore = Gtk::TreeStore.new(String)
+    @view.treeview.model = @treestore
+    
+    cellrenderer = Gtk::CellRendererText.new
+    col = Gtk::TreeViewColumn.new("élements", cellrenderer, :text=>0)
+    @view.treeview.append_column(col)
+    
+    treeparent = @treestore.append(nil)
+    iter = @treestore.append(treeparent)
+    iter[0] = "Base"
+    
+    
     new_file
     #@view.add_document
     #@view.update_appbar 
@@ -29,8 +44,8 @@ class ControlerNovedit
     if filename
       @model.open_file(filename)
     end
-    @view.currentDocument.buffer.place_cursor(@view.currentDocument.buffer.start_iter)
-    @view.currentDocument.textview.has_focus = true
+    @view.buffer.place_cursor(@view.buffer.start_iter)
+    @view.textview.has_focus = true
   end
   
   def select_file
@@ -58,17 +73,15 @@ class ControlerNovedit
   end
   
   def new_file()
-    modelDocument = @model.add_document
-    viewDocument = @view.add_document(modelDocument)
-    viewDocument.on_clear()
+    @model.open_file(nil)
   end
   
   def on_save_file
-    if @view.currentDocument.buffer.modified?
-      @model.currentDocument.text = @view.currentDocument.buffer.text
-      @model.currentDocument.filename = select_file() unless @model.currentDocument.filename
-      @model.currentDocument.save_file if @model.currentDocument.filename
-      @view.currentDocument.buffer.modified=false
+    if @view.buffer.modified?
+      @model.text = @view.buffer.text
+      @model.filename = select_file() unless @model.filename
+      @model.save_file if @model.filename
+      @view.buffer.modified=false
     end
   end
   
@@ -92,8 +105,8 @@ class ControlerNovedit
     @replace_dialog.hide
   end
   def on_replace_execute(widget)
-    iter = @currentDocument.buffer.get_iter_at_mark(@buffer.get_mark("insert"))
-    sel_bound = @currentDocument.buffer.get_iter_at_mark(@buffer.get_mark("selection_bound"))
+    iter = @buffer.get_iter_at_mark(@buffer.get_mark("insert"))
+    sel_bound = @buffer.get_iter_at_mark(@buffer.get_mark("selection_bound"))
     unless iter == sel_bound
       replace_selected_text(@glade.get_widget("replace_replace_entry").text, iter, sel_bound)
     end
