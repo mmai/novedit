@@ -94,8 +94,10 @@ class ControlerNovedit
  
   #Insertion d'un nouvel élément dans l'arbre
   def on_insert()
-    iter = @treestore.append(@view.treeview.selection.selected)
+    selectedIter = @view.treeview.selection.selected
+    iter = @treestore.append(selectedIter)
     iter[0] = "new item"
+    @view.treeview.expand_row(selectedIter.path,false)
     @view.treeview.set_cursor(iter.path, @view.treeview.get_column(0), true)
   end
   
