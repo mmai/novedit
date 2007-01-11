@@ -101,6 +101,11 @@ class ControlerNovedit
     @view.treeview.set_cursor(iter.path, @view.treeview.get_column(0), true)
   end
   
+  #Sélection d'un noeud de l'arbre
+  def on_select_node(path)
+    puts path
+  end
+  
   #Édition d'un élément de l'arbre
   def on_cell_edited(path, newtext)
     @treestore.get_iter(path)[0] = newtext
@@ -130,7 +135,3 @@ class ControlerNovedit
   end
   
 end
-
-
-
-

@@ -42,6 +42,9 @@ class ViewNovedit
     col = Gtk::TreeViewColumn.new("élements", cellrenderer, :text=>0)
     @treeview.append_column(col)
     
+    #Sélection d'un noeud
+    @treeview.signal_connect('row-activated') { |widget, path, column| @controler.on_select_node(path) }
+   
     #Menu contextuel sur l'arbre
     tree_context_menu = Gtk::Menu.new
     item = Gtk::MenuItem.new("Insert element")
@@ -50,8 +53,11 @@ class ViewNovedit
     tree_context_menu.show_all
     # Popup the menu on right click
     @treeview.signal_connect("button_press_event") do |widget, event|
-      if event.kind_of? Gdk::EventButton and event.button == 3
-        tree_context_menu.popup(nil, nil, event.button, event.time)
+      if event.kind_of? Gdk::EventButton
+        case event.button
+        when 3
+        	tree_context_menu.popup(nil, nil, event.button, event.time)
+        end       
       end
     end
     # Popup the menu on Shift-F10

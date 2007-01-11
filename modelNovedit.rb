@@ -4,15 +4,15 @@
 
 require 'observer'
 
-class NoveditModel
-  include Observable
-  
+class NoveditNode
   attr_accessor :filename, :undopool, :redopool, :buffer, :text
+  
   def initialize(filename)
-      @filename = filename
-      @undopool = Array.new
-      @redopool = Array.new
-      read_file
+    @nodes = Array.new  
+    @filename = filename
+    @undopool = Array.new
+    @redopool = Array.new
+    read_file
   end
    
   #
@@ -82,5 +82,28 @@ class NoveditModel
     end
     iter_on_screen(start_iter, "insert")
     @undopool << action
-  end    
+  end
+end
+
+class NoveditModel
+  include Observable
+  
+  def initialize
+    @nodes = Array.new
+  end
+  
+  def addNode
+    @nodes << NoveditNode.new(nil)
+  end
+  
+  def getNode(pathNode)
+    node = self
+    path = pathNode.split('.')
+    path.each {|nodePos| node = node.nodes[nodePos]}
+    return node
+  end
+  
+  def open_file(fichier)
+  end
+      
 end
