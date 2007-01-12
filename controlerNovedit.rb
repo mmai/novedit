@@ -102,8 +102,9 @@ class ControlerNovedit
   end
   
   #Sélection d'un noeud de l'arbre
-  def on_select_node(path)
-    puts path
+  def on_select_node(selectionWidget)
+    iter = selectionWidget.selected
+    puts iter[0] unless iter.nil?
   end
   
   #Édition d'un élément de l'arbre

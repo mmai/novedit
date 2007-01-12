@@ -43,8 +43,8 @@ class ViewNovedit
     @treeview.append_column(col)
     
     #Sélection d'un noeud
-    @treeview.signal_connect('row-activated') { |widget, path, column| @controler.on_select_node(path) }
-   
+    @treeview.selection.signal_connect("changed"){ |widget| @controler.on_select_node(widget) }
+    
     #Menu contextuel sur l'arbre
     tree_context_menu = Gtk::Menu.new
     item = Gtk::MenuItem.new("Insert element")
