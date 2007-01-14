@@ -5,31 +5,16 @@
 require 'observer'
 
 class NoveditNode
-  attr_accessor :filename, :undopool, :redopool, :buffer, :text
+  attr_accessor :name, :undopool, :redopool, :buffer, :text, :nodes
   
-  def initialize(filename)
+  def initialize(name, text='')
     @nodes = Array.new  
-    @filename = filename
+    @name = name
+    @text = text
     @undopool = Array.new
     @redopool = Array.new
-    read_file
   end
    
-  #
-  # File access
-  #
-  def save_file
-    File.open(@filename, "w"){|f| 
-      f.write(@text) 
-    }
-  end
-
-  def read_file
-    if not @filename.nil?
-      File.open(@filename){|f| @text = f.readlines.join } if File.exists?(@filename)
-    end
-  end
-  
   def appendUndo(action, iter, text)    
       if (action==:insert_text) 
         @undopool <<  [action, iter.offset, iter.offset + text.scan(/./).size, text]
@@ -39,14 +24,6 @@ class NoveditNode
         #@undopool <<  [action, start_iter.offset, end_iter.offset, text]
       end
    end
-    
-  def open_file(filename)
-    if @filename != filename
-        initialize(filename)
-        changed
-        notify_observers
-    end
-  end
 
   #
   # Undo, Redo
@@ -88,22 +65,58 @@ end
 class NoveditModel
   include Observable
   
-  def initialize
+  attr_accessor :currentNode, :nodes, :filename
+    
+  def initialize(filename)
+    @filename = filename
     @nodes = Array.new
+    addNode
+    @currentNode = @nodes[0]
+    changed
+    notify_observers
   end
   
-  def addNode
-    @nodes << NoveditNode.new(nil)
+  def addNode(nodeName = $DEFAULT_NODE_NAME)
+    @nodes << NoveditNode.new(nodeName)
+    changed
+    notify_observers
+  end
+  
+  def insert_node(parent_path, node)
+    parent = self
+    path = parent_path.split(':')
+    path_inserted = path.pop.to_i
+    path.each{|nodePos| parent = parent.nodes[nodePos.to_i]}
+    parent.nodes = parent.nodes.slice(0..(path_inserted-1)) + [node] + parent.nodes.slice(path_inserted..-1)
   end
   
   def getNode(pathNode)
     node = self
-    path = pathNode.split('.')
-    path.each {|nodePos| node = node.nodes[nodePos]}
+    path = pathNode.split(':')
+    path.each {|nodePos| node = node.nodes[nodePos.to_i]}
     return node
   end
   
-  def open_file(fichier)
+  #
+  # File access
+  #
+  def save_file
+    File.open(@filename, "w"){|f| 
+      f.write(@text) 
+    }
   end
-      
+
+  def read_file
+    if not @filename.nil?
+      File.open(@filename){|f| @text = f.readlines.join } if File.exists?(@filename)
+    end
+  end
+  
+  def open_file(filename)
+    if @filename != filename
+        initialize(filename)
+        changed
+        notify_observers
+    end
+  end
 end

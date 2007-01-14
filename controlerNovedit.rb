@@ -17,12 +17,12 @@ class ControlerNovedit
     @treestore = Gtk::TreeStore.new(String)
     @view.treeview.model = @treestore
     
-    treeparent = @treestore.append(nil)
-    treeparent[0] = "Base"
-    iter = @treestore.append(treeparent)
-    iter[0] = "item1"
-    iter = @treestore.append(treeparent)
-    iter[0] = "item2"
+    populateTree(@model, nil)
+#    treeparent[0] = "Base"
+#    iter = @treestore.append(treeparent)
+#    iter[0] = "item1"
+#    iter = @treestore.append(treeparent)
+#    iter[0] = "item2"
     
     new_file
     #@view.add_document
@@ -35,6 +35,14 @@ class ControlerNovedit
     @find_dialog = gladeDialogs.get_widget("find_dialog")
     @replace_dialog = gladeDialogs.get_widget("replace_dialog")
     @about_dialog = gladeDialogs.get_widget("aboutdialog1")
+  end
+  
+  def populateTree(nodeModel, nodeView)
+    nodeModel.nodes.each do |node|
+      iter = @treestore.append(nodeView)
+      iter[0] = node.name
+      populateTree(node, iter)
+    end
   end
   
   def open_file()
@@ -96,15 +104,19 @@ class ControlerNovedit
   def on_insert()
     selectedIter = @view.treeview.selection.selected
     iter = @treestore.append(selectedIter)
-    iter[0] = "new item"
+    @model.insert_node(iter.path.to_s, NoveditNode.new($DEFAULT_NODE_NAME))
+    
+    iter[0] = $DEFAULT_NODE_NAME
     @view.treeview.expand_row(selectedIter.path,false)
     @view.treeview.set_cursor(iter.path, @view.treeview.get_column(0), true)
   end
   
   #Sélection d'un noeud de l'arbre
   def on_select_node(selectionWidget)
+    @model.currentNode.text = @view.buffer.get_text
     iter = selectionWidget.selected
-    puts iter[0] unless iter.nil?
+    @model.currentNode = @model.getNode(iter.path.to_s) unless iter.nil?
+    @view.buffer.set_text @model.currentNode.text
   end
   
   #Édition d'un élément de l'arbre

@@ -101,8 +101,8 @@ class ViewNovedit
   end
 
   def update
-    @appwindow.set_title(@model.filename + " - " )
-    @buffer.set_text(@model.text)
+#    @appwindow.set_title(@model.filename + " - " )
+    @buffer.set_text(@model.currentNode.text)
 #    @tabs.set_tab_label(@tabs.children[@tabs.page], Gtk::Label.new(File.basename(@currentDocument.model.filename)))
   end
 
