@@ -70,7 +70,11 @@ class NoveditModel
   def initialize(filename)
     @filename = filename
     @nodes = Array.new
-    addNode
+    if (not filename.nil?)
+      read_file
+    else
+      addNode
+    end
     @currentNode = @nodes[0]
     changed
     notify_observers
@@ -101,22 +105,23 @@ class NoveditModel
   # File access
   #
   def save_file
-    File.open(@filename, "w"){|f| 
-      f.write(@text) 
-    }
+    File.open(@filename, "w")do|f|
+      Marshal.dump(@nodes, f) 
+#      f.write(@text) 
+    end
   end
 
   def read_file
-    if not @filename.nil?
-      File.open(@filename){|f| @text = f.readlines.join } if File.exists?(@filename)
+    if (not @filename.nil?) and File.exists?(@filename)
+      File.open(@filename) do |f| 
+        @nodes = Marshal.load(f)
+      end
     end
   end
   
   def open_file(filename)
     if @filename != filename
         initialize(filename)
-        changed
-        notify_observers
     end
   end
 end

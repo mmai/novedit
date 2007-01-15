@@ -16,17 +16,11 @@ class ControlerNovedit
     #Initialisation de l'arbre 
     @treestore = Gtk::TreeStore.new(String)
     @view.treeview.model = @treestore
+    @view.treeview.signal_connect("drag_data_received"){ |dest, selection_data| on_drag_data_received(dest, selection_data) }
+    @view.treeview.signal_connect("drag_end"){ |widget, drag_context| on_drag_end(widget, drag_context) }
     
     populateTree(@model, nil)
-#    treeparent[0] = "Base"
-#    iter = @treestore.append(treeparent)
-#    iter[0] = "item1"
-#    iter = @treestore.append(treeparent)
-#    iter[0] = "item2"
-    
     new_file
-    #@view.add_document
-    #@view.update_appbar 
      
     #Boites de dialogues
     pathgladeDialogs = File.dirname($0) + "/noveditDialogs.glade"
@@ -83,12 +77,9 @@ class ControlerNovedit
   end
   
   def on_save_file
-    if @view.buffer.modified?
-      @model.text = @view.buffer.text
+      @model.currentNode.text = @view.buffer.text
       @model.filename = select_file() unless @model.filename
       @model.save_file if @model.filename
-      @view.buffer.modified=false
-    end
   end
   
   #About Dialog
@@ -121,7 +112,21 @@ class ControlerNovedit
   
   #Édition d'un élément de l'arbre
   def on_cell_edited(path, newtext)
-    @treestore.get_iter(path)[0] = newtext
+    iter = @treestore.get_iter(path)
+    iter[0] = newtext
+    @model.getNode(path).name = newtext
+  end
+  
+  #Drag and drop
+  def on_drag_data_received(dest, selection_data)
+#    puts "DRAG DATA RECEIVED"
+#    p dest
+#    p selection_data
+  end
+  def on_drag_end(widget, context)
+    puts "DRAG END"
+    p widget
+    p context
   end
   
   private

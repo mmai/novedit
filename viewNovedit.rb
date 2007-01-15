@@ -100,9 +100,21 @@ class ViewNovedit
     end
   end
 
+  def insert_model_node(parent_node, model_node)
+    iter = @treeview.model.append(parent_node)
+    iter[0] = model_node.name
+    model_node.nodes.each{|node| insert_model_node(iter, node)}
+  end
+
   def update
-#    @appwindow.set_title(@model.filename + " - " )
+    @appwindow.set_title(@model.filename + " - " ) if not @model.filename.nil?
+    
+    @treeview.model.clear
+    @model.nodes.each do |modelNode|
+      insert_model_node(nil, modelNode)
+    end
     @buffer.set_text(@model.currentNode.text)
+    
 #    @tabs.set_tab_label(@tabs.children[@tabs.page], Gtk::Label.new(File.basename(@currentDocument.model.filename)))
   end
 
