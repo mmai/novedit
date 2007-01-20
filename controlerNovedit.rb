@@ -16,8 +16,6 @@ class ControlerNovedit
     #Initialisation de l'arbre 
     @treestore = Gtk::TreeStore.new(String)
     @view.treeview.model = @treestore
-    @view.treeview.signal_connect("drag_data_received"){ |dest, selection_data| on_drag_data_received(dest, selection_data) }
-    @view.treeview.signal_connect("drag_end"){ |widget, drag_context| on_drag_end(widget, drag_context) }
     
     populateTree(@model, nil)
     new_file
@@ -118,15 +116,23 @@ class ControlerNovedit
   end
   
   #Drag and drop
-  def on_drag_data_received(dest, selection_data)
-#    puts "DRAG DATA RECEIVED"
-#    p dest
-#    p selection_data
+#  def on_drag_data_received(dest, selection_data)
+  def on_drag_data_received(treeview, context, x, y, selection, info, timestamp)
+    drop_info = treeview.get_dest_row_at_pos(x, y)
+    if drop_info
+      p drop_info 
+      path, position = drop_info
+      data = selection.data
+      puts data
+      # do something with the data and the model
+     end
   end
-  def on_drag_end(widget, context)
-    puts "DRAG END"
-    p widget
-    p context
+  
+  def on_drag_data_get(treeview, context, selection, info, timestamp)
+      iter = treeview.selection.selected
+      p iter.to_s
+      text = iter[0]
+      selection.set('MY_TREE_MODEL_ROW', 8, text)
   end
   
   private
