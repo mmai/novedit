@@ -44,12 +44,12 @@ class ViewNovedit
     
     #Drag and drop
     #Source
-    @treeview.enable_model_drag_source(Gdk::Window::BUTTON1_MASK, [['MY_TREE_MODEL_ROW', 0, 0]], Gdk::DragContext::ACTION_DEFAULT | Gdk::DragContext::ACTION_MOVE)
+    @treeview.enable_model_drag_source(Gdk::Window::BUTTON1_MASK, [['text/plain', 0, 0]], Gdk::DragContext::ACTION_DEFAULT | Gdk::DragContext::ACTION_MOVE)
     @treeview.signal_connect("drag-data-get") do |treeview, context, selection, info, timestamp|
        @controler.on_drag_data_get(treeview, context, selection, info, timestamp)
     end
     #Destination
-    @treeview.enable_model_drag_dest([['MY_TREE_MODEL_ROW', 0, 0]], Gdk::DragContext::ACTION_DEFAULT | Gdk::DragContext::ACTION_MOVE)
+    @treeview.enable_model_drag_dest([['text/plain', 0, 0]], Gdk::DragContext::ACTION_DEFAULT | Gdk::DragContext::ACTION_MOVE)
     @treeview.signal_connect("drag-data-received") do |treeview, context, x, y, selection, info, timestamp| 
       @controler.on_drag_data_received(treeview, context, x, y, selection, info, timestamp)
     end

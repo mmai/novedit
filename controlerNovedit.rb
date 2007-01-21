@@ -116,23 +116,21 @@ class ControlerNovedit
   end
   
   #Drag and drop
-#  def on_drag_data_received(dest, selection_data)
+  def on_drag_data_get(treeview, context, selection, info, timestamp)
+      iter = treeview.selection.selected
+      selection.text = iter.to_s
+  end
+  
   def on_drag_data_received(treeview, context, x, y, selection, info, timestamp)
     drop_info = treeview.get_dest_row_at_pos(x, y)
     if drop_info
-      p drop_info 
       path, position = drop_info
-      data = selection.data
-      puts data
+      data = selection.text
+      puts "ini:"+data
+      puts "fin:"+path.to_s
+      puts position.to_s
       # do something with the data and the model
      end
-  end
-  
-  def on_drag_data_get(treeview, context, selection, info, timestamp)
-      iter = treeview.selection.selected
-      p iter.to_s
-      text = iter[0]
-      selection.set('MY_TREE_MODEL_ROW', 8, text)
   end
   
   private
