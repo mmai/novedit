@@ -30,7 +30,7 @@ class ControlerNovedit
   end
   
   def populateTree(nodeModel, nodeView)
-    nodeModel.nodes.each do |node|
+    nodeModel.childs.each do |node|
       iter = @treestore.append(nodeView)
       iter[0] = node.name
       populateTree(node, iter)
@@ -93,7 +93,7 @@ class ControlerNovedit
   def on_insert()
     selectedIter = @view.treeview.selection.selected
     iter = @treestore.append(selectedIter)
-    @model.insert_node(iter.path.to_s, NoveditNode.new($DEFAULT_NODE_NAME))
+    @model.insert_node(selectedIter.path.to_s, NoveditNode.new($DEFAULT_NODE_NAME))
     
     iter[0] = $DEFAULT_NODE_NAME
     @view.treeview.expand_row(selectedIter.path,false)

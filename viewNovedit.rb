@@ -123,7 +123,7 @@ class ViewNovedit
     @appwindow.set_title(@model.filename + " - " ) if not @model.filename.nil?
     
     @treeview.model.clear
-    @model.nodes.each do |modelNode|
+    @model.childs.each do |modelNode|
       insert_model_node(nil, modelNode)
     end
     @buffer.set_text(@model.currentNode.text)

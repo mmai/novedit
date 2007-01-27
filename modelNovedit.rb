@@ -3,12 +3,14 @@
 #
 
 require 'observer'
+require 'yaml'
+require 'lib/tree'
 
-class NoveditNode
-  attr_accessor :name, :undopool, :redopool, :buffer, :text, :nodes
+class NoveditNode < TreeNode
+  attr_accessor :name, :undopool, :redopool, :buffer, :text
   
-  def initialize(name, text='')
-    @nodes = Array.new  
+  def initialize(name, text='') 
+    super()
     @name = name
     @text = text
     @undopool = Array.new
@@ -65,39 +67,46 @@ end
 class NoveditModel
   include Observable
   
-  attr_accessor :currentNode, :nodes, :filename
+  attr_accessor :rootNode, :currentNode, :filename
     
   def initialize(filename)
     @filename = filename
-    @nodes = Array.new
+    @rootNode = nil
     if (not filename.nil?)
       read_file
     else
-      addNode
+      @rootNode = NoveditNode.new($DEFAULT_NODE_NAME)
     end
-    @currentNode = @nodes[0]
+    @currentNode = @rootNode
     changed
     notify_observers
   end
   
-  def addNode(nodeName = $DEFAULT_NODE_NAME)
-    @nodes << NoveditNode.new(nodeName)
-    changed
-    notify_observers
+#  def addNode(nodeName = $DEFAULT_NODE_NAME)
+#    @rootNode.add
+#    @nodes << NoveditNode.new(nodeName)
+#    changed
+#    notify_observers
+#  end
+
+  def childs
+    [@rootNode]
   end
   
   def insert_node(parent_path, node)
-    parent = self
-    path = parent_path.split(':')
-    path_inserted = path.pop.to_i
-    path.each{|nodePos| parent = parent.nodes[nodePos.to_i]}
-    parent.nodes = parent.nodes.slice(0..(path_inserted-1)) + [node] + parent.nodes.slice(path_inserted..-1)
+    @rootNode.getNode(parent_path).addNode(node)
+#    parent = self
+#    path = parent_path.split(':')
+#    path_inserted = path.pop.to_i
+#    path.each{|nodePos| parent = parent.nodes[nodePos.to_i]}
+#    parent.nodes = parent.nodes.slice(0..(path_inserted-1)) + [node] + parent.nodes.slice(path_inserted..-1)
   end
   
   def getNode(pathNode)
-    node = self
-    path = pathNode.split(':')
-    path.each {|nodePos| node = node.nodes[nodePos.to_i]}
+#    node = self
+#    path = pathNode.split(':')
+#    path.each {|nodePos| node = node.nodes[nodePos.to_i]}
+    node = @rootNode.getNode(pathNode)
     return node
   end
   
@@ -106,7 +115,9 @@ class NoveditModel
   #
   def save_file
     File.open(@filename, "w")do|f|
-      Marshal.dump(@nodes, f) 
+#      Marshal.dump(@rootNode, f) 
+      f.puts @rootNode.to_yaml
+      
 #      f.write(@text) 
     end
   end
@@ -114,7 +125,7 @@ class NoveditModel
   def read_file
     if (not @filename.nil?) and File.exists?(@filename)
       File.open(@filename) do |f| 
-        @nodes = Marshal.load(f)
+        @rootNode = Marshal.load(f)
       end
     end
   end
