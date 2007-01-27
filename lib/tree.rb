@@ -44,6 +44,28 @@ class TreeNode
     parentNode.addNode(node)
   end
   
+  def move_node(pathIni, pathFin)
+    #Noeud à déplacer
+    node = getNode(pathIni)
+    #Noeud de destination
+    newParentNode = getNode(pathFin)
+    
+    #On détache le noeud de son emplacement actuel
+    if node.parent.leftchild == node
+      node.parent.leftchild = node.rightbrother
+    else
+      leftbrother = node.parent.leftchild
+      while leftbrother.rightbrother != node
+        leftbrother = leftbrother.rightbrother
+      end
+      leftbrother.rightbrother = node.rightbrother
+    end
+    
+    #On ajoute le noeud à son nouveau père
+    node.rightbrother = nil
+    newParentNode.addNode(node)
+  end
+  
   def getNode(pathNode)
     #pathNode de type 0:2:2 ... 0: représente le noeud lui-même
     currentNode = self

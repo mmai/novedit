@@ -116,7 +116,7 @@ class ViewNovedit
   def insert_model_node(parent_node, model_node)
     iter = @treeview.model.append(parent_node)
     iter[0] = model_node.name
-    model_node.nodes.each{|node| insert_model_node(iter, node)}
+    model_node.childs.each{|node| insert_model_node(iter, node)}
   end
 
   def update

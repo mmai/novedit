@@ -110,6 +110,12 @@ class NoveditModel
     return node
   end
   
+  def move_node(pathIni, pathFin)
+    @rootNode.move_node(pathIni, pathFin)
+    changed
+    notify_observers
+  end
+  
   #
   # File access
   #

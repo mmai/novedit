@@ -126,10 +126,17 @@ class ControlerNovedit
     if drop_info
       path, position = drop_info
       data = selection.text
-      puts "ini:"+data
-      puts "fin:"+path.to_s
-      puts position.to_s
-      # do something with the data and the model
+      #On conserve en mémoire la structure de déploiement de la vue
+      expandedRows = Array.new
+      treeview.map_expanded_rows do |tree_view, path|
+        expandedRows << path
+      end
+      #On met à jour le modèle
+      @model.move_node(data, path.to_s)
+      #On redéploie la vue
+#      expandedRows.each do |path|
+#        treeview.expand_row(path, false)
+#      end
      end
   end
   
