@@ -70,6 +70,7 @@ class NoveditModel
   attr_accessor :rootNode, :currentNode, :filename
     
   def initialize(filename)
+    @exporter = NoveditExportBase.new(self)
     @filename = filename
     @rootNode = nil
     if (not filename.nil?)
@@ -80,6 +81,10 @@ class NoveditModel
     @currentNode = @rootNode
     changed
     notify_observers
+  end
+  
+  def set_exporter(exporter)
+    @exporter = exporter
   end
   
 #  def addNode(nodeName = $DEFAULT_NODE_NAME)
@@ -120,12 +125,11 @@ class NoveditModel
   # File access
   #
   def save_file
-    File.open(@filename, "w")do|f|
-#      Marshal.dump(@rootNode, f) 
-      f.puts @rootNode.to_yaml
-      
-#      f.write(@text) 
-    end
+#    File.open(@filename, "w")do|f|
+##      Marshal.dump(@rootNode, f) 
+#      f.puts @rootNode.to_yaml 
+#    end
+    @exporter.export(@filename)
   end
 
   def read_file
