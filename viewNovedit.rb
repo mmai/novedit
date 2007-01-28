@@ -28,7 +28,7 @@ class ViewNovedit
     @model.add_observer(self)
     
     #Construction de l'interface à partir du modèle Glade
-    @pathglade = File.dirname($0) + "/noveditBase.glade"
+    @pathglade = File.dirname($0) + "/glade/noveditBase.glade"
     @glade = GladeXML.new(@pathglade) {|handler| method(handler)}
     @appwindow = @glade.get_widget("appwindow")
     @appbar = @glade.get_widget("statusbar")

@@ -21,7 +21,7 @@ class ControlerNovedit
     new_file
      
     #Boites de dialogues
-    pathgladeDialogs = File.dirname($0) + "/noveditDialogs.glade"
+    pathgladeDialogs = File.dirname($0) + "/glade/noveditDialogs.glade"
     gladeDialogs = GladeXML.new(pathgladeDialogs) {|handler| method(handler)}
     @fileselection = gladeDialogs.get_widget("fileselection")
     @find_dialog = gladeDialogs.get_widget("find_dialog")
@@ -125,18 +125,19 @@ class ControlerNovedit
     drop_info = treeview.get_dest_row_at_pos(x, y)
     if drop_info
       path, position = drop_info
-      data = selection.text
+      pathDest = path.to_s
+      pathOrig = selection.text
       #On conserve en mémoire la structure de déploiement de la vue
       expandedRows = Array.new
-      treeview.map_expanded_rows do |tree_view, path|
-        expandedRows << path
+      treeview.map_expanded_rows do |tree_view, pathexp|
+        expandedRows << pathexp
       end
       #On met à jour le modèle
-      @model.move_node(data, path.to_s)
+      @model.move_node(pathOrig, pathDest)
       #On redéploie la vue
-#      expandedRows.each do |path|
-#        treeview.expand_row(path, false)
-#      end
+      expandedRows.each do |pathexp|
+        treeview.expand_row(pathexp, false)
+      end
      end
   end
   
