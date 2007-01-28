@@ -45,6 +45,11 @@ class TreeNode
   end
   
   def move_node(pathIni, pathFin)
+    #On interdit le déplacement d'un noeud dans sa sous-arborescence (boucle infinie)
+    if pathFin.index(pathIni)==0
+     raise TreeNodeException, "Impossible move", caller
+    end
+  
     #Noeud à déplacer
     node = getNode(pathIni)
     #Noeud de destination
@@ -77,6 +82,10 @@ class TreeNode
     end
     return currentNode
   end
+end
+
+class TreeNodeException < RuntimeError
+  
 end
 
 #class TreeTexte < TreeNode

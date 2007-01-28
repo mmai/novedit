@@ -20,6 +20,11 @@ class ViewNovedit
     iter = @buffer.get_iter_at_mark(@buffer.get_mark("insert"))
     @appbar.push(@appbar_context_id, "Line: #{iter.line + 1}, Column: #{iter.line_offset + 1}")
   end
+  
+  def write_appbar(text)
+    @appbar.pop(@appbar_context_id)
+    @appbar.push(@appbar_context_id, text)
+  end
 
   def initialize(controler, model)
     #Liaison MVC

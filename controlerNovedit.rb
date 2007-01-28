@@ -133,10 +133,15 @@ class ControlerNovedit
         expandedRows << pathexp
       end
       #On met à jour le modèle
-      @model.move_node(pathOrig, pathDest)
-      #On redéploie la vue
-      expandedRows.each do |pathexp|
-        treeview.expand_row(pathexp, false)
+      begin
+        @model.move_node(pathOrig, pathDest)
+      rescue TreeNodeException
+        @view.write_appbar "Mouvement interdit!"
+      else
+        #On redéploie la vue
+        expandedRows.each do |pathexp|
+          treeview.expand_row(pathexp, false)
+        end
       end
      end
   end
