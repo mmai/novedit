@@ -137,10 +137,8 @@ class NoveditModel
   end
 
   def read_file
-    if (not @filename.nil?) and File.exists?(@filename)
-      File.open(@filename) do |f| 
+    if (not @filename.nil?)
         @rootNode = @novedit_io.read(@filename)
-      end
     end
   end
   

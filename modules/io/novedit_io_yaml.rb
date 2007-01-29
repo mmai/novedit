@@ -3,7 +3,7 @@ require 'lib/novedit_io_base.rb'
 
 class NoveditIOYaml < NoveditIOBase
   def read(location)
-    rootNode = YAML.load(File.open(location))
+    rootNode = YAML.load(File.open(location)) if File.exists?(location)
     return rootNode
   end
 
