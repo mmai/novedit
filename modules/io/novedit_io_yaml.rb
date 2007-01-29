@@ -1,11 +1,10 @@
 require 'yaml'
 require 'lib/novedit_io_base.rb'
 
-class NoveditExportYaml < NoveditExportBase
+class NoveditIOYaml < NoveditIOBase
   def read(location)
-    File.open(location, "r")do|f|
-      noveditModel = ""
-    end
+    rootNode = YAML.load(File.open(location))
+    return rootNode
   end
 
   def write(noveditModel, location)

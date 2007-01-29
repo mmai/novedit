@@ -4,7 +4,7 @@
 
 require "viewNovedit.rb"
 
-require "modules/export/novedit_export_yaml.rb"
+require "modules/io/novedit_io_yaml.rb"
 
 class ControlerNovedit
   @model
@@ -13,7 +13,7 @@ class ControlerNovedit
   
   def initialize(model)
     @model = model
-    @model.set_exporter(NoveditExportYaml.new(@model))
+    @model.set_io(NoveditIOYaml.new)
     @view = ViewNovedit.new(self, model)
     
     #Initialisation de l'arbre 

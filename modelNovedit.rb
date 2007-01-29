@@ -70,10 +70,14 @@ class NoveditModel
   attr_accessor :rootNode, :currentNode, :filename
     
   def initialize(filename)
-    @exporter = NoveditExportBase.new(self)
+    @novedit_io = NoveditIOBase.new
     @filename = filename
+    fill_tree
+  end
+  
+  def fill_tree
     @rootNode = nil
-    if (not filename.nil?)
+    if (not @filename.nil?)
       read_file
     else
       @rootNode = NoveditNode.new($DEFAULT_NODE_NAME)
@@ -83,8 +87,8 @@ class NoveditModel
     notify_observers
   end
   
-  def set_exporter(exporter)
-    @exporter = exporter
+  def set_io(novedit_io)
+    @novedit_io = novedit_io
   end
   
 #  def addNode(nodeName = $DEFAULT_NODE_NAME)
@@ -129,20 +133,21 @@ class NoveditModel
 ##      Marshal.dump(@rootNode, f) 
 #      f.puts @rootNode.to_yaml 
 #    end
-    @exporter.export(@filename)
+    @novedit_io.write(self, @filename)
   end
 
   def read_file
     if (not @filename.nil?) and File.exists?(@filename)
       File.open(@filename) do |f| 
-        @rootNode = Marshal.load(f)
+        @rootNode = @novedit_io.read(@filename)
       end
     end
   end
   
   def open_file(filename)
     if @filename != filename
-        initialize(filename)
+      @filename = filename
+      fill_tree
     end
   end
 end
