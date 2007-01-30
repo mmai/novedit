@@ -60,6 +60,10 @@ class ViewNovedit
     end
 
     
+    #Ouverture / Fermeture d'un noeud
+    @treeview.signal_connect("row-collapsed"){ |widget, iter, path| @controler.on_collapse_node(path) }
+    @treeview.signal_connect("row-expanded"){ |widget, iter, path| @controler.on_expand_node(path) }
+    
     #Sélection d'un noeud
     @treeview.selection.signal_connect("changed"){ |widget| @controler.on_select_node(widget) }
     
@@ -121,6 +125,7 @@ class ViewNovedit
   def insert_model_node(parent_node, model_node)
     iter = @treeview.model.append(parent_node)
     iter[0] = model_node.name
+    @treeview.expand_row(iter.path, false) if (model_node.is_open)
     model_node.childs.each{|node| insert_model_node(iter, node)}
   end
 

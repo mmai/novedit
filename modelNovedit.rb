@@ -7,12 +7,13 @@ require 'yaml'
 require 'lib/tree'
 
 class NoveditNode < TreeNode
-  attr_accessor :name, :undopool, :redopool, :buffer, :text
+  attr_accessor :name, :undopool, :redopool, :buffer, :text, :is_open
   
-  def initialize(name, text='') 
+  def initialize(name, text='', is_open=false) 
     super()
     @name = name
     @text = text
+    @is_open = is_open
     @undopool = Array.new
     @redopool = Array.new
   end

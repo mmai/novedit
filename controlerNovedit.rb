@@ -149,6 +149,14 @@ class ControlerNovedit
      end
   end
   
+  def on_expand_node(path)
+    @model.getNode(path.to_s).is_open = true
+  end
+  
+  def on_collapse_node(path)
+    @model.getNode(path.to_s).is_open = false
+  end
+  
   private
   
   #Find Dialog
