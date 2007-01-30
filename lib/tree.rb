@@ -82,6 +82,29 @@ class TreeNode
     end
     return currentNode
   end
+  
+  def root
+    node = self
+    node = node.parent while not node.parent.nil?
+    return node
+  end
+  
+  def path
+    tabPath = []
+    node = self
+    while not node.parent.nil?
+      pos = 0
+      brother = node.parent.leftchild
+      while brother!=node
+        brother = brother.rightbrother
+        pos = pos + 1
+      end
+      tabPath << pos
+      node = node.parent
+    end
+    tabPath << 0
+    return tabPath.reverse.join(":")
+  end
 end
 
 class TreeNodeException < RuntimeError

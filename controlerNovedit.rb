@@ -130,21 +130,11 @@ class ControlerNovedit
       path, position = drop_info
       pathDest = path.to_s
       pathOrig = selection.text
-      #On conserve en mémoire la structure de déploiement de la vue
-      expandedRows = Array.new
-      treeview.map_expanded_rows do |tree_view, pathexp|
-        expandedRows << pathexp
-      end
       #On met à jour le modèle
       begin
         @model.move_node(pathOrig, pathDest)
       rescue TreeNodeException
         @view.write_appbar "Mouvement interdit!"
-      else
-        #On redéploie la vue
-        expandedRows.each do |pathexp|
-          treeview.expand_row(pathexp, false)
-        end
       end
      end
   end

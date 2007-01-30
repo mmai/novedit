@@ -125,8 +125,14 @@ class ViewNovedit
   def insert_model_node(parent_node, model_node)
     iter = @treeview.model.append(parent_node)
     iter[0] = model_node.name
-    @treeview.expand_row(iter.path, false) if (model_node.is_open)
     model_node.childs.each{|node| insert_model_node(iter, node)}
+  end
+  
+  def check_opened_nodes(model_node)
+    if (model_node.is_open)
+      @treeview.expand_row(Gtk::TreePath.new(model_node.path), false) 
+      model_node.childs.each {|node| check_opened_nodes(node)}
+    end
   end
 
   def update
@@ -135,6 +141,7 @@ class ViewNovedit
     @treeview.model.clear
     @model.childs.each do |modelNode|
       insert_model_node(nil, modelNode)
+      check_opened_nodes(modelNode)
     end
     @buffer.set_text(@model.currentNode.text)
     
