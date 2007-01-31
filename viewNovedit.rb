@@ -85,6 +85,20 @@ class ViewNovedit
     # Popup the menu on Shift-F10
     @treeview.signal_connect("popup_menu") { tree_context_menu.popup(nil, nil, 0, Gdk::Event::CURRENT_TIME) }
     
+    #Add sibbling on CTRL-Enter
+    @treeview.signal_connect("key-press-event") do |widget, event|
+#      puts event.keyval
+      case event.keyval
+      when 65379 #Ins
+        @controler.on_insert_child
+      when 65293 #Enter
+        @controler.on_insert_sibling
+      when 65535 #Suppr
+        @controler.on_delete_node
+      end
+    end
+    
+    
     #Tabs document
     @tabs = @glade.get_widget('notebook1')
     undoc = @glade.get_widget('scrolledwindow')

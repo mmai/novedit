@@ -92,8 +92,8 @@ class ControlerNovedit
   # Évènements sur l'arbre
   #############################
  
-  #Insertion d'un nouvel élément dans l'arbre
-  def on_insert()
+  #Insertion d'un nouveau sous-élément
+  def on_insert_child()
     selectedIter = @view.treeview.selection.selected
     iter = @treestore.append(selectedIter)
     @model.insert_node(selectedIter.path.to_s, NoveditNode.new($DEFAULT_NODE_NAME))
@@ -101,6 +101,23 @@ class ControlerNovedit
     iter[0] = $DEFAULT_NODE_NAME
     @view.treeview.expand_row(selectedIter.path,false)
     @view.treeview.set_cursor(iter.path, @view.treeview.get_column(0), true)
+  end
+  
+  #Insertion d'un nouveau frère
+  def on_insert_sibling()
+    selectedIter = @view.treeview.selection.selected.parent
+    
+    iter = @treestore.append(selectedIter)
+    @model.insert_node(selectedIter.path.to_s, NoveditNode.new($DEFAULT_NODE_NAME))
+    
+    iter[0] = $DEFAULT_NODE_NAME
+    @view.treeview.expand_row(selectedIter.path,false)
+    @view.treeview.set_cursor(iter.path, @view.treeview.get_column(0), true)
+  end
+  
+  #Suppression d'un noeud
+  def on_delete_node
+    puts "delete"
   end
   
   #Sélection d'un noeud de l'arbre
