@@ -91,6 +91,16 @@ class ControlerNovedit
   ##############################
   # Évènements sur l'arbre
   #############################
+  def on_tree_key_pressed(keyval)
+      case keyval
+      when 65379 #Ins
+        on_insert_child
+      when 65293 #Enter
+        on_insert_sibling
+      when 65535 #Suppr
+        on_delete_node
+      end
+    end
  
   #Insertion d'un nouveau sous-élément
   def on_insert_child()
@@ -106,12 +116,15 @@ class ControlerNovedit
   #Insertion d'un nouveau frère
   def on_insert_sibling()
     selectedIter = @view.treeview.selection.selected.parent
-    
     iter = @treestore.append(selectedIter)
-    @model.insert_node(selectedIter.path.to_s, NoveditNode.new($DEFAULT_NODE_NAME))
+    if selectedIter.nil?
+      pathparent = ""
+    else 
+      pathparent = selectedIter.path.to_s
+    end
+    @model.insert_node(pathparent, NoveditNode.new($DEFAULT_NODE_NAME))
     
     iter[0] = $DEFAULT_NODE_NAME
-    @view.treeview.expand_row(selectedIter.path,false)
     @view.treeview.set_cursor(iter.path, @view.treeview.get_column(0), true)
   end
   

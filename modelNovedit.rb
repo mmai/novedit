@@ -17,6 +17,10 @@ class NoveditNode < TreeNode
     @undopool = Array.new
     @redopool = Array.new
   end
+  
+  def to_s
+    @name + ": [" + childs.map{|child| child.to_s}.join(',') + "]"
+  end
    
   def appendUndo(action, iter, text)    
       if (action==:insert_text) 
@@ -77,13 +81,13 @@ class NoveditModel
   end
   
   def fill_tree
-    @rootNode = nil
+    @rootNode = NoveditNode.new("root")
     if (not @filename.nil?)
       read_file
     else
-      @rootNode = NoveditNode.new($DEFAULT_NODE_NAME)
+      @rootNode.addNode(NoveditNode.new($DEFAULT_NODE_NAME))
     end
-    @currentNode = @rootNode
+    @currentNode = @rootNode.getNode("O")
     changed
     notify_observers
   end
@@ -100,7 +104,7 @@ class NoveditModel
 #  end
 
   def childs
-    [@rootNode]
+    @rootNode.childs
   end
   
   def insert_node(parent_path, node)
@@ -116,7 +120,8 @@ class NoveditModel
 #    node = self
 #    path = pathNode.split(':')
 #    path.each {|nodePos| node = node.nodes[nodePos.to_i]}
-    node = @rootNode.getNode(pathNode)
+    node = self
+    node = @rootNode.getNode(pathNode) if not pathNode.nil?
     return node
   end
   

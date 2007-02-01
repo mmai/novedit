@@ -72,10 +72,8 @@ class TreeNode
   end
   
   def getNode(pathNode)
-    #pathNode de type 0:2:2 ... 0: représente le noeud lui-même
     currentNode = self
     path = pathNode.split(':')
-    path.shift#On retire le noeud initial (lui-même)
     path.each do |nodePos| 
       currentNode = currentNode.leftchild
       nodePos.to_i.times {currentNode = currentNode.rightbrother}
@@ -102,7 +100,6 @@ class TreeNode
       tabPath << pos
       node = node.parent
     end
-    tabPath << 0
     return tabPath.reverse.join(":")
   end
 end

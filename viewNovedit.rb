@@ -70,7 +70,7 @@ class ViewNovedit
     #Menu contextuel sur l'arbre
     tree_context_menu = Gtk::Menu.new
     item = Gtk::MenuItem.new("Insert element")
-    item.signal_connect("activate") { @controler.on_insert }
+    item.signal_connect("activate") { @controler.on_insert_child }
     tree_context_menu.append(item)
     tree_context_menu.show_all
     # Popup the menu on right click
@@ -85,19 +85,8 @@ class ViewNovedit
     # Popup the menu on Shift-F10
     @treeview.signal_connect("popup_menu") { tree_context_menu.popup(nil, nil, 0, Gdk::Event::CURRENT_TIME) }
     
-    #Add sibbling on CTRL-Enter
-    @treeview.signal_connect("key-press-event") do |widget, event|
-#      puts event.keyval
-      case event.keyval
-      when 65379 #Ins
-        @controler.on_insert_child
-      when 65293 #Enter
-        @controler.on_insert_sibling
-      when 65535 #Suppr
-        @controler.on_delete_node
-      end
-    end
-    
+    #Key pressed
+    @treeview.signal_connect("key-press-event") { |widget, event| @controler.on_tree_key_pressed(event.keyval)}  
     
     #Tabs document
     @tabs = @glade.get_widget('notebook1')
