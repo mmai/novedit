@@ -56,19 +56,17 @@ class TreeNode
     newParentNode = getNode(pathFin)
     
     #On détache le noeud de son emplacement actuel
-    if node.parent.leftchild == node
-      node.parent.leftchild = node.rightbrother
-    else
-      leftbrother = node.parent.leftchild
-      while leftbrother.rightbrother != node
-        leftbrother = leftbrother.rightbrother
-      end
-      leftbrother.rightbrother = node.rightbrother
-    end
+    node.detach
     
     #On ajoute le noeud à son nouveau père
     node.rightbrother = nil
     newParentNode.addNode(node)
+  end
+  
+  def remove(path)
+    node = getNode(path)
+    node.detach
+    node = nil
   end
   
   def getNode(pathNode)
@@ -102,6 +100,20 @@ class TreeNode
     end
     return tabPath.reverse.join(":")
   end
+  
+  def detach
+    #On détache le noeud de son emplacement actuel
+    if @parent.leftchild == self
+      @parent.leftchild = @rightbrother
+    else
+      leftbrother = @parent.leftchild
+      while leftbrother.rightbrother != node
+        leftbrother = leftbrother.rightbrother
+      end
+      leftbrother.rightbrother = @rightbrother
+    end
+   end
+  
 end
 
 class TreeNodeException < RuntimeError

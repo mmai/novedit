@@ -130,7 +130,8 @@ class ControlerNovedit
   
   #Suppression d'un noeud
   def on_delete_node
-    puts "delete"
+    selectedIter = @view.treeview.selection.selected
+    @model.remove_node(selectedIter.path.to_s)
   end
   
   #Sélection d'un noeud de l'arbre

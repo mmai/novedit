@@ -131,6 +131,12 @@ class NoveditModel
     notify_observers
   end
   
+  def remove_node(path)
+    @rootNode.remove(path)
+    changed
+    notify_observers
+  end
+  
   #
   # File access
   #
