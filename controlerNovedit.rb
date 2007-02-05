@@ -5,13 +5,15 @@
 require "viewNovedit.rb"
 
 require "modules/io/novedit_io_yaml.rb"
+require "lib/undo_redo.rb"
 
-class ControlerNovedit
+class ControlerNovedit < UndoRedo
   @model
   @view
   @treemodel
   
   def initialize(model)
+    super()
     @model = model
     @model.set_io(NoveditIOYaml.new)
     @view = ViewNovedit.new(self, model)
@@ -99,6 +101,10 @@ class ControlerNovedit
         on_insert_sibling
       when 65535 #Suppr
         on_delete_node
+      when 122 # z
+        undo_command
+      when 121 # y
+        redo_command
       end
     end
  
@@ -145,8 +151,17 @@ class ControlerNovedit
   #Édition d'un élément de l'arbre
   def on_cell_edited(path, newtext)
     iter = @treestore.get_iter(path)
-    iter[0] = newtext
-    @model.getNode(path).name = newtext
+    itertxt = iter[0]
+    todo = lambda {
+      iter[0] = newtext
+      @model.getNode(path).name = newtext
+    }
+    toundo = lambda {
+      iter[0] = itertxt
+      @model.getNode(path).name = itertxt
+    }
+    todo.call
+    @tabUndo << Command.new(todo, toundo)
   end
   
   #Drag and drop

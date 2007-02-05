@@ -5,7 +5,6 @@
 require 'observer'
 require 'yaml'
 require 'lib/tree'
-require 'lib/command'
 
 class NoveditNode < TreeNode
   attr_accessor :name, :undopool, :redopool, :buffer, :text, :is_open
@@ -73,12 +72,11 @@ end
 class NoveditModel
   include Observable
   
-  attr_accessor :rootNode, :currentNode, :filename, :tabCommands
+  attr_accessor :rootNode, :currentNode, :filename
     
   def initialize(filename)
     @novedit_io = NoveditIOBase.new
     @filename = filename
-    @tabCommands = []
     fill_tree
   end
   
