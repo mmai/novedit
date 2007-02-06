@@ -138,13 +138,14 @@ class ControlerNovedit < UndoRedo
   def on_delete_node
     selectedIter = @view.treeview.selection.selected
     node = @model.getNode(selectedIter.path.to_s)
+    nodepos = node.path.split(":").last.to_i
     todo = lambda {
 #      @model.remove_node(selectedIter.path.to_s)
       node.detach
       @view.update
     }
     toundo = lambda {
-      node.parent.addNode(node)
+      node.parent.addNode(node, nodepos)
       @view.update
     }
     todo.call
@@ -161,18 +162,22 @@ class ControlerNovedit < UndoRedo
   
   #Édition d'un élément de l'arbre
   def on_cell_edited(path, newtext)
+    node = @model.getNode(path)
     iter = @treestore.get_iter(path)
+    iterpath = iter.path
     itertxt = iter[0]
     todo = lambda {
-      iter[0] = newtext
-      @model.getNode(path).name = newtext
+      node.name = newtext
+      @view.update
     }
     toundo = lambda {
-      iter[0] = itertxt
-      @model.getNode(path).name = itertxt
+      node.name = itertxt
+      @view.update
     }
     todo.call
     @tabUndo << Command.new(todo, toundo)
+    
+    @view.treeview.set_cursor(iterpath, @view.treeview.get_column(0), false)
   end
   
   #Drag and drop

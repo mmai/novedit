@@ -27,10 +27,20 @@ class TreeNode
     return tabChilds
   end
   
-  def addNode(node)
+  def addNode(node, pos=nil)   
     if @leftchild.nil?
       @leftchild = node
       node.parent = self
+    elsif not pos.nil?
+      curnode = @leftchild
+      curpos = 0
+      while curpos < (pos-1) and not curnode.rightbrother.nil?
+        curnode = curnode.rightbrother
+        curpos = curpos + 1
+      end
+      node.rightbrother = curnode.rightbrother
+      node.parent = self
+      curnode.rightbrother = node
     else
       rightchild = get_rightchild
       rightchild.rightbrother = node
