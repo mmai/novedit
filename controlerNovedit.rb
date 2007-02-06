@@ -137,7 +137,18 @@ class ControlerNovedit < UndoRedo
   #Suppression d'un noeud
   def on_delete_node
     selectedIter = @view.treeview.selection.selected
-    @model.remove_node(selectedIter.path.to_s)
+    node = @model.getNode(selectedIter.path.to_s)
+    todo = lambda {
+#      @model.remove_node(selectedIter.path.to_s)
+      node.detach
+      @view.update
+    }
+    toundo = lambda {
+      node.parent.addNode(node)
+      @view.update
+    }
+    todo.call
+    @tabUndo << Command.new(todo, toundo)
   end
   
   #Sélection d'un noeud de l'arbre

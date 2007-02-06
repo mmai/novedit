@@ -107,7 +107,7 @@ class TreeNode
       @parent.leftchild = @rightbrother
     else
       leftbrother = @parent.leftchild
-      while leftbrother.rightbrother != node
+      while leftbrother.rightbrother != self
         leftbrother = leftbrother.rightbrother
       end
       leftbrother.rightbrother = @rightbrother
