@@ -111,45 +111,69 @@ class ControlerNovedit < UndoRedo
   #Insertion d'un nouveau sous-élément
   def on_insert_child()
     selectedIter = @view.treeview.selection.selected
-    iter = @treestore.append(selectedIter)
-    @model.insert_node(selectedIter.path.to_s, NoveditNode.new($DEFAULT_NODE_NAME))
-    
-    iter[0] = $DEFAULT_NODE_NAME
-    @view.treeview.expand_row(selectedIter.path,false)
-    @view.treeview.set_cursor(iter.path, @view.treeview.get_column(0), true)
+    if not selectedIter.nil?
+      newnode = NoveditNode.new($DEFAULT_NODE_NAME)
+      parent = @model.getNode(selectedIter.path.to_s)
+      todo = lambda {
+        parent.addNode(newnode)
+        parent.is_open = true
+        @view.update
+      }
+      toundo = lambda {
+        newnode.detach
+        @view.update
+      }
+      todo.call
+      @tabUndo << Command.new(todo, toundo)
+      @view.treeview.set_cursor(Gtk::TreePath.new(newnode.path), @view.treeview.get_column(0), true)
+    end
   end
   
   #Insertion d'un nouveau frère
   def on_insert_sibling()
-    selectedIter = @view.treeview.selection.selected.parent
-    iter = @treestore.append(selectedIter)
-    if selectedIter.nil?
-      pathparent = ""
-    else 
-      pathparent = selectedIter.path.to_s
+    selectedIter = @view.treeview.selection.selected
+    if not selectedIter.nil?
+      selectedIter = selectedIter.parent
+      if selectedIter.nil?
+        pathparent = ""
+      else 
+        pathparent = selectedIter.path.to_s
+      end
+        
+      newnode = NoveditNode.new($DEFAULT_NODE_NAME)
+      todo = lambda {
+        @model.insert_node(pathparent, newnode)
+        @view.update
+      }
+      toundo = lambda{
+        newnode.detach
+        @view.update
+      }
+      todo.call
+      @tabUndo << Command.new(todo, toundo)
+      @view.treeview.set_cursor(Gtk::TreePath.new(newnode.path), @view.treeview.get_column(0), true)
     end
-    @model.insert_node(pathparent, NoveditNode.new($DEFAULT_NODE_NAME))
-    
-    iter[0] = $DEFAULT_NODE_NAME
-    @view.treeview.set_cursor(iter.path, @view.treeview.get_column(0), true)
   end
   
   #Suppression d'un noeud
   def on_delete_node
     selectedIter = @view.treeview.selection.selected
-    node = @model.getNode(selectedIter.path.to_s)
-    nodepos = node.path.split(":").last.to_i
-    todo = lambda {
-#      @model.remove_node(selectedIter.path.to_s)
-      node.detach
-      @view.update
-    }
-    toundo = lambda {
-      node.parent.addNode(node, nodepos)
-      @view.update
-    }
-    todo.call
-    @tabUndo << Command.new(todo, toundo)
+    if not selectedIter.nil?
+      node = @model.getNode(selectedIter.path.to_s)
+      nodepos = node.path.split(":").last.to_i
+      nodeparent = node.parent
+      todo = lambda {
+  #      @model.remove_node(selectedIter.path.to_s)
+        node.detach
+        @view.update
+      }
+      toundo = lambda {
+        nodeparent.addNode(node, nodepos)
+        @view.update
+      }
+      todo.call
+      @tabUndo << Command.new(todo, toundo)
+    end
   end
   
   #Sélection d'un noeud de l'arbre
@@ -166,18 +190,20 @@ class ControlerNovedit < UndoRedo
     iter = @treestore.get_iter(path)
     iterpath = iter.path
     itertxt = iter[0]
-    todo = lambda {
-      node.name = newtext
-      @view.update
-    }
-    toundo = lambda {
-      node.name = itertxt
-      @view.update
-    }
-    todo.call
-    @tabUndo << Command.new(todo, toundo)
-    
-    @view.treeview.set_cursor(iterpath, @view.treeview.get_column(0), false)
+    if (newtext!=itertxt)
+      todo = lambda {
+        node.name = newtext
+        @view.update
+      }
+      toundo = lambda {
+        node.name = itertxt
+        @view.update
+      }
+      todo.call
+      @tabUndo << Command.new(todo, toundo)
+      
+      @view.treeview.set_cursor(iterpath, @view.treeview.get_column(0), false)
+    end
   end
   
   #Drag and drop

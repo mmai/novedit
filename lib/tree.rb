@@ -31,7 +31,15 @@ class TreeNode
     if @leftchild.nil?
       @leftchild = node
       node.parent = self
-    elsif not pos.nil?
+    elsif pos.nil?
+      rightchild = get_rightchild
+      rightchild.rightbrother = node
+      node.parent = self
+    elsif pos == 0
+      node.rightbrother = @leftchild
+      @leftchild = node
+      node.parent = self
+    else
       curnode = @leftchild
       curpos = 0
       while curpos < (pos-1) and not curnode.rightbrother.nil?
@@ -41,10 +49,6 @@ class TreeNode
       node.rightbrother = curnode.rightbrother
       node.parent = self
       curnode.rightbrother = node
-    else
-      rightchild = get_rightchild
-      rightchild.rightbrother = node
-      node.parent = self
     end
   end
   
