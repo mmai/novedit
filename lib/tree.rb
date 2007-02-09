@@ -27,7 +27,22 @@ class TreeNode
     return tabChilds
   end
   
-  def addNode(node, pos=nil)   
+  def ancestors
+    tabAncestors = []
+    node = @parent
+    while not node.nil?
+      tabAncestors << node
+      node = node.parent
+    end
+    return tabAncestors
+  end
+  
+  def addNode(node, pos=nil) 
+    #On interdit le déplacement d'un noeud dans sa sous-arborescence (boucle infinie)
+    if ancestors.include?(node)
+      raise TreeNodeException, "Impossible move", caller
+    end
+    
     if @leftchild.nil?
       @leftchild = node
       node.parent = self
@@ -56,6 +71,15 @@ class TreeNode
   def insert_node(path, node)
     parentNode = getNode(path)
     parentNode.addNode(node)
+  end
+  
+  def move_to(new_parent, pos=nil)
+    #On interdit le déplacement d'un noeud dans sa sous-arborescence (boucle infinie)
+    if new_parent.ancestors.include?(self)
+      raise TreeNodeException, "Impossible move", caller
+    end
+    detach
+    new_parent.addNode(self, pos)
   end
   
   def move_node(pathIni, pathFin)
@@ -126,6 +150,7 @@ class TreeNode
       end
       leftbrother.rightbrother = @rightbrother
     end
+    @rightbrother = nil
    end
   
 end

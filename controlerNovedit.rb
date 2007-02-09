@@ -225,13 +225,11 @@ class ControlerNovedit < UndoRedo
       node_rightbrother = node.rightbrother
       #On met à jour le modèle
       todo = lambda {
-        node.detach
-        node_newparent.addNode(node)
+        node.move_to(node_newparent)
         @view.update
       }
       toundo = lambda {
-        node.detach
-        node_parent.addNode(node, node_pos)
+        node.move_to(node_parent, node_pos)
         @view.update
       }
       begin
