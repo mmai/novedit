@@ -218,9 +218,25 @@ class ControlerNovedit < UndoRedo
       path, position = drop_info
       pathDest = path.to_s
       pathOrig = selection.text
+      node = @model.getNode(pathOrig)
+      node_pos = pathOrig.split(":").last.to_i
+      node_parent = node.parent
+      node_newparent = @model.getNode(pathDest)
+      node_rightbrother = node.rightbrother
       #On met à jour le modèle
+      todo = lambda {
+        node.detach
+        node_newparent.addNode(node)
+        @view.update
+      }
+      toundo = lambda {
+        node.detach
+        node_parent.addNode(node, node_pos)
+        @view.update
+      }
       begin
-        @model.move_node(pathOrig, pathDest)
+        todo.call
+        @tabUndo << Command.new(todo, toundo)
       rescue TreeNodeException
         @view.write_appbar "Mouvement interdit!"
       end
