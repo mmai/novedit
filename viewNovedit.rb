@@ -5,7 +5,7 @@
 require 'libglade2'
 
 class ViewNovedit
-  attr_accessor :treeview, :textview, :undopool, :redopool, :buffer
+  attr_accessor :treeview, :textview, :buffer
   
   #
   # Common
@@ -94,26 +94,23 @@ class ViewNovedit
     @textview = @glade.get_widget('textview')
     
     @filename = nil
-    @undopool = Array.new
-    @redopool = Array.new
       
     @buffer = @textview.buffer
     @buffer.signal_connect("insert_text") do |w, iter, text, length|
-      if @user_action
-        @undopool <<  ["insert_text", iter.offset, iter.offset + text.scan(/./).size, text]
-        @redopool.clear
-      end
+      @controler.on_insert_text(iter, text) if @user_action
     end
+    
     @buffer.signal_connect("delete_range") do |w, start_iter, end_iter|
-      text = @buffer.get_text(start_iter, end_iter)
-      @undopool <<  ["delete_range", start_iter.offset, end_iter.offset, text] if @user_action
+      @controler.on_delete_range(start_iter, end_iter) if @user_action
     end
+    
     @buffer.signal_connect("begin_user_action") do
       @user_action = true
     end
     @buffer.signal_connect("end_user_action") do
       @user_action = false
     end
+    
     @buffer.signal_connect("changed") do |w|
       update_appbar
     end
@@ -212,20 +209,21 @@ class ViewNovedit
   end
 
   def on_redo(widget)
-    return if @redopool.size == 0
-    action = @redopool.pop 
-    case action[0]
-    when "insert_text"
-      start_iter = @buffer.get_iter_at_offset(action[1])
-      end_iter = @buffer.get_iter_at_offset(action[2])
-      @buffer.insert(start_iter, action[3])
-    when "delete_range"
-      start_iter = @buffer.get_iter_at_offset(action[1])
-      end_iter = @buffer.get_iter_at_offset(action[2])
-      @buffer.delete(start_iter, end_iter)
-    end
-    iter_on_screen(start_iter, "insert")
-    @undopool << action
+    @controler.on_redo(widget)
+#    return if @redopool.size == 0
+#    action = @redopool.pop 
+#    case action[0]
+#    when "insert_text"
+#      start_iter = @buffer.get_iter_at_offset(action[1])
+#      end_iter = @buffer.get_iter_at_offset(action[2])
+#      @buffer.insert(start_iter, action[3])
+#    when "delete_range"
+#      start_iter = @buffer.get_iter_at_offset(action[1])
+#      end_iter = @buffer.get_iter_at_offset(action[2])
+#      @buffer.delete(start_iter, end_iter)
+#    end
+#    iter_on_screen(start_iter, "insert")
+#    @undopool << action
   end
 
   #

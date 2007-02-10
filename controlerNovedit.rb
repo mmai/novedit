@@ -260,6 +260,53 @@ class ControlerNovedit < UndoRedo
     @model.getNode(path.to_s).is_open = false
   end
   
+  ########################
+  # Actions sur le texte
+  ########################
+          
+  def on_insert_text(iter, text)
+    @model.currentNode.undopool <<  ["insert_text", iter.offset, iter.offset + text.scan(/./).size, text]
+    @model.currentNode.redopool.clear
+  end
+  
+  def on_delete_range(start_iter, end_iter)
+    text = @view.buffer.get_text(start_iter, end_iter)
+    @model.currentNode.undopool <<  ["delete_range", start_iter.offset, end_iter.offset, text]
+  end
+  
+  def on_undo(widget)
+    return if @model.currentNode.undopool.size == 0
+    action = @model.currentNode.undopool.pop 
+    case action[0]
+    when "insert_text"
+      start_iter = @view.buffer.get_iter_at_offset(action[1])
+      end_iter = @view.buffer.get_iter_at_offset(action[2])
+      @view.buffer.delete(start_iter, end_iter)
+    when "delete_range"
+      start_iter = @view.buffer.get_iter_at_offset(action[1])
+      @view.buffer.insert(start_iter, action[3])
+    end
+    @view.iter_on_screen(start_iter, "insert")
+    @model.currentNode.redopool << action
+  end
+
+  def on_redo(widget)
+    return if @model.currentNode.redopool.size == 0
+    action = @model.currentNode.redopool.pop 
+    case action[0]
+    when "insert_text"
+      start_iter = @view.buffer.get_iter_at_offset(action[1])
+      end_iter = @view.buffer.get_iter_at_offset(action[2])
+      @view.buffer.insert(start_iter, action[3])
+    when "delete_range"
+      start_iter = @view.buffer.get_iter_at_offset(action[1])
+      end_iter = @view.buffer.get_iter_at_offset(action[2])
+      @view.buffer.delete(start_iter, end_iter)
+    end
+    @view.iter_on_screen(start_iter, "insert")
+    @model.currentNode.undopool << action
+  end
+  
   private
   
   #Find Dialog

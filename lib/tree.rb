@@ -97,7 +97,6 @@ class TreeNode
     node.detach
     
     #On ajoute le noeud à son nouveau père
-    node.rightbrother = nil
     newParentNode.addNode(node)
   end
   
