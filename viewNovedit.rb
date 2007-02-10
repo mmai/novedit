@@ -160,19 +160,6 @@ class ViewNovedit
     @buffer.move_mark(@buffer.get_mark("selection_bound"), @buffer.start_iter)
   end
     
-  #
-  # File access
-  #
-  def save_file
-    File.open(@filename, "w"){|f| 
-      f.write(@buffer.get_text(*@buffer.bounds)) 
-    }
-  end
-
-  def read_file
-    File.open(@filename){|f| ret = f.readlines.join }
-  end
-  
   private
 
   def on_open_file(widget) 
@@ -208,19 +195,20 @@ class ViewNovedit
   # Unfo, Redo
   #
   def on_undo(widget)
-    return if @undopool.size == 0
-    action = @undopool.pop 
-    case action[0]
-    when "insert_text"
-      start_iter = @buffer.get_iter_at_offset(action[1])
-      end_iter = @buffer.get_iter_at_offset(action[2])
-      @buffer.delete(start_iter, end_iter)
-    when "delete_range"
-      start_iter = @buffer.get_iter_at_offset(action[1])
-      @buffer.insert(start_iter, action[3])
-    end
-    iter_on_screen(start_iter, "insert")
-    @redopool << action
+    @controler.on_undo(widget)
+#    return if @undopool.size == 0
+#    action = @undopool.pop 
+#    case action[0]
+#    when "insert_text"
+#      start_iter = @buffer.get_iter_at_offset(action[1])
+#      end_iter = @buffer.get_iter_at_offset(action[2])
+#      @buffer.delete(start_iter, end_iter)
+#    when "delete_range"
+#      start_iter = @buffer.get_iter_at_offset(action[1])
+#      @buffer.insert(start_iter, action[3])
+#    end
+#    iter_on_screen(start_iter, "insert")
+#    @redopool << action
   end
 
   def on_redo(widget)

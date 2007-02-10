@@ -127,16 +127,20 @@ class TreeNode
     tabPath = []
     node = self
     while not node.parent.nil?
-      pos = 0
-      brother = node.parent.leftchild
-      while brother!=node
-        brother = brother.rightbrother
-        pos = pos + 1
-      end
-      tabPath << pos
+      tabPath << node.pos
       node = node.parent
     end
     return tabPath.reverse.join(":")
+  end
+  
+  def pos
+    position = 0
+    brother = @parent.leftchild
+    while brother!= self
+      brother = brother.rightbrother
+      position = position + 1
+    end
+    return position
   end
   
   def detach

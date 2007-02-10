@@ -218,14 +218,25 @@ class ControlerNovedit < UndoRedo
       path, position = drop_info
       pathDest = path.to_s
       pathOrig = selection.text
+      
       node = @model.getNode(pathOrig)
       node_pos = pathOrig.split(":").last.to_i
       node_parent = node.parent
       node_newparent = @model.getNode(pathDest)
       node_rightbrother = node.rightbrother
+      
+      node_newpos = nil
+      if position == Gtk::TreeView::DROP_BEFORE
+        node_newpos = node_newparent.pos
+        node_newparent = node_newparent.parent
+      elsif position == Gtk::TreeView::DROP_AFTER
+        node_newpos = node_newparent.pos + 1
+        node_newparent = node_newparent.parent
+      end
+      
       #On met à jour le modèle
       todo = lambda {
-        node.move_to(node_newparent)
+        node.move_to(node_newparent, node_newpos)
         @view.update
       }
       toundo = lambda {
