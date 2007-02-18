@@ -124,6 +124,7 @@ class ControlerNovedit < UndoRedo
         @view.update
       }
       todo.call
+      @model.is_saved = false
       @tabUndo << Command.new(todo, toundo)
       @view.treeview.set_cursor(Gtk::TreePath.new(newnode.path), @view.treeview.get_column(0), true)
     end
@@ -150,6 +151,7 @@ class ControlerNovedit < UndoRedo
         @view.update
       }
       todo.call
+      @model.is_saved = false
       @tabUndo << Command.new(todo, toundo)
       @view.treeview.set_cursor(Gtk::TreePath.new(newnode.path), @view.treeview.get_column(0), true)
     end
@@ -172,6 +174,7 @@ class ControlerNovedit < UndoRedo
         @view.update
       }
       todo.call
+      @model.is_saved = false
       @tabUndo << Command.new(todo, toundo)
     end
   end
@@ -200,6 +203,7 @@ class ControlerNovedit < UndoRedo
         @view.update
       }
       todo.call
+      @model.is_saved = false
       @tabUndo << Command.new(todo, toundo)
       
       @view.treeview.set_cursor(iterpath, @view.treeview.get_column(0), false)
@@ -245,6 +249,7 @@ class ControlerNovedit < UndoRedo
       }
       begin
         todo.call
+        @model.is_saved = false
         @tabUndo << Command.new(todo, toundo)
       rescue TreeNodeException
         @view.write_appbar "Mouvement interdit!"
@@ -267,11 +272,13 @@ class ControlerNovedit < UndoRedo
   def on_insert_text(iter, text)
     @model.currentNode.undopool <<  ["insert_text", iter.offset, iter.offset + text.scan(/./).size, text]
     @model.currentNode.redopool.clear
+    @model.is_saved = false
   end
   
   def on_delete_range(start_iter, end_iter)
     text = @view.buffer.get_text(start_iter, end_iter)
     @model.currentNode.undopool <<  ["delete_range", start_iter.offset, end_iter.offset, text]
+    @model.is_saved = false
   end
   
   def on_undo(widget)
@@ -305,6 +312,20 @@ class ControlerNovedit < UndoRedo
     end
     @view.iter_on_screen(start_iter, "insert")
     @model.currentNode.undopool << action
+  end
+  
+  def on_quit
+    if @model.is_saved
+      Gtk.main_quit
+    else
+      dialog = Gtk::MessageDialog.new(@appwindow, Gtk::Dialog::MODAL, 
+                                        Gtk::MessageDialog::ERROR, 
+                                        Gtk::MessageDialog::BUTTONS_CLOSE, 
+                                        "Document not saved!")
+      dialog.run
+      dialog.destroy
+      return true
+    end
   end
   
   private

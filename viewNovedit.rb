@@ -149,7 +149,7 @@ class ViewNovedit
   end
 
   def on_quit(*widget)
-    Gtk.main_quit
+    @controler.on_quit
   end
 
   def on_selectall(widget)
@@ -193,37 +193,10 @@ class ViewNovedit
   #
   def on_undo(widget)
     @controler.on_undo(widget)
-#    return if @undopool.size == 0
-#    action = @undopool.pop 
-#    case action[0]
-#    when "insert_text"
-#      start_iter = @buffer.get_iter_at_offset(action[1])
-#      end_iter = @buffer.get_iter_at_offset(action[2])
-#      @buffer.delete(start_iter, end_iter)
-#    when "delete_range"
-#      start_iter = @buffer.get_iter_at_offset(action[1])
-#      @buffer.insert(start_iter, action[3])
-#    end
-#    iter_on_screen(start_iter, "insert")
-#    @redopool << action
   end
 
   def on_redo(widget)
     @controler.on_redo(widget)
-#    return if @redopool.size == 0
-#    action = @redopool.pop 
-#    case action[0]
-#    when "insert_text"
-#      start_iter = @buffer.get_iter_at_offset(action[1])
-#      end_iter = @buffer.get_iter_at_offset(action[2])
-#      @buffer.insert(start_iter, action[3])
-#    when "delete_range"
-#      start_iter = @buffer.get_iter_at_offset(action[1])
-#      end_iter = @buffer.get_iter_at_offset(action[2])
-#      @buffer.delete(start_iter, end_iter)
-#    end
-#    iter_on_screen(start_iter, "insert")
-#    @undopool << action
   end
 
   #

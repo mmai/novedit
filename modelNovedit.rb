@@ -26,11 +26,12 @@ end
 class NoveditModel
   include Observable
   
-  attr_accessor :rootNode, :currentNode, :filename
+  attr_accessor :rootNode, :currentNode, :filename, :is_saved
     
   def initialize(filename)
     @novedit_io = NoveditIOBase.new
     @filename = filename
+    @is_saved = true
     fill_tree
   end
   
@@ -100,11 +101,13 @@ class NoveditModel
 #      f.puts @rootNode.to_yaml 
 #    end
     @novedit_io.write(self, @filename)
+    @is_saved = true
   end
 
   def read_file
     if (not @filename.nil?)
         @rootNode = @novedit_io.read(@filename)
+        @is_saved = true
     end
   end
   
