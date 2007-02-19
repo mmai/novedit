@@ -42,7 +42,7 @@ class NoveditModel
     else
       @rootNode.addNode(NoveditNode.new($DEFAULT_NODE_NAME))
     end
-    @currentNode = @rootNode.getNode("O")
+    @currentNode = @rootNode.getNode("0")
     changed
     notify_observers
   end
@@ -106,8 +106,19 @@ class NoveditModel
 
   def read_file
     if (not @filename.nil?)
-        @rootNode = @novedit_io.read(@filename)
-        @is_saved = true
+        lu = @novedit_io.read(@filename)
+        if lu.nil?
+          dialog = Gtk::MessageDialog.new(@appwindow, Gtk::Dialog::MODAL, 
+                                        Gtk::MessageDialog::ERROR, 
+                                        Gtk::MessageDialog::BUTTONS_CLOSE, 
+                                        "Cannot open " + @filename)
+          dialog.run
+          dialog.destroy
+          open_file(nil)
+        else
+          @rootNode = lu
+          @is_saved = true
+        end
     end
   end
   

@@ -23,7 +23,9 @@ class ControlerNovedit < UndoRedo
     @view.treeview.model = @treestore
     
     populateTree(@model, nil)
-    new_file
+    
+    #On ouvre le fichier passé en paramètre
+    @model.open_file($*[0])
      
     #Boites de dialogues
     pathgladeDialogs = File.dirname($0) + "/glade/noveditDialogs.glade"

@@ -11,11 +11,13 @@ $NAME = "Novedit"
 $VERSION = "0.0.3"
 
 $DEFAULT_NODE_NAME = "New node"
+$: << File.dirname($0)
 
-require "controlerNovedit"
-require "modelNovedit"
+require  "controlerNovedit"
+require  "modelNovedit"
 
 Gtk.init
+
 model = NoveditModel.new(nil)
 ControlerNovedit.new(model)
 Gtk.main
