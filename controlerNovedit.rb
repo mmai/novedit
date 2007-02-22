@@ -332,6 +332,7 @@ class ControlerNovedit < UndoRedo
       dialog.destroy
       Gtk.main_quit if response == -5
     end
+    return true
   end
   
   def on_show_tabinfos
