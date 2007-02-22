@@ -5,7 +5,7 @@
 require 'libglade2'
 
 class ViewNovedit
-  attr_accessor :treeview, :textview, :buffer
+  attr_accessor :treeview, :textview, :buffer, :wordcount_value
   
   #
   # Common
@@ -38,6 +38,9 @@ class ViewNovedit
     @appwindow = @glade.get_widget("appwindow")
     @appbar = @glade.get_widget("statusbar")
     @appbar_context_id = @appbar.get_context_id('status_context')
+    
+    #Temporaire
+    @wordcount_value = @glade.get_widget("labelNbWordsValue")
     
     #Arbre - composé de noeuds texte éditables
     @treeview = @glade.get_widget('treeview')
@@ -174,6 +177,12 @@ class ViewNovedit
 
   def on_save_file(widget)
     @controler.on_save_file()
+  end
+  
+  def on_notebook_switch_page(widget, page, page_num)
+    if page_num == 1
+      @controler.on_show_tabinfos
+    end    
   end
   
   def on_clear()

@@ -5,6 +5,7 @@
 require "viewNovedit.rb"
 
 require "modules/io/novedit_io_yaml.rb"
+require "modules/infos/novedit_info_word_count.rb"
 require "lib/undo_redo.rb"
 
 class ControlerNovedit < UndoRedo
@@ -12,11 +13,14 @@ class ControlerNovedit < UndoRedo
   @view
   @treemodel
   
+  @tab_infos
+  
   def initialize(model)
     super()
     @model = model
     @model.set_io(NoveditIOYaml.new)
     @view = ViewNovedit.new(self, model)
+    @tab_infos = [NoveditInfoWordCount.new]
     
     #Initialisation de l'arbre 
     @treestore = Gtk::TreeStore.new(String)
@@ -321,13 +325,18 @@ class ControlerNovedit < UndoRedo
       Gtk.main_quit
     else
       dialog = Gtk::MessageDialog.new(@appwindow, Gtk::Dialog::MODAL, 
-                                        Gtk::MessageDialog::ERROR, 
-                                        Gtk::MessageDialog::BUTTONS_CLOSE, 
-                                        "Document not saved!")
-      dialog.run
+                                        Gtk::MessageDialog::QUESTION, 
+                                        Gtk::MessageDialog::BUTTONS_OK_CANCEL, 
+                                        "Document not saved! Quit without saving ?")
+      response = dialog.run
       dialog.destroy
-      return true
+      Gtk.main_quit if response == -5
     end
+  end
+  
+  def on_show_tabinfos
+    @model.currentNode.text = @view.buffer.get_text
+    @view.wordcount_value.label = @tab_infos[0].to_s(@model.currentNode)
   end
   
   private
