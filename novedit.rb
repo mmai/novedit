@@ -3,6 +3,10 @@
 # Novedit
 #
 
+require 'gettext'
+include GetText
+bindtextdomain("novedit")
+
 #Utilisation de UTF-8
 $KCODE = "U"
 
@@ -10,7 +14,7 @@ $TITLE = "Novedit"
 $NAME = "Novedit"
 $VERSION = "0.0.3"
 
-$DEFAULT_NODE_NAME = "New node"
+$DEFAULT_NODE_NAME = _("New node")
 $: << File.dirname($0)
 
 require  "controlerNovedit"

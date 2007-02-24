@@ -38,6 +38,13 @@ class ControlerNovedit < UndoRedo
     @find_dialog = gladeDialogs.get_widget("find_dialog")
     @replace_dialog = gladeDialogs.get_widget("replace_dialog")
     @about_dialog = gladeDialogs.get_widget("aboutdialog1")
+    
+    #Raccourcis clavier
+    ag = Gtk::AccelGroup.new
+    ag.connect(Gdk::Keyval::GDK_A, Gdk::Window::CONTROL_MASK, Gtk::ACCEL_VISIBLE) {
+      p "Hello World."
+    }
+    @view.appwindow.add_accel_group(ag)
   end
   
   def populateTree(nodeModel, nodeView)

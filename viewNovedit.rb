@@ -5,7 +5,7 @@
 require 'libglade2'
 
 class ViewNovedit
-  attr_accessor :treeview, :textview, :buffer, :wordcount_value
+  attr_accessor :treeview, :textview, :buffer, :wordcount_value, :appwindow
   
   #
   # Common
