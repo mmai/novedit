@@ -3,9 +3,15 @@
 # Novedit
 #
 
+begin
+  require 'rubygems'
+rescue LoadError
+  $stderr.puts "RubyGems is not found."
+end
+
 require 'gettext'
 include GetText
-bindtextdomain("novedit")
+bindtextdomain("novedit", "./locale")
 
 #Utilisation de UTF-8
 $KCODE = "U"

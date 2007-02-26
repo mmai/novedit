@@ -8,6 +8,9 @@ require "modules/io/novedit_io_yaml.rb"
 require "modules/infos/novedit_info_word_count.rb"
 require "lib/undo_redo.rb"
 
+bindtextdomain("controlerNovedit", "./locale")
+
+
 class ControlerNovedit < UndoRedo
   @model
   @view
@@ -73,7 +76,7 @@ class ControlerNovedit < UndoRedo
         dialog = Gtk::MessageDialog.new(@appwindow, Gtk::Dialog::MODAL, 
                                         Gtk::MessageDialog::ERROR, 
                                         Gtk::MessageDialog::BUTTONS_CLOSE, 
-                                        "Directory was selected. Select a text file.")
+                                        _("Directory was selected. Select a text file."))
         dialog.run
         dialog.destroy
         @fileselection.hide
@@ -265,7 +268,7 @@ class ControlerNovedit < UndoRedo
         @model.is_saved = false
         @tabUndo << Command.new(todo, toundo)
       rescue TreeNodeException
-        @view.write_appbar "Mouvement interdit!"
+        @view.write_appbar _("Mouvement interdit!")
       end
      end
   end
@@ -334,7 +337,7 @@ class ControlerNovedit < UndoRedo
       dialog = Gtk::MessageDialog.new(@appwindow, Gtk::Dialog::MODAL, 
                                         Gtk::MessageDialog::QUESTION, 
                                         Gtk::MessageDialog::BUTTONS_OK_CANCEL, 
-                                        "Document not saved! Quit without saving ?")
+                                        _("Document not saved! Quit without saving ?"))
       response = dialog.run
       dialog.destroy
       Gtk.main_quit if response == -5
