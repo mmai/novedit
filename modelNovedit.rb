@@ -106,12 +106,21 @@ class NoveditModel
 
   def read_file
     if (not @filename.nil?)
+      begin
         lu = @novedit_io.read(@filename)
+      rescue
+        errmes=$!.to_s
+        case errmes
+          when "novedit:modules:io:Bad format"
+            err_message = _("Bad file format")
+        end
+      end
+      
         if lu.nil?
           dialog = Gtk::MessageDialog.new(@appwindow, Gtk::Dialog::MODAL, 
                                         Gtk::MessageDialog::ERROR, 
                                         Gtk::MessageDialog::BUTTONS_CLOSE, 
-                                        "Cannot open " + @filename)
+                                        "Cannot open " + @filename + ((err_message.nil?)?errmes:err_message))
           dialog.run
           dialog.destroy
           open_file(nil)

@@ -2,6 +2,8 @@
 # Novedit
 #
 
+require "find" #Pour la détection des plugins
+
 require "viewNovedit.rb"
 
 require "modules/io/novedit_io_yaml.rb"
@@ -10,8 +12,33 @@ require "lib/undo_redo.rb"
 
 bindtextdomain("controlerNovedit", "./locale")
 
+#Ce module utilisé par le controlleur fait office de proxy pour les plugins
+#Il traduit les modifications de l'interface et les ajouts de fonctions demandées par les plugins
+#dans l'implémentation du controlleur et de la vue. 
+module NoveditPluginsProxy
+  #Ajoute une entrée de menu menant à une action :
+  # ne peut pas contenir de sous-menus (utiliser addMenuContainer)
+  def addMenu(name, function=nil, parent=nil)
+    newmenu = Gtk::MenuItem.new(name)
+    parent << newmenu
+    parent.show_all
+  end
+  
+  #Ajoute un menu contenant des entrées ou des sous-menus
+  def addMenuContainer(name, parent=nil)
+    parent = @view.appwindow.children[0].children[0] if parent.nil?
+    top_menu = Gtk::MenuItem.new(name)
+    parent << top_menu
+    newmenu = Gtk::Menu.new
+    top_menu.set_submenu( newmenu )
+    parent.show_all
+    return newmenu
+  end
+end
 
 class ControlerNovedit < UndoRedo
+  include NoveditPluginsProxy
+  
   @model
   @view
   @treemodel
@@ -20,9 +47,13 @@ class ControlerNovedit < UndoRedo
   
   def initialize(model)
     super()
+    #Model association (MVC)
     @model = model
+    #Mode d'enregistrement
     @model.set_io(NoveditIOYaml.new)
+    #Association à l'interface visuelle (MVC)
     @view = ViewNovedit.new(self, model)
+    #Elements de l'onglet infos
     @tab_infos = [NoveditInfoWordCount.new]
     
     #Initialisation de l'arbre 
@@ -48,6 +79,23 @@ class ControlerNovedit < UndoRedo
       p "Hello World."
     }
     @view.appwindow.add_accel_group(ag)
+    
+    #Initialisation des plugins : on exécute la fonction plugin_init() des fichiers 'init.rb'
+    # de chaque dossier(=plugin) du répertoire 'plugins'.   
+    dirPlugins = File.dirname($0) + "/plugins"
+    Find.find(dirPlugins) do |path|
+      if FileTest.directory?(path)
+        if File.basename(path)[0] == ?.
+          Find.prune       # Don't look any further into this directory.
+        else
+          next
+        end
+      elsif path =~ /init\.rb/
+         require path
+         plugin_init(self)
+      end
+    end
+    #Fin plugins
   end
   
   def populateTree(nodeModel, nodeView)

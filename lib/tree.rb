@@ -6,6 +6,13 @@ class TreeNode
     @rightbrother = nil
   end
   
+  def nodes_do(&func)
+    yield(self)
+    childs.each do |node|
+      node.nodes_do(&func)
+    end
+  end
+  
   def get_rightchild
     child = nil
     if @leftchild
@@ -176,7 +183,7 @@ end
 #    end
 #  end
 #end
-
+#
 #arbre = TreeTexte.new('racine')
 #fils1 = TreeTexte.new('fils1')
 #fils2 = TreeTexte.new('fils2')
@@ -186,5 +193,5 @@ end
 #arbre.addNode(fils2)
 #fils1.addNode(fifils)
 #fils1.addNode(fifils2)
-#fils
 #arbre.print
+#arbre.nodes_do {|node| node.print}
