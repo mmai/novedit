@@ -246,12 +246,12 @@ class ViewNovedit
     
   # Find dialog
   def on_find(widget)
-    @find_dialog.show
+    @controler.on_find
   end
 
   #Replace dialog
   def on_replace(widget)
-    @replace_dialog.show
+    @controler.on_replace
   end
 
   #

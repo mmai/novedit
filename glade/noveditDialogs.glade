@@ -2,6 +2,7 @@
 <!DOCTYPE glade-interface SYSTEM "http://glade.gnome.org/glade-2.0.dtd">
 
 <glade-interface>
+
 <widget class="GtkFileSelection" id="fileselection">
   <property name="border_width">10</property>
   <property name="title" translatable="yes">Select a file</property>
@@ -19,8 +20,8 @@
   <property name="urgency_hint">False</property>
   <property name="show_fileops">True</property>
 
-  <child internal-child="ok_button">
-    <widget class="GtkButton" id="ok_button">
+  <child internal-child="cancel_button">
+    <widget class="GtkButton" id="cancel_button">
       <property name="visible">True</property>
       <property name="can_default">True</property>
       <property name="can_focus">True</property>
@@ -29,8 +30,8 @@
     </widget>
   </child>
 
-  <child internal-child="cancel_button">
-    <widget class="GtkButton" id="cancel_button">
+  <child internal-child="ok_button">
+    <widget class="GtkButton" id="ok_button">
       <property name="visible">True</property>
       <property name="can_default">True</property>
       <property name="can_focus">True</property>
@@ -44,9 +45,9 @@
   <property name="title" translatable="yes">Find</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_MOUSE</property>
-  <property name="modal">False</property>
+  <property name="modal">True</property>
   <property name="resizable">True</property>
-  <property name="destroy_with_parent">False</property>
+  <property name="destroy_with_parent">True</property>
   <property name="decorated">True</property>
   <property name="skip_taskbar_hint">False</property>
   <property name="skip_pager_hint">False</property>
@@ -55,6 +56,7 @@
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
   <property name="has_separator">True</property>
+  <signal name="delete_event" handler="on_find_quit"/>
 
   <child internal-child="vbox">
     <widget class="GtkVBox" id="dialog-vbox1">
@@ -225,6 +227,7 @@
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
   <property name="has_separator">True</property>
+  <signal name="delete_event" handler="on_replace_quit"/>
 
   <child internal-child="vbox">
     <widget class="GtkVBox" id="vbox2">
@@ -439,10 +442,14 @@
 </widget>
 
 <widget class="GtkAboutDialog" id="aboutdialog1">
-  <property name="destroy_with_parent">False</property>
+  <property name="destroy_with_parent">True</property>
   <property name="name" translatable="yes">Novedit</property>
+  <property name="comments" translatable="yes">The primary goal of Novedit is to be a clone of notes taking editors like Keynote or WikidPad wich are only available on Windows. It is written in Ruby / Gtk and should run on Linux, Mac and Windows.</property>
+  <property name="license" translatable="yes">GNU General Public License 2.0</property>
   <property name="wrap_license">False</property>
+  <property name="website">http://code.google.com/p/novedit/</property>
   <property name="authors">Henri Bourcereau</property>
   <property name="translator_credits" translatable="yes" comments="TRANSLATORS: Replace this string with your names, one name per line.">translator-credits</property>
 </widget>
+
 </glade-interface>

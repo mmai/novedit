@@ -67,11 +67,11 @@ class ControlerNovedit < UndoRedo
      
     #Boites de dialogues
     pathgladeDialogs = File.dirname($0) + "/glade/noveditDialogs.glade"
-    gladeDialogs = GladeXML.new(pathgladeDialogs) {|handler| method(handler)}
-    @fileselection = gladeDialogs.get_widget("fileselection")
-    @find_dialog = gladeDialogs.get_widget("find_dialog")
-    @replace_dialog = gladeDialogs.get_widget("replace_dialog")
-    @about_dialog = gladeDialogs.get_widget("aboutdialog1")
+    @gladeDialogs = GladeXML.new(pathgladeDialogs) {|handler| method(handler)}
+    @fileselection = @gladeDialogs.get_widget("fileselection")
+    @find_dialog = @gladeDialogs.get_widget("find_dialog")
+    @replace_dialog = @gladeDialogs.get_widget("replace_dialog")
+    @about_dialog = @gladeDialogs.get_widget("aboutdialog1")
     
     #Raccourcis clavier
     ag = Gtk::AccelGroup.new
@@ -151,7 +151,8 @@ class ControlerNovedit < UndoRedo
   
   #About Dialog
   def on_about()
-    @about_dialog.show
+    ret = @about_dialog.run
+    @about_dialog.hide
   end
   
   ##############################
@@ -398,20 +399,32 @@ class ControlerNovedit < UndoRedo
     @view.wordcount_value.label = @tab_infos[0].to_s(@model.currentNode)
   end
   
+  def on_find()
+    @find_dialog.show
+  end
+  
+  def on_replace()
+    @replace_dialog.show
+  end
+  
   private
   
   #Find Dialog
-  def on_find_quit(widget)
+  def on_find_quit()
     @find_dialog.hide
   end
+  
   def on_find_execute(widget)
-    find_and_select("find_entry", "backwards_checkbutton", @find_dialog)
+    string_to_find = @gladeDialogs.get_widget('find_entry').text
+#    find_and_select("find_entry", "backwards_checkbutton", @find_dialog)
+    puts string_to_find
   end
   
   #Replace Dialog
-  def on_replace_quit(widget)
+  def on_replace_quit()
     @replace_dialog.hide
   end
+  
   def on_replace_execute(widget)
     iter = @buffer.get_iter_at_mark(@buffer.get_mark("insert"))
     sel_bound = @buffer.get_iter_at_mark(@buffer.get_mark("selection_bound"))
