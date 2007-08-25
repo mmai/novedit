@@ -416,8 +416,18 @@ class ControlerNovedit < UndoRedo
   
   def on_find_execute(widget)
     string_to_find = @gladeDialogs.get_widget('find_entry').text
-#    find_and_select("find_entry", "backwards_checkbutton", @find_dialog)
-    puts string_to_find
+    #On recherche à partir de la fin de la section courante (= position du curseur s'il n'y a pas de sélection)
+    iterDebut =  @view.buffer.get_iter_at_mark(@view.buffer.get_mark('selection_bound'))
+    itersFound = iterDebut.forward_search(string_to_find, Gtk::TextIter::SEARCH_TEXT_ONLY) 
+    if (itersFound.nil?)
+      print "pas trouvé!"
+    else
+      #On sélectionne le texte trouvé
+      @view.buffer.select_range(itersFound[0], itersFound[1])
+      #On scrolle vers le texte trouvé
+      @view.textview.scroll_mark_onscreen(@view.buffer.get_mark('selection_bound'))
+    end
+
   end
   
   #Replace Dialog
