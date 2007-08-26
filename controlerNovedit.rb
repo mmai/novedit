@@ -436,12 +436,23 @@ class ControlerNovedit < UndoRedo
   end
   
   def on_replace_execute(widget)
-    iter = @buffer.get_iter_at_mark(@buffer.get_mark("insert"))
-    sel_bound = @buffer.get_iter_at_mark(@buffer.get_mark("selection_bound"))
-    unless iter == sel_bound
-      replace_selected_text(@glade.get_widget("replace_replace_entry").text, iter, sel_bound)
+    string_to_find = @gladeDialogs.get_widget('replace_find_entry').text
+    string_replace = @gladeDialogs.get_widget('replace_replace_entry').text
+    #On recherche à partir de la fin de la section courante (= position du curseur s'il n'y a pas de sélection)
+    iterDebut =  @view.buffer.get_iter_at_mark(@view.buffer.get_mark('selection_bound'))
+    itersFound = iterDebut.forward_search(string_to_find, Gtk::TextIter::SEARCH_TEXT_ONLY) 
+    if (itersFound.nil?)
+      print "pas trouvé!"
+    else
+      #On sélectionne le texte trouvé
+      @view.buffer.select_range(itersFound[0], itersFound[1])
+      #On scrolle vers le texte trouvé
+      @view.textview.scroll_mark_onscreen(@view.buffer.get_mark('selection_bound'))
+      #On supprime le texte trouvé
+      @view.buffer.delete(itersFound[0], itersFound[1])
+      #On ajoute le texte de remplacement
+      @view.buffer.insert(itersFound[0], string_replace)
     end
-    find_and_select("replace_find_entry", "replace_backwards_checkbutton", @replace_dialog)
   end
   
 end
