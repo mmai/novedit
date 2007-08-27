@@ -383,13 +383,24 @@ class ControlerNovedit < UndoRedo
     if @model.is_saved
       Gtk.main_quit
     else
+      titre = (@model.filename.nil?)?_("Sans titre"):@model.filename
       dialog = Gtk::MessageDialog.new(@appwindow, Gtk::Dialog::MODAL, 
                                         Gtk::MessageDialog::QUESTION, 
-                                        Gtk::MessageDialog::BUTTONS_OK_CANCEL, 
-                                        _("Document not saved! Quit without saving ?"))
+                                        Gtk::MessageDialog::BUTTONS_NONE, 
+                                        _("Save changes to ")+titre+"?")
+      dialog.add_buttons([Gtk::Stock::YES, Gtk::Dialog::RESPONSE_YES],
+                         [Gtk::Stock::NO, Gtk::Dialog::RESPONSE_NO],
+                         [Gtk::Stock::CANCEL, Gtk::Dialog::RESPONSE_CANCEL])
       response = dialog.run
       dialog.destroy
-      Gtk.main_quit if response == -5
+      case response
+      when Gtk::Dialog::RESPONSE_NO
+        Gtk.main_quit 
+      when Gtk::Dialog::RESPONSE_YES
+        on_save_file
+        Gtk.main_quit 
+      when Gtk::Dialog::RESPONSE_CANCEL
+      end
     end
     return true
   end
