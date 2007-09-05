@@ -138,6 +138,15 @@ class ControlerNovedit < UndoRedo
     end
     return filename
   end
+
+  def show_message(message)
+    dialog = Gtk::MessageDialog.new(@appwindow, Gtk::Dialog::MODAL, 
+                                        Gtk::MessageDialog::INFO, 
+                                        Gtk::MessageDialog::BUTTONS_CLOSE, 
+                                        message)
+    response = dialog.run
+    dialog.destroy
+  end
   
   def new_file()
     @model.open_file(nil)
@@ -427,11 +436,18 @@ class ControlerNovedit < UndoRedo
   
   def on_find_execute(widget)
     string_to_find = @gladeDialogs.get_widget('find_entry').text
-    #On recherche à partir de la fin de la section courante (= position du curseur s'il n'y a pas de sélection)
-    iterDebut =  @view.buffer.get_iter_at_mark(@view.buffer.get_mark('selection_bound'))
-    itersFound = iterDebut.forward_search(string_to_find, Gtk::TextIter::SEARCH_TEXT_ONLY) 
+    backward = @gladeDialogs.get_widget('backwards_checkbutton').active?
+    if (backward)
+      #On recherche à partir du début de la section courante (= position du curseur s'il n'y a pas de sélection)
+      iterDebut =  @view.buffer.get_iter_at_mark(@view.buffer.get_mark('insert'))
+      itersFound = iterDebut.backward_search(string_to_find, Gtk::TextIter::SEARCH_TEXT_ONLY) 
+    else
+      #On recherche à partir de la fin de la section courante (= position du curseur s'il n'y a pas de sélection)
+      iterDebut =  @view.buffer.get_iter_at_mark(@view.buffer.get_mark('selection_bound'))
+      itersFound = iterDebut.forward_search(string_to_find, Gtk::TextIter::SEARCH_TEXT_ONLY) 
+    end
     if (itersFound.nil?)
-      print "pas trouvé!"
+      show_message(_("End of file"))
     else
       #On sélectionne le texte trouvé
       @view.buffer.select_range(itersFound[0], itersFound[1])
@@ -449,11 +465,17 @@ class ControlerNovedit < UndoRedo
   def on_replace_execute(widget)
     string_to_find = @gladeDialogs.get_widget('replace_find_entry').text
     string_replace = @gladeDialogs.get_widget('replace_replace_entry').text
-    #On recherche à partir de la fin de la section courante (= position du curseur s'il n'y a pas de sélection)
-    iterDebut =  @view.buffer.get_iter_at_mark(@view.buffer.get_mark('selection_bound'))
-    itersFound = iterDebut.forward_search(string_to_find, Gtk::TextIter::SEARCH_TEXT_ONLY) 
+    backward = @gladeDialogs.get_widget('replace_backwards_checkbutton').active?
+    if (backward)
+      iterDebut =  @view.buffer.get_iter_at_mark(@view.buffer.get_mark('insert'))
+      itersFound = iterDebut.backward_search(string_to_find, Gtk::TextIter::SEARCH_TEXT_ONLY) 
+    else
+      #On recherche à partir de la fin de la section courante (= position du curseur s'il n'y a pas de sélection)
+      iterDebut =  @view.buffer.get_iter_at_mark(@view.buffer.get_mark('selection_bound'))
+      itersFound = iterDebut.forward_search(string_to_find, Gtk::TextIter::SEARCH_TEXT_ONLY) 
+    end
     if (itersFound.nil?)
-      print "pas trouvé!"
+      show_message(_("End of file"))
     else
       #On sélectionne le texte trouvé
       @view.buffer.select_range(itersFound[0], itersFound[1])
