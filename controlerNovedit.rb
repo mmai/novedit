@@ -74,11 +74,17 @@ class ControlerNovedit < UndoRedo
     @about_dialog = @gladeDialogs.get_widget("aboutdialog1")
     
     #Raccourcis clavier
-    ag = Gtk::AccelGroup.new
-    ag.connect(Gdk::Keyval::GDK_A, Gdk::Window::CONTROL_MASK, Gtk::ACCEL_VISIBLE) {
-      p "Hello World."
-    }
-    @view.appwindow.add_accel_group(ag)
+#    ag = Gtk::AccelGroup.new
+    #Undo : Ctrl-Z
+#    ag.connect(Gdk::Keyval::GDK_Z, Gdk::Window::CONTROL_MASK, Gtk::ACCEL_VISIBLE) {
+#     on_undo(nil) 
+#    }
+    #Redo : Ctrl-Y 
+#    ag.connect(Gdk::Keyval::GDK_Y, Gdk::Window::CONTROL_MASK, Gtk::ACCEL_VISIBLE) {
+#     on_redo(nil) 
+#    }
+
+#    @view.appwindow.add_accel_group(ag)
     
     #Initialisation des plugins : on exécute la fonction plugin_init() des fichiers 'init.rb'
     # de chaque dossier(=plugin) du répertoire 'plugins'.   
