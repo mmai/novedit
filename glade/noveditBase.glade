@@ -173,10 +173,11 @@
                 <child>
                   <widget class="GtkMenu" id="menu4">
                     <child>
-                      <widget class="GtkMenuItem" id="À_propos1">
+                      <widget class="GtkImageMenuItem" id="A_propos1">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">À _propos</property>
+                        <property name="label">gtk-about</property>
                         <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
                         <signal name="activate" handler="on_about"/>
                       </widget>
                     </child>
@@ -436,18 +437,6 @@
                                   <placeholder/>
                                 </child>
                                 <child>
-                                  <widget class="GtkLabel" id="labelNbWords">
-                                    <property name="visible">True</property>
-                                    <property name="xalign">0</property>
-                                    <property name="label" translatable="yes">&lt;b&gt;Word count&lt;/b&gt;</property>
-                                    <property name="use_markup">True</property>
-                                  </widget>
-                                  <packing>
-                                    <property name="x_options">GTK_FILL</property>
-                                    <property name="y_options"></property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <widget class="GtkLabel" id="labelNbWordsValue">
                                     <property name="visible">True</property>
                                     <property name="xalign">0</property>
@@ -455,6 +444,18 @@
                                   <packing>
                                     <property name="left_attach">1</property>
                                     <property name="right_attach">2</property>
+                                    <property name="x_options">GTK_FILL</property>
+                                    <property name="y_options"></property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <widget class="GtkLabel" id="labelNbWords">
+                                    <property name="visible">True</property>
+                                    <property name="xalign">0</property>
+                                    <property name="label" translatable="yes">&lt;b&gt;Word count&lt;/b&gt;</property>
+                                    <property name="use_markup">True</property>
+                                  </widget>
+                                  <packing>
                                     <property name="x_options">GTK_FILL</property>
                                     <property name="y_options"></property>
                                   </packing>

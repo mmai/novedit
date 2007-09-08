@@ -171,8 +171,7 @@ class ViewNovedit
   end
 
   def on_save_as_file(widget)
-    select_file
-    @controler.save_file(self) if @model.filename
+    @controler.on_save_as()
   end
 
   def on_save_file(widget)

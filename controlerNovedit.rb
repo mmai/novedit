@@ -119,6 +119,7 @@ class ControlerNovedit < UndoRedo
     end
     @view.buffer.place_cursor(@view.buffer.start_iter)
     @view.textview.has_focus = true
+    @view.update
   end
   
   def select_file
@@ -162,8 +163,17 @@ class ControlerNovedit < UndoRedo
       @model.currentNode.text = @view.buffer.text
       @model.filename = select_file() unless @model.filename
       @model.save_file if @model.filename
+      @view.update
+  end
+
+  def on_save_as
+      @model.currentNode.text = @view.buffer.text
+      @model.filename = select_file()
+      @model.save_file if @model.filename
+      @view.update
   end
   
+
   #About Dialog
   def on_about()
     ret = @about_dialog.run
