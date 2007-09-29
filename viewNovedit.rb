@@ -138,9 +138,19 @@ class ViewNovedit
     end
   end
 
+  def maj_title
+    title = ""
+    if @model.filename.nil?
+      title = $TITLE
+    else
+      title = @model.filename
+    end
+    title = title + " * " if not @model.is_saved
+    @appwindow.set_title(title) 
+  end
+
   def update
-    @appwindow.set_title(@model.filename + " - " ) if not @model.filename.nil?
-    
+    maj_title 
     @treeview.model.clear
     @model.childs.each do |modelNode|
       insert_model_node(nil, modelNode)

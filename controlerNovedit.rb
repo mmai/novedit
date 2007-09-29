@@ -74,7 +74,7 @@ class ControlerNovedit < UndoRedo
     @about_dialog = @gladeDialogs.get_widget("aboutdialog1")
     
     #Raccourcis clavier
-#    ag = Gtk::AccelGroup.new
+    #ag = Gtk::AccelGroup.new
     #Undo : Ctrl-Z
 #    ag.connect(Gdk::Keyval::GDK_Z, Gdk::Window::CONTROL_MASK, Gtk::ACCEL_VISIBLE) {
 #     on_undo(nil) 
@@ -83,7 +83,6 @@ class ControlerNovedit < UndoRedo
 #    ag.connect(Gdk::Keyval::GDK_Y, Gdk::Window::CONTROL_MASK, Gtk::ACCEL_VISIBLE) {
 #     on_redo(nil) 
 #    }
-
 #    @view.appwindow.add_accel_group(ag)
     
     #Initialisation des plugins : on exécute la fonction plugin_init() des fichiers 'init.rb'
@@ -112,6 +111,16 @@ class ControlerNovedit < UndoRedo
     end
   end
   
+  def set_saved()
+      @model.is_saved = true
+      @view.maj_title
+  end
+
+  def set_not_saved()
+      @model.is_saved = false
+      @view.maj_title
+  end
+
   def open_file()
     filename = select_file
     if filename
@@ -120,6 +129,7 @@ class ControlerNovedit < UndoRedo
     @view.buffer.place_cursor(@view.buffer.start_iter)
     @view.textview.has_focus = true
     @view.update
+    set_saved
   end
   
   def select_file
@@ -161,15 +171,33 @@ class ControlerNovedit < UndoRedo
   
   def on_save_file
       @model.currentNode.text = @view.buffer.text
-      @model.filename = select_file() unless @model.filename
-      @model.save_file if @model.filename
-      @view.update
+      while not @model.filename
+        selected_file = select_file()
+        if File.exists?(selected_file)
+          dialog = Gtk::MessageDialog.new(@appwindow, Gtk::Dialog::MODAL, 
+                                          Gtk::MessageDialog::QUESTION, 
+                                          Gtk::MessageDialog::BUTTONS_YES_NO, 
+                                          _("File allready exists. Replace file ?"))
+          response = dialog.run
+          dialog.destroy
+          @model.filename = selected_file if response == Gtk::Dialog::RESPONSE_YES
+        else
+          @model.filename = selected_file
+        end
+      end
+      @model.save_file
+      set_saved
+      # Pourquoi avais-je écrit la ligne suivante ? Elle fait perdre la position du curseur et la selection sur le noeud courant...
+      # @view.update
   end
 
   def on_save_as
       @model.currentNode.text = @view.buffer.text
       @model.filename = select_file()
-      @model.save_file if @model.filename
+      if @model.filename
+        @model.save_file
+        set_saved
+      end
       @view.update
   end
   
@@ -184,7 +212,10 @@ class ControlerNovedit < UndoRedo
   # Évènements sur l'arbre
   #############################
   def on_tree_key_pressed(keyval)
+#    puts "keypressed : "+keyval.to_s
       case keyval
+      when 65471 #F2
+        rename_node
       when 65379 #Ins
         on_insert_child
       when 65293 #Enter
@@ -198,6 +229,16 @@ class ControlerNovedit < UndoRedo
       end
     end
  
+  #Edition d'un noeud
+  def rename_node
+    selectedIter = @view.treeview.selection.selected
+    if not selectedIter.nil?
+      node = @model.getNode(selectedIter.path.to_s)
+      @view.treeview.set_cursor(Gtk::TreePath.new(node.path), @view.treeview.get_column(0), true)
+      set_not_saved
+    end
+  end
+
   #Insertion d'un nouveau sous-élément
   def on_insert_child()
     selectedIter = @view.treeview.selection.selected
@@ -214,9 +255,9 @@ class ControlerNovedit < UndoRedo
         @view.update
       }
       todo.call
-      @model.is_saved = false
       @tabUndo << Command.new(todo, toundo)
       @view.treeview.set_cursor(Gtk::TreePath.new(newnode.path), @view.treeview.get_column(0), true)
+      set_not_saved
     end
   end
   
@@ -241,9 +282,9 @@ class ControlerNovedit < UndoRedo
         @view.update
       }
       todo.call
-      @model.is_saved = false
       @tabUndo << Command.new(todo, toundo)
       @view.treeview.set_cursor(Gtk::TreePath.new(newnode.path), @view.treeview.get_column(0), true)
+      set_not_saved
     end
   end
   
@@ -264,8 +305,8 @@ class ControlerNovedit < UndoRedo
         @view.update
       }
       todo.call
-      @model.is_saved = false
       @tabUndo << Command.new(todo, toundo)
+      set_not_saved
     end
   end
   
@@ -293,7 +334,7 @@ class ControlerNovedit < UndoRedo
         @view.update
       }
       todo.call
-      @model.is_saved = false
+      set_not_saved
       @tabUndo << Command.new(todo, toundo)
       
       @view.treeview.set_cursor(iterpath, @view.treeview.get_column(0), false)
@@ -339,7 +380,7 @@ class ControlerNovedit < UndoRedo
       }
       begin
         todo.call
-        @model.is_saved = false
+        set_not_saved
         @tabUndo << Command.new(todo, toundo)
       rescue TreeNodeException
         @view.write_appbar _("Mouvement interdit!")
@@ -362,13 +403,13 @@ class ControlerNovedit < UndoRedo
   def on_insert_text(iter, text)
     @model.currentNode.undopool <<  ["insert_text", iter.offset, iter.offset + text.scan(/./).size, text]
     @model.currentNode.redopool.clear
-    @model.is_saved = false
+    set_not_saved
   end
   
   def on_delete_range(start_iter, end_iter)
     text = @view.buffer.get_text(start_iter, end_iter)
     @model.currentNode.undopool <<  ["delete_range", start_iter.offset, end_iter.offset, text]
-    @model.is_saved = false
+    set_not_saved
   end
   
   def on_undo(widget)
@@ -501,6 +542,7 @@ class ControlerNovedit < UndoRedo
       @view.buffer.delete(itersFound[0], itersFound[1])
       #On ajoute le texte de remplacement
       @view.buffer.insert(itersFound[0], string_replace)
+      set_not_saved
     end
   end
   
