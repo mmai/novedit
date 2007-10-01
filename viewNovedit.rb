@@ -201,7 +201,7 @@ class ViewNovedit
      @textview.signal_emit("cut_clipboard")
   end
   def on_paste(widget)
-     @textview.signal_emit("paste_clipboard")
+    @controler.on_paste(widget)
   end
   def on_copy(widget)
      @textview.signal_emit("copy_clipboard")

@@ -399,9 +399,21 @@ class ControlerNovedit < UndoRedo
   ########################
   # Actions sur le texte
   ########################
+
+  def on_paste(widget)
+    #TODO : si on édite l'arborescence, copie dans le noeud édité, sinon copie dans la page
+    @view.textview.signal_emit("paste_clipboard")
+  end
           
   def on_insert_text(iter, text)
-    @model.currentNode.undopool <<  ["insert_text", iter.offset, iter.offset + text.scan(/./).size, text]
+    separators_list = [" ", "\n", "\t"]
+    #On met toutes les lettres d'un même mot dans le même undo/redo
+    if (not @model.currentNode.undopool.empty?) and (not separators_list.include?(text)) and (@model.currentNode.undopool.last[0] == "insert_text")
+      last_text = @model.currentNode.undopool.pop
+      @model.currentNode.undopool <<  ["insert_text", last_text[1], last_text[1] + last_text[2] + text.scan(/./).size, last_text[3] + text]
+    else
+      @model.currentNode.undopool <<  ["insert_text", iter.offset, iter.offset + text.scan(/./).size, text]
+    end
     @model.currentNode.redopool.clear
     set_not_saved
   end
