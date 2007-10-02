@@ -402,7 +402,16 @@ class ControlerNovedit < UndoRedo
 
   def on_paste(widget)
     #TODO : si on édite l'arborescence, copie dans le noeud édité, sinon copie dans la page
-    @view.textview.signal_emit("paste_clipboard")
+    @view.textview.signal_emit("paste_clipboard") if @view.textview.focus?
+    if @view.treeview.focus?
+      selectedIter = @view.treeview.selection.selected
+      if not selectedIter.nil?
+        selectedIter.set_value(0, 'toto est test')
+#        node = @model.getNode(selectedIter.path.to_s)
+#        @view.treeview.set_cursor(Gtk::TreePath.new(node.path), @view.treeview.get_column(0), true)
+#        @view.treeview.signal_emit("paste_clipboard") 
+      end
+    end
   end
           
   def on_insert_text(iter, text)
