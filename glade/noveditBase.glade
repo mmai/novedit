@@ -93,7 +93,7 @@
                         <signal name="activate" handler="on_cut"/>
                       </widget>
                     </child>
-                    <child>
+                    <!--  <child>
                       <widget class="GtkImageMenuItem" id="copier1">
                         <property name="visible">True</property>
                         <property name="label">gtk-copy</property>
@@ -107,10 +107,10 @@
                         <property name="visible">True</property>
                         <property name="label">gtk-paste</property>
                         <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                        <signal name="activate" handler="on_paste"/>
+                          <property name="use_stock">True</property>
+                          <signal name="activate" handler="on_paste"/>
                       </widget>
-                    </child>
+                    </child>-->
                     <child>
                       <widget class="GtkImageMenuItem" id="defaire1">
                         <property name="visible">True</property>
