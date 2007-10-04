@@ -7,6 +7,7 @@ require "find" #Pour la détection des plugins
 require "viewNovedit.rb"
 
 require "modules/io/novedit_io_yaml.rb"
+#require "modules/io/novedit_io_html.rb"
 require "modules/infos/novedit_info_word_count.rb"
 require "lib/undo_redo.rb"
 
@@ -51,6 +52,7 @@ class ControlerNovedit < UndoRedo
     @model = model
     #Mode d'enregistrement
     @model.set_io(NoveditIOYaml.new)
+#    @model.set_io(NoveditIOHtml.new)
     #Association à l'interface visuelle (MVC)
     @view = ViewNovedit.new(self, model)
     #Elements de l'onglet infos

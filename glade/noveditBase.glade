@@ -93,7 +93,9 @@
                         <signal name="activate" handler="on_cut"/>
                       </widget>
                     </child>
-                    <!--  <child>
+                    <!--
+                    Les menus copier/coller sont désactivés car en interceptant les évènements ctrl-C ctrl-V ils ne permettent pas le copier-coller dans les cellules éditables du treeview. Voir la fonction on_paste du controlleur : on peut transmettre le signal paste_clipboard au textview mais pas au treeview (ou même au cellrenderertext du treeview)
+                    <child>
                       <widget class="GtkImageMenuItem" id="copier1">
                         <property name="visible">True</property>
                         <property name="label">gtk-copy</property>
