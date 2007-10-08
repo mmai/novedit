@@ -252,6 +252,16 @@ class ViewNovedit
       dialog.destroy
     end
   end
+
+  # Text formating toolbar
+  def on_text_bold(widget)
+    @controler.on_text_bold
+  end
+
+  def on_text_italic(widget)
+    @controler.on_text_italic
+  end
+
     
   # Find dialog
   def on_find(widget)

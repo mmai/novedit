@@ -93,26 +93,6 @@
                         <signal name="activate" handler="on_cut"/>
                       </widget>
                     </child>
-                    <!--
-                    Les menus copier/coller sont désactivés car en interceptant les évènements ctrl-C ctrl-V ils ne permettent pas le copier-coller dans les cellules éditables du treeview. Voir la fonction on_paste du controlleur : on peut transmettre le signal paste_clipboard au textview mais pas au treeview (ou même au cellrenderertext du treeview)
-                    <child>
-                      <widget class="GtkImageMenuItem" id="copier1">
-                        <property name="visible">True</property>
-                        <property name="label">gtk-copy</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                        <signal name="activate" handler="on_copy"/>
-                      </widget>
-                    </child>
-                    <child>
-                      <widget class="GtkImageMenuItem" id="coller1">
-                        <property name="visible">True</property>
-                        <property name="label">gtk-paste</property>
-                        <property name="use_underline">True</property>
-                          <property name="use_stock">True</property>
-                          <signal name="activate" handler="on_paste"/>
-                      </widget>
-                    </child>-->
                     <child>
                       <widget class="GtkImageMenuItem" id="defaire1">
                         <property name="visible">True</property>
@@ -373,21 +353,62 @@
                 <property name="can_focus">True</property>
                 <signal name="switch_page" handler="on_notebook_switch_page"/>
                 <child>
-                  <widget class="GtkScrolledWindow" id="scrolledwindow">
+                  <widget class="GtkVBox" id="vboxtext">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="has_focus">True</property>
-                    <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
-                    <property name="vscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
                     <child>
-                      <widget class="GtkTextView" id="textview">
+                      <widget class="GtkToolbar" id="toolbartext">
+                        <property name="visible">True</property>
+                        <property name="border_width">1</property>
+                        <property name="icon_size">GTK_ICON_SIZE_SMALL_TOOLBAR</property>
+                        <child>
+                          <widget class="GtkToolButton" id="button_bold">
+                            <property name="visible">True</property>
+                            <property name="tooltip" translatable="yes">Bold</property>
+                            <property name="stock_id">gtk-bold</property>
+                            <signal name="clicked" handler="on_text_bold"/>
+                          </widget>
+                          <packing>
+                            <property name="expand">False</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <widget class="GtkToolButton" id="button_italic">
+                            <property name="visible">True</property>
+                            <property name="tooltip" translatable="yes">Italic</property>
+                            <property name="stock_id">gtk-italic</property>
+                            <signal name="clicked" handler="on_text_italic"/>
+                          </widget>
+                          <packing>
+                            <property name="expand">False</property>
+                          </packing>
+                        </child>
+                      </widget>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkScrolledWindow" id="scrolledwindow">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="has_focus">True</property>
-                        <property name="can_default">True</property>
-                        <property name="has_default">True</property>
-                        <property name="wrap_mode">GTK_WRAP_WORD</property>
+                        <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
+                        <property name="vscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
+                        <child>
+                          <widget class="GtkTextView" id="textview">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="has_focus">True</property>
+                            <property name="can_default">True</property>
+                            <property name="has_default">True</property>
+                            <property name="wrap_mode">GTK_WRAP_WORD</property>
+                          </widget>
+                        </child>
                       </widget>
+                      <packing>
+                        <property name="position">1</property>
+                      </packing>
                     </child>
                   </widget>
                   <packing>
@@ -440,18 +461,6 @@
                                   <placeholder/>
                                 </child>
                                 <child>
-                                  <widget class="GtkLabel" id="labelNbWords">
-                                    <property name="visible">True</property>
-                                    <property name="xalign">0</property>
-                                    <property name="label" translatable="yes">&lt;b&gt;Word count&lt;/b&gt;</property>
-                                    <property name="use_markup">True</property>
-                                  </widget>
-                                  <packing>
-                                    <property name="x_options">GTK_FILL</property>
-                                    <property name="y_options"></property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <widget class="GtkLabel" id="labelNbWordsValue">
                                     <property name="visible">True</property>
                                     <property name="xalign">0</property>
@@ -459,6 +468,18 @@
                                   <packing>
                                     <property name="left_attach">1</property>
                                     <property name="right_attach">2</property>
+                                    <property name="x_options">GTK_FILL</property>
+                                    <property name="y_options"></property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <widget class="GtkLabel" id="labelNbWords">
+                                    <property name="visible">True</property>
+                                    <property name="xalign">0</property>
+                                    <property name="label" translatable="yes">&lt;b&gt;Word count&lt;/b&gt;</property>
+                                    <property name="use_markup">True</property>
+                                  </widget>
+                                  <packing>
                                     <property name="x_options">GTK_FILL</property>
                                     <property name="y_options"></property>
                                   </packing>

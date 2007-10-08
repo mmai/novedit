@@ -55,6 +55,16 @@ class ControlerNovedit < UndoRedo
 #    @model.set_io(NoveditIOHtml.new)
     #Association à l'interface visuelle (MVC)
     @view = ViewNovedit.new(self, model)
+
+    #Association des fonctions de mise en forme à la barre d'outils texte
+    @text_tags = Hash.new
+    @text_tags['Bold'] = Gtk::TextTag.new;
+    @text_tags['Bold'].weight=Pango::FontDescription::WEIGHT_BOLD
+    @view.buffer.tag_table.add(@text_tags['Bold']);
+    @text_tags['Italic'] = Gtk::TextTag.new;
+    @text_tags['Italic'].style=Pango::FontDescription::STYLE_ITALIC
+    @view.buffer.tag_table.add(@text_tags['Italic']);
+
     #Elements de l'onglet infos
     @tab_infos = [NoveditInfoWordCount.new]
     
@@ -507,6 +517,17 @@ class ControlerNovedit < UndoRedo
     @replace_dialog.show
   end
   
+  def on_text_bold
+    (debut, fin, selected) = @view.buffer.selection_bounds
+    @view.buffer.apply_tag(@text_tags['Bold'], debut, fin) if selected
+  end
+
+  def on_text_italic
+    (debut, fin, selected) = @view.buffer.selection_bounds
+    @view.buffer.apply_tag(@text_tags['Italic'], debut, fin) if selected
+  end
+
+
   private
   
   #Find Dialog
@@ -568,5 +589,4 @@ class ControlerNovedit < UndoRedo
       set_not_saved
     end
   end
-  
 end
