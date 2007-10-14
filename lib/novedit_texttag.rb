@@ -1,15 +1,15 @@
 
-#using System;
-#using System.Collections;
-#using System.IO;
-#using System.Xml;
+#using System
+#using System.Collections
+#using System.IO
+#using System.Xml
 #
 #namespace Tomboy
 #{
 #	def delegate bool TagActivatedHandler (NoteTag tag,
 #						  NoteEditor editor,
 #						  Gtk.TextIter start, 
-#						  Gtk.TextIter end);
+#						  Gtk.TextIter end)
 
 	class NoteTag 
     attr_accessor :element_name
@@ -26,7 +26,7 @@
 		
 		
 		def NoteTag (tag_name)
-			if (tag_name == null || tag_name == "") 
+			if (tag_name == nil || tag_name == "") 
 				raise ("NoteTags must have a tag name.  Use " + "DynamicNoteTag for constructing " + "anonymous tags.")
       end
 			initialize(tag_name)
@@ -34,558 +34,505 @@
 
 		def initialize (element_name)
 			@element_name = element_name
-			@flags = @tag_flags.CanSerialize | @tag_flags.CanSplit;
+			@flags = @tag_flags['CanSerialize'] | @tag_flags['CanSplit']
     end
 
-		def bool CanSerialize 
-		{
-			get { return (flags & @tag_flags.CanSerialize) != 0; }
-			set {
+		def CanSerialize 
+			return (@flags & @tag_flags['CanSerialize']) != 0
+    end
+    def CanSerialize=(value)
 				if (value)
-					flags |= @tag_flags.CanSerialize;
+					@flags |= @tag_flags['CanSerialize']
 				else 
-					flags &= ~@tag_flags.CanSerialize;
-			}
-		}
+					@flags &= ~@tag_flags['CanSerialize']
+        end
+    end
 
-		def bool CanUndo 
-		{
-			get { return (flags & @tag_flags.CanUndo) != 0; }
-			set {
+		def CanUndo 
+			return (@flags & @tag_flags['CanUndo']) != 0
+    end
+    def CanUndo=(value)
 				if (value)
-					flags |= @tag_flags.CanUndo;
+					@flags |= @tag_flags['CanUndo']
 				else 
-					flags &= ~@tag_flags.CanUndo;
-			}
-		}
+					@flags &= ~@tag_flags['CanUndo']
+        end
+    end
 
-		def bool CanGrow
-		{
-			get { return (flags & @tag_flags.CanGrow) != 0; }
-			set {
+		def CanGrow
+			return (@flags & @tag_flags['CanGrow']) != 0
+    end
+    def CanGrow=(value)
 				if (value)
-					flags |= @tag_flags.CanGrow;
+					@flags |= @tag_flags['CanGrow']
 				else 
-					flags &= ~@tag_flags.CanGrow;
-			}
-		}
+					@flags &= ~@tag_flags['CanGrow']
+        end
+    end
 
-		def bool CanSpellCheck
-		{
-			get { return (flags & @tag_flags.CanSpellCheck) != 0; }
-			set {
+		def CanSpellCheck
+			return (@flags & @tag_flags['CanSpellCheck']) != 0
+    end
+    def CanSpellCheck=(value)
 				if (value)
-					flags |= @tag_flags.CanSpellCheck;
+					@flags |= @tag_flags['CanSpellCheck']
 				else 
-					flags &= ~@tag_flags.CanSpellCheck;
-			}
-		}
+					@flags &= ~@tag_flags['CanSpellCheck']
+        end
+    end
 
-		def bool CanActivate
-		{
-			get { return (flags & @tag_flags.CanActivate) != 0; }
-			set {
+		def CanActivate
+			return (@flags & @tag_flags['CanActivate']) != 0
+    end
+    def CanActivate=(value)
 				if (value)
-					flags |= @tag_flags.CanActivate;
+					@flags |= @tag_flags['CanActivate']
 				else 
-					flags &= ~@tag_flags.CanActivate;
-			}
-		}
+					@flags &= ~@tag_flags['CanActivate']
+        end
+    end
 
-		def bool CanSplit
-		{
-			get { return (flags & @tag_flags.CanSplit) != 0; }
-			set {
+		def CanSplit
+			return (@flags & @tag_flags['CanSplit']) != 0
+    end
+    def CanSplit=(value)
 				if (value)
-					flags |= @tag_flags.CanSplit;
+					@flags |= @tag_flags['CanSplit']
 				else
-					flags &= ~@tag_flags.CanSplit;
-			}
-		}
+					@flags &= ~@tag_flags['CanSplit']
+        end
+    end
 
-		def void GetExtents (Gtk.TextIter iter, 
-					out Gtk.TextIter start, 
-					out Gtk.TextIter end)
-		{
-			start = iter;
-			if (!start.BeginsTag (this))
-				start.BackwardToTagToggle (this);
-
-			end = iter;
-			end.ForwardToTagToggle (this);
-		}
+#		def void GetExtents (Gtk.TextIter iter, out Gtk.TextIter start, out Gtk.TextIter end) 
+		def GetExtents (iter, start, fin) 
+			start = iter
+			if (!start.BeginsTag (self))
+				start.BackwardToTagToggle (self)
+      end
+			fin = iter
+			fin.ForwardToTagToggle (self)
+    end
 		
-		def virtual void Write (XmlTextWriter xml, bool start)
-		{
-			if (CanSerialize) {
-				if (start) {
-					xml.WriteStartElement (null, element_name, null);
-				} else {
-					xml.WriteEndElement();
-				}
-			}
-		}
+		def Write (xml, start)
+			if (CanSerialize) 
+				if (start) 
+					xml.WriteStartElement (nil, element_name, nil)
+				else 
+					xml.WriteEndElement()
+        end
+      end
+    end
 
-		def virtual void Read (XmlTextReader xml, bool start)
-		{
-			if (CanSerialize) {
-				if (start) {
-					element_name = xml.Name;
-				}
-			}
-		}
+		def Read (xml, start)
+			if (CanSerialize) 
+				if (start) 
+					element_name = xml.Name
+        end
+      end
+    end
 
-		protected override bool OnTextEvent (GLib.Object  sender, 
-						     Gdk.Event    ev, 
-						     Gtk.TextIter iter)
-		{
-			NoteEditor editor = (NoteEditor) sender;
-			Gtk.TextIter start, end;
+#		protected override bool OnTextEvent (GLib.Object  sender, Gdk.Event    ev, Gtk.TextIter iter)
+		def OnTextEvent (sender, ev, iter)
+			NoteEditor editor = (NoteEditor) sender
+			Gtk.TextIter start, end
 
 			if (!CanActivate)
-				return false;
+				return false
+      end
 
-			switch (ev.Type) {
-			case Gdk.EventType.ButtonPress:
-				Gdk.EventButton button_ev = new Gdk.EventButton (ev.Handle);
-
+			case (ev.Type) 
+      when Gdk.EventType.ButtonPress:
+				button_ev =  Gdk::EventButton.new(ev.Handle)
 				if (button_ev.Button != 1 && button_ev.Button != 2)
-					return false;
-
+					return false
+        end
 				/* Don't activate if Shift or Control is pressed */
-				if ((int) (button_ev.State & (Gdk.ModifierType.ShiftMask |
-							      Gdk.ModifierType.ControlMask)) != 0)
-					return false;
-
-				GetExtents (iter, out start, out end);
-				bool success = OnActivate (editor, start, end);
-
-				if (success && button_ev.Button == 2) {
-					Gtk.Widget widget = (Gtk.Widget) sender;
-					widget.Toplevel.Hide ();
-				}
-
-				return success;
-
-			case Gdk.EventType.KeyPress:
-				Gdk.EventKey key_ev = new Gdk.EventKey (ev.Handle);
-
-				// Control-Enter activates the link at point...
+				if ((int) (button_ev.State & (Gdk.ModifierType.ShiftMask | Gdk.ModifierType.ControlMask)) != 0)
+					return false
+        end
+				GetExtents (iter, start, fin)
+				success = OnActivate (editor, start, fin)
+				if (success && button_ev.Button == 2) 
+					widget = (Gtk.Widget) sender
+					widget.Toplevel.Hide ()
+        end	
+				return success
+      when Gdk.EventType.KeyPress:
+				key_ev = Gdk::EventKey.new (ev.Handle)
+				# Control-Enter activates the link at point...
 				if ((int) (key_ev.State & Gdk.ModifierType.ControlMask) == 0)
-					return false;
+					return false
+        end
+				if (key_ev.Key != Gdk.Key.Return && key_ev.Key != Gdk.Key.KP_Enter)
+					return false
+        end
+				GetExtents (iter, out start, out fin)
+				return OnActivate (editor, start, fin)
+      end
 
-				if (key_ev.Key != Gdk.Key.Return &&
-				    key_ev.Key != Gdk.Key.KP_Enter)
-					return false;
+			return false
+  end
 
-				GetExtents (iter, out start, out end);
-				return OnActivate (editor, start, end);
-			}
+#		protected virtual bool OnActivate (NoteEditor editor, 
+		def OnActivate (editor, start, fin)
+			retval = false
 
-			return false;
-		}
+			if (Activated != nil) 
+				Activated.GetInvocationList().each do |d| 
+					handler = (TagActivatedHandler) d
+					retval |= handler (self, editor, start, fin)
+        end
+      end
 
-		protected virtual bool OnActivate (NoteEditor editor, 
-						   Gtk.TextIter start, 
-						   Gtk.TextIter end)
-		{
-			bool retval = false;
+			return retval
+    end
 
-			if (Activated != null) {
-				foreach (Delegate d in Activated.GetInvocationList()) {
-					TagActivatedHandler handler = (TagActivatedHandler) d;
-					retval |= handler (this, editor, start, end);
-				}
-			}
+		def Activated
+    end
 
-			return retval;
-		}
+		def Image
+			return image
+    end
+    def Image=
+      image = value
+      if (Changed != nil) 
+        args = Gtk::TagChangedArgs.new
+        args.Args [0] = false; # SizeChanged
+        args.Args [1] = self;  # Tag
+        Changed (self, args)
+      end
+    end
 
-		def event TagActivatedHandler Activated;
+		def ImageLocation
+			return imageLocation
+    end
+    def ImageLocation=
+			imageLocation = value
+    end
 
-		def virtual Gdk.Pixbuf Image
-		{
-			get { return image; }
-			set {
-				image = value;
+		def Changed
+    end
 
-				if (Changed != null) {
-					Gtk.TagChangedArgs args = new Gtk.TagChangedArgs ();
-					args.Args [0] = false; // SizeChanged
-					args.Args [1] = this;  // Tag
-					Changed (this, args);
-				}
-			}
-		}
-
-		def virtual Gtk.TextMark ImageLocation
-		{
-			get { return imageLocation; }
-			set { imageLocation = value; }
-		}
-
-		def event Gtk.TagChangedHandler Changed;
-	}
-
-	def class DynamicNoteTag : NoteTag
-	{
-		Hashtable attributes;
+	class DynamicNoteTag < NoteTag
+		attributes
 
 		def DynamicNoteTag ()
-			: base()
-		{
-		}
+      super
+    end
 
-		def Hashtable Attributes 
-		{
-			get { 
-				if (attributes == null)
-					attributes = new Hashtable ();
-				return attributes; 
-			}
-		}
+    def Attributes 
+      if (attributes == nil)
+        attributes = Hash.new
+      end
+      return attributes 
+    end
 
-		def override void Write (XmlTextWriter xml, bool start)
-		{
-			if (CanSerialize) {
-				base.Write (xml, start);
+		def Write (xml, start)
+			if (CanSerialize) 
+				super(xml, start)
+				if (start && attributes != nil) 
+					attributes.Keys.each do |key|
+						val = attributes[key].to_s
+						xml.WriteAttributeString (nil, key, nil, val)
+          end
+        end
+      end
+    end
 
-				if (start && attributes != null) {
-					foreach (string key in attributes.Keys) {
-						string val = (string) attributes [key];
-						xml.WriteAttributeString (null, key, null, val);
-					}
-				}
-			}
-		}
-
-		def override void Read (XmlTextReader xml, bool start)
-		{
-			if (CanSerialize) {
-				base.Read (xml, start);
-
-				if (start) {
-					while (xml.MoveToNextAttribute()) {
-						string name = xml.Name;
-
-						xml.ReadAttributeValue();
-						Attributes [name] = xml.Value;
-
-						Logger.Log (
-							"NoteTag: {0} read attribute {1}='{2}'",
-							ElementName,
-							name,
-							xml.Value);
-					}
-				}
-			}
-		}
-	}
+		def Read (xml, start)
+			if (CanSerialize) 
+				super(xml, start)
+				if (start) 
+					while (xml.MoveToNextAttribute()) 
+						name = xml.Name
+						xml.ReadAttributeValue()
+						Attributes[name] = xml.Value
+						Logger.Log ( "NoteTag: {0} read attribute {1}='{2}'", ElementName, name, xml.Value)
+          end
+        end
+      end
+    end
+  end
 	
-	def class DepthNoteTag : NoteTag
-	{
-		int depth = -1;
-		Pango.Direction direction = Pango.Direction.Ltr;
+	class DepthNoteTag < NoteTag
+		depth = -1
+		direction = Pango.Direction.Ltr
 		
-		def int Depth
-		{
-			get{ return depth; }
-		}
+		def Depth
+			return depth
+		end
 		
-		def Pango.Direction Direction
-		{
-			get{ return direction; }
-		}
+		def Direction
+			return direction
+    end
 
-		def DepthNoteTag (int depth, Pango.Direction direction)
-			: base("depth:" + depth + ":" + direction)
-		{
-			this.depth = depth;
-			this.direction = direction;
-		}
+		def DepthNoteTag (depth, direction)
+#			: base("depth:" + depth + ":" + direction)
+			self.depth = depth
+			self.direction = direction
+    end
 
-		def override void Write (XmlTextWriter xml, bool start)
-		{
-			if (CanSerialize) {
-				if (start) {
-					xml.WriteStartElement (null, "list-item", null);
+		def Write (xml, start)
+			if (CanSerialize) 
+				if (start) 
+					xml.WriteStartElement (nil, "list-item", nil)
 					
-					// Write the list items writing direction
-					xml.WriteStartAttribute (null, "dir", null);
+#					 Write the list items writing direction
+					xml.WriteStartAttribute (nil, "dir", nil)
 					if (Direction == Pango.Direction.Rtl)
-						xml.WriteString ("rtl");
+						xml.WriteString ("rtl")
 					else
-						xml.WriteString ("ltr");
-					xml.WriteEndAttribute ();
-				} else {
-					xml.WriteEndElement ();
-				}
-			}
-		}
-	}	
+						xml.WriteString ("ltr")
+          end
+					xml.WriteEndAttribute ()
+				else 
+					xml.WriteEndElement ()
+        end
+      end
+    end
+  end	
 
-	def class NoteTagTable : Gtk.TextTagTable
-	{
-		static NoteTagTable instance;
-		Hashtable tag_types;
-		ArrayList added_tags;
+	class NoteTagTable < Gtk::TextTagTable
+		@instance
+		@tag_types
+		@added_tags
 
-		def static NoteTagTable Instance 
-		{
-			get {
-				if (instance == null) 
-					instance = new NoteTagTable ();
-				return instance;
-			}
-		}
+		def Instance 
+				if (@instance == nil) 
+					@instance = NoteTagTable.new 
+        end
+				return @instance
+    end
 
 		def NoteTagTable () 
-			: base ()
-		{
-			tag_types = new Hashtable ();
-			added_tags = new ArrayList ();
-
-			InitCommonTags ();
-		}
+#			: base ()
+			@tag_types = Hashtable.new 
+			@added_tags = ArrayList.new
+			InitCommonTags ()
+    end
 		
-		void InitCommonTags () 
-		{
-			NoteTag tag;
+		def InitCommonTags
+			tag
 
-			// Font stylings
+			# Font stylings
 
-			tag = new NoteTag ("centered");
-			tag.Justification = Gtk.Justification.Center;
-			tag.CanUndo = true;
-			tag.CanGrow = true;
-			tag.CanSpellCheck = true;
-			Add (tag);
+			tag = NoteTag.new ("centered")
+			tag.Justification = Gtk.Justification.Center
+			tag.CanUndo = true
+			tag.CanGrow = true
+			tag.CanSpellCheck = true
+			Add (tag)
 
-			tag = new NoteTag ("bold");
-			tag.Weight = Pango.Weight.Bold;
-			tag.CanUndo = true;
-			tag.CanGrow = true;
-			tag.CanSpellCheck = true;
-			Add (tag);
+			tag = NoteTag.new ("bold")
+			tag.Weight = Pango.Weight.Bold
+			tag.CanUndo = true
+			tag.CanGrow = true
+			tag.CanSpellCheck = true
+			Add (tag)
 
-			tag = new NoteTag ("italic");
-			tag.Style = Pango.Style.Italic;
-			tag.CanUndo = true;
-			tag.CanGrow = true;
-			tag.CanSpellCheck = true;
-			Add (tag);
+			tag = NoteTag.new ("italic")
+			tag.Style = Pango.Style.Italic
+			tag.CanUndo = true
+			tag.CanGrow = true
+			tag.CanSpellCheck = true
+			Add (tag)
 
-			tag = new NoteTag ("strikethrough");
-			tag.Strikethrough = true;
-			tag.CanUndo = true;
-			tag.CanGrow = true;
-			tag.CanSpellCheck = true;
-			Add (tag);
+			tag = NoteTag.new ("strikethrough")
+			tag.Strikethrough = true
+			tag.CanUndo = true
+			tag.CanGrow = true
+			tag.CanSpellCheck = true
+			Add (tag)
 
-			tag = new NoteTag ("highlight");
- 			tag.Background = "yellow";
-			tag.CanUndo = true;
-			tag.CanGrow = true;
-			tag.CanSpellCheck = true;
-			Add (tag);
+			tag = NoteTag.new ("highlight")
+ 			tag.Background = "yellow"
+			tag.CanUndo = true
+			tag.CanGrow = true
+			tag.CanSpellCheck = true
+			Add (tag)
 
-			tag = new NoteTag ("find-match");
-			tag.Background = "green";
-			tag.CanSerialize = false;
-			tag.CanSpellCheck = true;
-			Add (tag);
+			tag = NoteTag.new ("find-match")
+			tag.Background = "green"
+			tag.CanSerialize = false
+			tag.CanSpellCheck = true
+			Add (tag)
 
-			tag = new NoteTag ("note-title");
-			tag.Underline = Pango.Underline.Single;
-			tag.Foreground = "#204a87";
-			tag.Scale = Pango.Scale.XXLarge;
-			// FiXME: Hack around extra rewrite on open
-			tag.CanSerialize = false;
-			Add (tag);
+			tag = NoteTag.new ("note-title")
+			tag.Underline = Pango.Underline.Single
+			tag.Foreground = "#204a87"
+			tag.Scale = Pango.Scale.XXLarge
+			# FiXME: Hack around extra rewrite on open
+			tag.CanSerialize = false
+			Add (tag)
 
-			tag = new NoteTag ("related-to");
-			tag.Scale = Pango.Scale.Small;
-			tag.LeftMargin = 40;
-			tag.Editable = false;
-			Add (tag);
+			tag = NoteTag.new ("related-to")
+			tag.Scale = Pango.Scale.Small
+			tag.LeftMargin = 40
+			tag.Editable = false
+			Add (tag)
 
-			// Used when inserting dropped URLs/text to Start Here
-			tag = new NoteTag ("datetime");
-			tag.Scale = Pango.Scale.Small;
-			tag.Style = Pango.Style.Italic;
-			tag.Foreground = "#888a85";
-			Add (tag);
+			# Used when inserting dropped URLs/text to Start Here
+			tag = NoteTag.new ("datetime")
+			tag.Scale = Pango.Scale.Small
+			tag.Style = Pango.Style.Italic
+			tag.Foreground = "#888a85"
+			Add (tag)
 
-			// Font sizes
+			# Font sizes
 
-			tag = new NoteTag ("size:huge");
-			tag.Scale = Pango.Scale.XXLarge;
-			tag.CanUndo = true;
-			tag.CanGrow = true;
-			tag.CanSpellCheck = true;
-			Add (tag);
+			tag = NoteTag.new ("size:huge")
+			tag.Scale = Pango.Scale.XXLarge
+			tag.CanUndo = true
+			tag.CanGrow = true
+			tag.CanSpellCheck = true
+			Add (tag)
 
-			tag = new NoteTag ("size:large");
-			tag.Scale = Pango.Scale.XLarge;
-			tag.CanUndo = true;
-			tag.CanGrow = true;
-			tag.CanSpellCheck = true;
-			Add (tag);
+			tag = NoteTag.new ("size:large")
+			tag.Scale = Pango.Scale.XLarge
+			tag.CanUndo = true
+			tag.CanGrow = true
+			tag.CanSpellCheck = true
+			Add (tag)
 
-			tag = new NoteTag ("size:normal");
-			tag.Scale = Pango.Scale.Medium;
-			tag.CanUndo = true;
-			tag.CanGrow = true;
-			tag.CanSpellCheck = true;
-			Add (tag);
+			tag = NoteTag.new ("size:normal")
+			tag.Scale = Pango.Scale.Medium
+			tag.CanUndo = true
+			tag.CanGrow = true
+			tag.CanSpellCheck = true
+			Add (tag)
 
-			tag = new NoteTag ("size:small");
-			tag.Scale = Pango.Scale.Small;
-			tag.CanUndo = true;
-			tag.CanGrow = true;
-			tag.CanSpellCheck = true;
-			Add (tag);
+			tag = NoteTag.new ("size:small")
+			tag.Scale = Pango.Scale.Small
+			tag.CanUndo = true
+			tag.CanGrow = true
+			tag.CanSpellCheck = true
+			Add (tag)
 
-			// Links
+			# Links
 
-			tag = new NoteTag ("link:broken");
-			tag.Underline = Pango.Underline.Single;
-			tag.Foreground = "#555753";
-			tag.CanActivate = true;
-			Add (tag);
+			tag = NoteTag.new ("link:broken")
+			tag.Underline = Pango.Underline.Single
+			tag.Foreground = "#555753"
+			tag.CanActivate = true
+			Add (tag)
 
-			tag = new NoteTag ("link:internal");
-			tag.Underline = Pango.Underline.Single;
-			tag.Foreground = "#204a87";
-			tag.CanActivate = true;
-			Add (tag);
+			tag = NoteTag.new ("link:internal")
+			tag.Underline = Pango.Underline.Single
+			tag.Foreground = "#204a87"
+			tag.CanActivate = true
+			Add (tag)
 
-			tag = new NoteTag ("link:url");
-			tag.Underline = Pango.Underline.Single;
-			tag.Foreground = "#3465a4";
-			tag.CanActivate = true;
-			Add (tag);
-		}
+			tag = NoteTag.new ("link:url")
+			tag.Underline = Pango.Underline.Single
+			tag.Foreground = "#3465a4"
+			tag.CanActivate = true
+			Add (tag)
+    end
 
-		def static bool TagIsSerializable (Gtk.TextTag tag)
-		{
-			if (tag is NoteTag)
-				return ((NoteTag) tag).CanSerialize;
-			return false;
-		}
+		def TagIsSerializable (tag)
+#			if (tag is NoteTag)
+#				return ((NoteTag) tag).CanSerialize
+#      end
+#			return false
+      return tag.CanSerialize
+    end
 
-		def static bool TagIsGrowable (Gtk.TextTag tag)
-		{
-			if (tag is NoteTag)
-				return ((NoteTag) tag).CanGrow;
-			return false;
-		}
+		def TagIsGrowable ( tag)
+				return tag.CanGrow
+    end
 
-		def static bool TagIsUndoable (Gtk.TextTag tag)
-		{
-			if (tag is NoteTag)
-				return ((NoteTag) tag).CanUndo;
-			return false;
-		}
+		def TagIsUndoable (tag)
+				return  tag.CanUndo
+    end
 
-		def static bool TagIsSpellCheckable (Gtk.TextTag tag)
-		{
-			if (tag is NoteTag)
-				return ((NoteTag) tag).CanSpellCheck;
-			return false;
-		}
+		def TagIsSpellCheckable (tag)
+				return tag.CanSpellCheck
+    end
 
-		def static bool TagIsActivatable (Gtk.TextTag tag)
-		{
-			if (tag is NoteTag)
-				return ((NoteTag) tag).CanActivate;
-			return false;
-		}
+		def TagIsActivatable (tag)
+				return tag.CanActivate
+    end
 		
-		def static bool TagHasDepth (Gtk.TextTag tag)
-		{
-			if (tag is DepthNoteTag)
-				return true;
-			
-			return false;
-		}
+		def TagHasDepth (tag)
+			if (tag.kind_of?(DepthNoteTag)
+				return true
+      end
+			return false
+    end
 
-		def DepthNoteTag GetDepthTag(int depth, Pango.Direction direction)
-		{
-			string name = "depth:" + depth + ":" + direction;
-			
-			DepthNoteTag tag = Lookup (name) as DepthNoteTag;
+		def GetDepthTag(depth, direction)
+			name = "depth:" + depth + ":" + direction
+			tag = Lookup (name) as DepthNoteTag
 
-			if (tag == null) {
-				tag = new DepthNoteTag (depth, direction);
-				tag.Indent = -14;
+			if (tag == nil) 
+				tag = DepthNoteTag.new (depth, direction)
+				tag.Indent = -14
 				
 				if (direction == Pango.Direction.Rtl)
-					tag.RightMargin = (depth+1) * 25;
+					tag.RightMargin = (depth+1) * 25
 				else
-					tag.LeftMargin = (depth+1) * 25;
+					tag.LeftMargin = (depth+1) * 25
+        end
 				
-				tag.PixelsBelowLines = 4;
-				tag.Scale = Pango.Scale.Medium;
-				tag.SizePoints = 12;
-				Add (tag);
-			}
+				tag.PixelsBelowLines = 4
+				tag.Scale = Pango.Scale.Medium
+				tag.SizePoints = 12
+				Add (tag)
+      end
 
-			return tag;
-		}
+			return tag
+    end
 
-		def DynamicNoteTag CreateDynamicTag (string tag_name)
-		{
-			Type tag_type = tag_types [tag_name] as Type;
-			if (tag_type == null) 
-				return null;
+		def CreateDynamicTag (tag_name)
+			tag_type = tag_types [tag_name] 
+			if (tag_type == nil) 
+				return nil
+      end
 
-			DynamicNoteTag tag = (DynamicNoteTag) Activator.CreateInstance(tag_type);
-			tag.Initialize (tag_name);
-			Add (tag);
-			return tag;
-		}
+			tag = Activator.CreateInstance(tag_type)
+			tag.Initialize (tag_name)
+			Add (tag)
+			return tag
+    end
 
-		def void RegisterDynamicTag (string tag_name, Type type)
-		{
-			if (!type.IsSubclassOf (typeof (DynamicNoteTag)))
-				throw new Exception ("Must register only DynamicNoteTag types.");
+		def RegisterDynamicTag (tag_name, type)
+			if (!type.IsSubclassOf (DynamicNoteTag.class))
+				throw Exception.new ("Must register only DynamicNoteTag types.")
+      end
+			@tag_types [tag_name] = type
+    end
 
-			tag_types [tag_name] = type;
-		}
+		def IsDynamicTagRegistered (tag_name)
+			return @tag_types [tag_name] != nil
+    end
 
-		def bool IsDynamicTagRegistered (string tag_name)
-		{
-			return tag_types [tag_name] != null;
-		}
+    def OnTagChanged (sender, args)
+      if (TagChanged != nil) 
+        TagChanged (self, args)
+      end
+    end
 
-		protected override void OnTagAdded (Gtk.TextTag tag)
-		{
-			added_tags.Add (tag);
+    def TagChanged
+    end
 
-			NoteTag note_tag = tag as NoteTag;
-			if (note_tag != null) {
-				note_tag.Changed += OnTagChanged;
-			}
-		}
+		protected 
 
-		protected override void OnTagRemoved (Gtk.TextTag tag)
-		{
-			added_tags.Remove (tag);
+    def OnTagAdded (tag)
+			@added_tags.Add (tag)
 
-			NoteTag note_tag = tag as NoteTag;
-			if (note_tag != null) {
-				note_tag.Changed -= OnTagChanged;
-			}
-		}
+			note_tag = tag
+			if (not note_tag.nil?) 
+				note_tag.Changed += OnTagChanged
+      end
+    end
 
-		void OnTagChanged (object sender, Gtk.TagChangedArgs args)
-		{
-			if (TagChanged != null) {
-				TagChanged (this, args);
-			}
-		}
+		def OnTagRemoved (tag)
+			added_tags.Remove (tag)
 
-		def new event Gtk.TagChangedHandler TagChanged;
-	}
-}
+			note_tag = tag
+			if (not note_tag.nil?) 
+				note_tag.Changed -= OnTagChanged
+      end
+    end
+
+  end
