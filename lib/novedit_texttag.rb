@@ -11,9 +11,9 @@
 #						  Gtk.TextIter start, 
 #						  Gtk.TextIter end)
 
-	class NoteTag 
+	class NoteTag < Gtk::TextTag
     attr_accessor :element_name
-		imageLocation = Gtk::TextMark.new
+		@imageLocation = Gtk::TextMark.new
 
 		@tag_flags = {
 			'CanSerialize' => 1,
@@ -204,35 +204,35 @@
     end
 
 		def ImageLocation
-			return imageLocation
+			return @imageLocation
     end
-    def ImageLocation=
-			imageLocation = value
+    def ImageLocation=(value)
+			@imageLocation = value
     end
 
 		def Changed
     end
 
 	class DynamicNoteTag < NoteTag
-		attributes
+		@attributes
 
 		def DynamicNoteTag ()
       super
     end
 
     def Attributes 
-      if (attributes == nil)
-        attributes = Hash.new
+      if (@attributes == nil)
+        @attributes = Hash.new
       end
-      return attributes 
+      return @attributes 
     end
 
 		def Write (xml, start)
 			if (CanSerialize) 
 				super(xml, start)
-				if (start && attributes != nil) 
-					attributes.Keys.each do |key|
-						val = attributes[key].to_s
+				if (start && @attributes != nil) 
+					@attributes.Keys.each do |key|
+						val = @attributes[key].to_s
 						xml.WriteAttributeString (nil, key, nil, val)
           end
         end
@@ -312,7 +312,6 @@
     end
 		
 		def InitCommonTags
-			tag
 
 			# Font stylings
 
