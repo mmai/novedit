@@ -26,7 +26,7 @@
 		
 		
 		def NoteTag (tag_name)
-			if (tag_name == nil || tag_name == "") 
+			if (tag_name.nil? || tag_name == "") 
 				raise ("NoteTags must have a tag name.  Use " + "DynamicNoteTag for constructing " + "anonymous tags.")
       end
 			initialize(tag_name)
@@ -177,7 +177,7 @@
 		def OnActivate (editor, start, fin)
 			retval = false
 
-			if (Activated != nil) 
+			if (!Activated.nil?) 
 				Activated.GetInvocationList().each do |d| 
 					handler = (TagActivatedHandler) d
 					retval |= handler (self, editor, start, fin)
@@ -195,7 +195,7 @@
     end
     def Image=
       image = value
-      if (Changed != nil) 
+      if (!Changed.nil?) 
         args = Gtk::TagChangedArgs.new
         args.Args [0] = false; # SizeChanged
         args.Args [1] = self;  # Tag
@@ -221,7 +221,7 @@
     end
 
     def Attributes 
-      if (@attributes == nil)
+      if (!@attributes.nil?)
         @attributes = Hash.new
       end
       return @attributes 
@@ -230,7 +230,7 @@
 		def Write (xml, start)
 			if (CanSerialize) 
 				super(xml, start)
-				if (start && @attributes != nil) 
+				if (start && !@attributes.nil?) 
 					@attributes.Keys.each do |key|
 						val = @attributes[key].to_s
 						xml.WriteAttributeString (nil, key, nil, val)
@@ -298,7 +298,7 @@
 		@added_tags
 
 		def Instance 
-				if (@instance == nil) 
+				if (@instance.nil?) 
 					@instance = NoteTagTable.new 
         end
 				return @instance
@@ -463,7 +463,7 @@
 			name = "depth:" + depth + ":" + direction
 			tag = Lookup (name) as DepthNoteTag
 
-			if (tag == nil) 
+			if (tag.nil?) 
 				tag = DepthNoteTag.new (depth, direction)
 				tag.Indent = -14
 				
@@ -484,7 +484,7 @@
 
 		def CreateDynamicTag (tag_name)
 			tag_type = tag_types [tag_name] 
-			if (tag_type == nil) 
+			if (tag_type.nil?) 
 				return nil
       end
 
@@ -502,11 +502,11 @@
     end
 
 		def IsDynamicTagRegistered (tag_name)
-			return @tag_types [tag_name] != nil
+			return not @tag_types[tag_name].nil?
     end
 
     def OnTagChanged (sender, args)
-      if (TagChanged != nil) 
+      if (!TagChanged.nil?) 
         TagChanged (self, args)
       end
     end
