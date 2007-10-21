@@ -10,6 +10,7 @@ require "modules/io/novedit_io_yaml.rb"
 #require "modules/io/novedit_io_html.rb"
 require "modules/infos/novedit_info_word_count.rb"
 require "lib/undo_redo.rb"
+require "lib/novedit_xml.rb"
 
 bindtextdomain("controlerNovedit", "./locale")
 
@@ -182,25 +183,27 @@ class ControlerNovedit < UndoRedo
   end
   
   def on_save_file
-      @model.currentNode.text = @view.buffer.text
-      while not @model.filename
-        selected_file = select_file()
-        if File.exists?(selected_file)
-          dialog = Gtk::MessageDialog.new(@appwindow, Gtk::Dialog::MODAL, 
-                                          Gtk::MessageDialog::QUESTION, 
-                                          Gtk::MessageDialog::BUTTONS_YES_NO, 
-                                          _("File allready exists. Replace file ?"))
-          response = dialog.run
-          dialog.destroy
-          @model.filename = selected_file if response == Gtk::Dialog::RESPONSE_YES
-        else
-          @model.filename = selected_file
-        end
+    xml = NoveditXml.new
+    @view.buffer.serialize(xml)
+    @model.currentNode.text = @view.buffer.text
+    while not @model.filename
+      selected_file = select_file()
+      if File.exists?(selected_file)
+        dialog = Gtk::MessageDialog.new(@appwindow, Gtk::Dialog::MODAL, 
+                                        Gtk::MessageDialog::QUESTION, 
+                                        Gtk::MessageDialog::BUTTONS_YES_NO, 
+                                        _("File allready exists. Replace file ?"))
+        response = dialog.run
+        dialog.destroy
+        @model.filename = selected_file if response == Gtk::Dialog::RESPONSE_YES
+      else
+        @model.filename = selected_file
       end
-      @model.save_file
-      set_saved
-      # Pourquoi avais-je écrit la ligne suivante ? Elle fait perdre la position du curseur et la selection sur le noeud courant...
-      # @view.update
+    end
+    @model.save_file
+    set_saved
+    # Pourquoi avais-je écrit la ligne suivante ? Elle fait perdre la position du curseur et la selection sur le noeud courant...
+    # @view.update
   end
 
   def on_save_as

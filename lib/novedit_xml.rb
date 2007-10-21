@@ -1,6 +1,11 @@
 class NoveditXml
   def WriteStartElement(euh, name, euh2)
-    puts "<"+name+">"
+    puts "WSE"
+    puts "<"+name+">" unless name.nil?
+  end
+
+  def WriteString(str)
+    print str
   end
 
   def WriteEndElement()
@@ -11,7 +16,7 @@ class NoveditXml
     puts "</full>"
   end
 
-  def WriteAttributeString(euh, cle, euh2, valeur)
+  def WriteAttributeString(cle, valeur)
     puts " "+cle+"='"+valeur+"' "
   end
 

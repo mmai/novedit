@@ -3,6 +3,7 @@
 #
 
 require 'libglade2'
+require 'lib/novedit_textbuffer.rb'
 
 class ViewNovedit
   attr_accessor :treeview, :textview, :buffer, :wordcount_value, :appwindow
@@ -99,6 +100,9 @@ class ViewNovedit
     @filename = nil
       
     @buffer = @textview.buffer
+    @buffer.extend(NoveditTextbuffer)
+
+
     @buffer.signal_connect("insert_text") do |w, iter, text, length|
       @controler.on_insert_text(iter, text) if @user_action
     end
