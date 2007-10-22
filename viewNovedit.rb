@@ -99,6 +99,7 @@ class ViewNovedit
     
     @filename = nil
       
+    @textview.buffer = Gtk::TextBuffer.new(NoteTagTable.new)
     @buffer = @textview.buffer
     @buffer.extend(NoveditTextbuffer)
 

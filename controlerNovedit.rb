@@ -65,7 +65,8 @@ class ControlerNovedit < UndoRedo
 #    @text_tags['Italic'] = Gtk::TextTag.new;
 #    @text_tags['Italic'].style=Pango::FontDescription::STYLE_ITALIC
 #    @view.buffer.tag_table.add(@text_tags['Italic']);
-    @view.buffer.tag_table = NoteTagTable.new
+
+#    @view.buffer.tag_table = NoteTagTable.new
 
     #Elements de l'onglet infos
     @tab_infos = [NoveditInfoWordCount.new]
@@ -523,12 +524,12 @@ class ControlerNovedit < UndoRedo
   
   def on_text_bold
     (debut, fin, selected) = @view.buffer.selection_bounds
-    @view.buffer.apply_tag(@text_tags['Bold'], debut, fin) if selected
+    @view.buffer.apply_tag(@view.buffer.tag_table['bold'], debut, fin) if selected
   end
 
   def on_text_italic
     (debut, fin, selected) = @view.buffer.selection_bounds
-    @view.buffer.apply_tag(@text_tags['Italic'], debut, fin) if selected
+    @view.buffer.apply_tag(@view.buffer.tag_table['italic'], debut, fin) if selected
   end
 
 

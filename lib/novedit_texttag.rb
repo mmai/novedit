@@ -24,10 +24,12 @@ class NoteTag < Gtk::TextTag
 #  end
 #
   def initialize(tag)
-    if (tag.instance_of?(Gtk::TextTag))
-      @element_name = tag.name
-    else
-      super(tag)
+    if !tag.instance_of?(NoteTag)
+         if (tag.instance_of?(Gtk::TextTag))
+           @element_name = tag.name
+         else
+           super(tag)
+         end
     end
 
     @imageLocation = Gtk::TextMark.new
@@ -373,7 +375,7 @@ class NoteTagTable < Gtk::TextTagTable
 #    tag.Editable = false
 #    add(tag)
 #
-#    # Used when inserting dropped URLs/text to Start Here
+    # Used when inserting dropped URLs/text to Start Here
 #    tag = NoteTag.new("datetime")
 #    tag.Scale = Pango.Scale.Small
 #    tag.Style = Pango.Style.Italic
