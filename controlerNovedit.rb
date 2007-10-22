@@ -58,13 +58,14 @@ class ControlerNovedit < UndoRedo
     @view = ViewNovedit.new(self, model)
 
     #Association des fonctions de mise en forme à la barre d'outils texte
-    @text_tags = Hash.new
-    @text_tags['Bold'] = Gtk::TextTag.new;
-    @text_tags['Bold'].weight=Pango::FontDescription::WEIGHT_BOLD
-    @view.buffer.tag_table.add(@text_tags['Bold']);
-    @text_tags['Italic'] = Gtk::TextTag.new;
-    @text_tags['Italic'].style=Pango::FontDescription::STYLE_ITALIC
-    @view.buffer.tag_table.add(@text_tags['Italic']);
+#    @text_tags = Hash.new
+#    @text_tags['Bold'] = Gtk::TextTag.new;
+#    @text_tags['Bold'].weight=Pango::FontDescription::WEIGHT_BOLD
+#    @view.buffer.tag_table.add(@text_tags['Bold']);
+#    @text_tags['Italic'] = Gtk::TextTag.new;
+#    @text_tags['Italic'].style=Pango::FontDescription::STYLE_ITALIC
+#    @view.buffer.tag_table.add(@text_tags['Italic']);
+    @view.buffer.tag_table = NoteTagTable.new
 
     #Elements de l'onglet infos
     @tab_infos = [NoveditInfoWordCount.new]

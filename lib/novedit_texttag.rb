@@ -10,21 +10,26 @@
 #						  NoteEditor editor,
 #						  Gtk.TextIter start, 
 #						  Gtk.TextIter end)
+require 'singleton'
 
 class NoteTag < Gtk::TextTag
   attr_accessor :element_name
   
 
-  def NoteTag (tag_name)
-    if (tag_name.nil? || tag_name == "") 
-      raise ("NoteTags must have a tag name.  Use " + "DynamicNoteTag for constructing " + "anonymous tags.")
+#  def NoteTag(tag_name)
+#    if (tag_name.nil? || tag_name == "") 
+#      raise ("NoteTags must have a tag name.  Use " + "DynamicNoteTag for constructing " + "anonymous tags.")
+#    end
+#    initialize(tag_name)
+#  end
+#
+  def initialize(tag)
+    if (tag.instance_of?(Gtk::TextTag))
+      @element_name = tag.name
+    else
+      super(tag)
     end
-    initialize(tag_name)
-  end
 
-  def initialize (tag)
-    @element_name = tag.name
-    
     @imageLocation = Gtk::TextMark.new
     @tag_flags = {
       'CanSerialize' => 1,
@@ -271,8 +276,8 @@ class DepthNoteTag < NoteTag
     return direction
   end
 
-  def DepthNoteTag(depth, direction)
-    #			: base("depth:" + depth + ":" + direction)
+  def initialize(depth, direction)
+    super("depth:" + depth + ":" + direction)
     self.depth = depth
     self.direction = direction
   end
@@ -298,137 +303,132 @@ class DepthNoteTag < NoteTag
 end	
 
 class NoteTagTable < Gtk::TextTagTable
-  @instance
+#  include Singleton
+
   @tag_types
   @added_tags
 
-  def Instance 
-    if (@instance.nil?) 
-      @instance = NoteTagTable.new 
-    end
-    return @instance
-  end
-
-  def NoteTagTable() 
-    #			: base ()
+  def initialize() 
+    super()
     @tag_types = Hash.new 
     @added_tags = Array.new
-    InitCommonTags()
+    init_common_tags()
   end
 
-  def InitCommonTags
+  def init_common_tags
     # Font stylings
-    tag = NoteTag.new("centered")
-    tag.Justification = Gtk.Justification.Center
-    tag.CanUndo = true
-    tag.CanGrow = true
-    tag.CanSpellCheck = true
-    Add(tag)
-
     tag = NoteTag.new("bold")
-    tag.Weight = Pango.Weight.Bold
+    tag.weight=Pango::FontDescription::WEIGHT_BOLD
     tag.CanUndo = true
     tag.CanGrow = true
     tag.CanSpellCheck = true
-    Add(tag)
+    add(tag)
 
     tag = NoteTag.new("italic")
-    tag.Style = Pango.Style.Italic
+    tag.style=Pango::FontDescription::STYLE_ITALIC
     tag.CanUndo = true
     tag.CanGrow = true
     tag.CanSpellCheck = true
-    Add(tag)
+    add(tag)
 
-    tag = NoteTag.new("strikethrough")
-    tag.Strikethrough = true
-    tag.CanUndo = true
-    tag.CanGrow = true
-    tag.CanSpellCheck = true
-    Add(tag)
-
-    tag = NoteTag.new("highlight")
-    tag.Background = "yellow"
-    tag.CanUndo = true
-    tag.CanGrow = true
-    tag.CanSpellCheck = true
-    Add(tag)
-
-    tag = NoteTag.new("find-match")
-    tag.Background = "green"
-    tag.CanSerialize = false
-    tag.CanSpellCheck = true
-    Add(tag)
-
-    tag = NoteTag.new("note-title")
-    tag.Underline = Pango.Underline.Single
-    tag.Foreground = "#204a87"
-    tag.Scale = Pango.Scale.XXLarge
-    # FiXME: Hack around extra rewrite on open
-    tag.CanSerialize = false
-    Add(tag)
-
-    tag = NoteTag.new("related-to")
-    tag.Scale = Pango.Scale.Small
-    tag.LeftMargin = 40
-    tag.Editable = false
-    Add(tag)
-
-    # Used when inserting dropped URLs/text to Start Here
-    tag = NoteTag.new("datetime")
-    tag.Scale = Pango.Scale.Small
-    tag.Style = Pango.Style.Italic
-    tag.Foreground = "#888a85"
-    Add(tag)
-
-    # Font sizes
-
-    tag = NoteTag.new("size:huge")
-    tag.Scale = Pango.Scale.XXLarge
-    tag.CanUndo = true
-    tag.CanGrow = true
-    tag.CanSpellCheck = true
-    Add(tag)
-
-    tag = NoteTag.new("size:large")
-    tag.Scale = Pango.Scale.XLarge
-    tag.CanUndo = true
-    tag.CanGrow = true
-    tag.CanSpellCheck = true
-    Add(tag)
-
-    tag = NoteTag.new("size:normal")
-    tag.Scale = Pango.Scale.Medium
-    tag.CanUndo = true
-    tag.CanGrow = true
-    tag.CanSpellCheck = true
-    Add(tag)
-
-    tag = NoteTag.new("size:small")
-    tag.Scale = Pango.Scale.Small
-    tag.CanUndo = true
-    tag.CanGrow = true
-    tag.CanSpellCheck = true
-    Add(tag)
-
-    # Links
-
-    tag = NoteTag.new("link:broken")
-    tag.Underline = Pango.Underline.Single
-    tag.Foreground = "#555753"
-    tag.CanActivate = true
-    Add(tag)
-
-    tag = NoteTag.new("link:internal")
-    tag.Underline = Pango.Underline.Single
-    tag.Foreground = "#204a87"
-    tag.CanActivate = true
-    Add(tag)
-
-    tag = NoteTag.new("link:url")
-    tag.Underline = Pango.Underline.Single
-    tag.Foreground = "#3465a4"
-    tag.CanActivate = true
-    Add(tag)
+#    tag = NoteTag.new("centered")
+#    tag.justification = Pango::FontDescription::JUSTIFICATION_CENTER
+#    tag.CanUndo = true
+#    tag.CanGrow = true
+#    tag.CanSpellCheck = true
+#    add(tag)
+#
+#
+#    tag = NoteTag.new("strikethrough")
+#    tag.Strikethrough = true
+#    tag.CanUndo = true
+#    tag.CanGrow = true
+#    tag.CanSpellCheck = true
+#    add(tag)
+#
+#    tag = NoteTag.new("highlight")
+#    tag.Background = "yellow"
+#    tag.CanUndo = true
+#    tag.CanGrow = true
+#    tag.CanSpellCheck = true
+#    add(tag)
+#
+#    tag = NoteTag.new("find-match")
+#    tag.Background = "green"
+#    tag.CanSerialize = false
+#    tag.CanSpellCheck = true
+#    add(tag)
+#
+#    tag = NoteTag.new("note-title")
+#    tag.Underline = Pango::FontDescription::UNDERLINE_SINGLE
+#    tag.Foreground = "#204a87"
+#    tag.Scale = Pango::FondDescription::SCALE_XXLARGE
+#    # FiXME: Hack around extra rewrite on open
+#    tag.CanSerialize = false
+#    add(tag)
+#
+#    tag = NoteTag.new("related-to")
+#    tag.Scale = Pango.Scale.Small
+#    tag.LeftMargin = 40
+#    tag.Editable = false
+#    add(tag)
+#
+#    # Used when inserting dropped URLs/text to Start Here
+#    tag = NoteTag.new("datetime")
+#    tag.Scale = Pango.Scale.Small
+#    tag.Style = Pango.Style.Italic
+#    tag.Foreground = "#888a85"
+#    add(tag)
+#
+#    # Font sizes
+#
+#    tag = NoteTag.new("size:huge")
+#    tag.Scale = Pango.Scale.XXLarge
+#    tag.CanUndo = true
+#    tag.CanGrow = true
+#    tag.CanSpellCheck = true
+#    add(tag)
+#
+#    tag = NoteTag.new("size:large")
+#    tag.Scale = Pango.Scale.XLarge
+#    tag.CanUndo = true
+#    tag.CanGrow = true
+#    tag.CanSpellCheck = true
+#    add(tag)
+#
+#    tag = NoteTag.new("size:normal")
+#    tag.Scale = Pango.Scale.Medium
+#    tag.CanUndo = true
+#    tag.CanGrow = true
+#    tag.CanSpellCheck = true
+#    add(tag)
+#
+#    tag = NoteTag.new("size:small")
+#    tag.Scale = Pango.Scale.Small
+#    tag.CanUndo = true
+#    tag.CanGrow = true
+#    tag.CanSpellCheck = true
+#    add(tag)
+#
+#    # Links
+#
+#    tag = NoteTag.new("link:broken")
+#    tag.Underline = Pango.Underline.Single
+#    tag.Foreground = "#555753"
+#    tag.CanActivate = true
+#    add(tag)
+#
+#    tag = NoteTag.new("link:internal")
+#    tag.Underline = Pango.Underline.Single
+#    tag.Foreground = "#204a87"
+#    tag.CanActivate = true
+#    add(tag)
+#
+#    tag = NoteTag.new("link:url")
+#    tag.Underline = Pango.Underline.Single
+#    tag.Foreground = "#3465a4"
+#    tag.CanActivate = true
+#    add(tag)
   end
 
   def NoteTagTable.TagIsSerializable(tag)
@@ -476,7 +476,7 @@ class NoteTagTable < Gtk::TextTagTable
       tag.PixelsBelowLines = 4
       tag.Scale = Pango.Scale.Medium
       tag.SizePoints = 12
-      Add(tag)
+      add(tag)
     end
 
     return tag
@@ -490,7 +490,7 @@ class NoteTagTable < Gtk::TextTagTable
 
     tag = Activator.CreateInstance(tag_type)
     tag.Initialize(tag_name)
-    Add(tag)
+    add(tag)
     return tag
   end
 
@@ -517,7 +517,7 @@ class NoteTagTable < Gtk::TextTagTable
   protected 
 
   def OnTagAdded(tag)
-    @added_tags.Add(tag)
+    @added_tags.add(tag)
 
     note_tag = tag
     if (not note_tag.nil?) 
