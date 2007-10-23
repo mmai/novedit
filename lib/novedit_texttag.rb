@@ -29,6 +29,7 @@ class NoteTag < Gtk::TextTag
            @element_name = tag.name
          else
            super(tag)
+           @element_name = tag
          end
     end
 

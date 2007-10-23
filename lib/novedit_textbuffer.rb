@@ -3,16 +3,20 @@ require 'lib/novedit_texttag.rb'
 module NoveditTextbuffer
 
  	def write_tag(tag, xml, start)
+    if tag.instance_of?(NoteTag)
+      note_tag = tag
+    else
 			note_tag = NoteTag.new(tag)
-			if (!note_tag.nil?) 
-				note_tag.Write(xml, start)
-			elsif (NoteTagTable.TagIsSerializable(tag)) 
-				if (start)
-					xml.WriteStartElement(null, tag.Name, null)
-				else 
-					xml.WriteEndElement()
-        end
+    end
+    if (!note_tag.nil?) 
+      note_tag.Write(xml, start)
+    elsif (NoteTagTable.TagIsSerializable(tag)) 
+      if (start)
+        xml.WriteStartElement(null, tag.Name, null)
+      else 
+        xml.WriteEndElement()
       end
+    end
   end
 
   def find_depth_tag(iter)
@@ -189,7 +193,7 @@ module NoveditTextbuffer
         end					
       else 
         iter.tags.each do |tag|
-          if (tag_ends_here(tag, iter, next_iter) && NoteTagTable.TagIsSerializable(tag) && !(tag.instance_of?(depthNoteTag))) 
+          if (tag_ends_here(tag, iter, next_iter) && NoteTagTable.TagIsSerializable(tag) && !(tag.instance_of?(DepthNoteTag))) 
             while (tag_stack.length > 0) 
               existing_tag = tag_stack.pop()
 
@@ -204,8 +208,8 @@ module NoveditTextbuffer
             # Restart any tags that
             # overlapped with the ended
             # tag...
-            while (replay_stack.Count > 0) 
-              Gtk.TextTag replay_tag = replay_stack.pop()
+            while (replay_stack.length > 0) 
+              replay_tag = replay_stack.pop()
               tag_stack.push(replay_tag)
               write_tag(replay_tag, xml, true)
             end				
@@ -246,5 +250,6 @@ module NoveditTextbuffer
     end
 
     xml.WriteEndElement() # </note-content>
+    puts xml.to_s
   end
 end
