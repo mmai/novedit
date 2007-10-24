@@ -252,4 +252,119 @@ module NoveditTextbuffer
     xml.WriteEndElement() # </note-content>
     puts xml.to_s
   end
+
+  def deserialize (buffer, startIter, xml) 
+			offset = startIter.offset
+			stack = Array.new
+			tag_start = TagStart.new
+			note_table = buffer.tag_table
+			curr_depth = -1
+			
+			# A stack of boolean values which mark if a
+			# list-item contains content other than another list
+			list_stack = Array.new
+
+			while (xml.read()) 
+				switch (xml.NodeType) {
+				case XmlNodeType.Element:
+					if (xml.Name == "note-content")
+						break;
+
+					tag_start = new TagStart ();
+					tag_start.Start = offset;
+
+					if (!note_table.nil? && note_table.IsDynamicTagRegistered(xml.Name)) {
+						tag_start.Tag = 
+							note_table.CreateDynamicTag(xml.Name);
+					} else if (xml.Name == "list") {
+						curr_depth++;
+						break;
+					} else if (xml.Name == "list-item") {
+						if (curr_depth >= 0) {
+							if (xml.GetAttribute("dir") == "rtl") {
+								tag_start.Tag = 
+									note_table.GetDepthTag(curr_depth, Pango.Direction.Rtl);
+							} else {
+								tag_start.Tag = 
+									note_table.GetDepthTag(curr_depth, Pango.Direction.Ltr);
+							}							
+							list_stack.Push(false);
+						} else {
+							Logger.Error("</list> tag mismatch");
+						}
+					} else {
+						tag_start.Tag = buffer.TagTable.Lookup(xml.Name);
+					}
+
+					if (tag_start.Tag is NoteTag) {
+						((NoteTag) tag_start.Tag).Read(xml, true);
+					}
+
+					stack.Push(tag_start);
+					break;
+				case XmlNodeType.Text:
+				case XmlNodeType.Whitespace:
+				case XmlNodeType.SignificantWhitespace:
+					Gtk.TextIter insert_at = buffer.GetIterAtOffset(offset);
+					buffer.Insert(ref insert_at, xml.Value);
+
+					offset += xml.Value.Length;
+					
+					# If we are inside a <list-item> mark off 
+					# that we have encountered some content 
+					if (list_stack.Count > 0) {
+						list_stack.Pop();
+						list_stack.Push(true);
+					}
+					
+					break;
+				case XmlNodeType.EndElement:
+					if (xml.Name == "note-content")
+						break;
+						
+					if (xml.Name == "list") {
+						curr_depth--;
+						break;
+					}
+
+					tag_start = (TagStart) stack.Pop();
+					if (tag_start.Tag == null)
+					    break;
+
+					Gtk.TextIter apply_start, apply_end;
+					apply_start = buffer.GetIterAtOffset(tag_start.Start);
+					apply_end = buffer.GetIterAtOffset(offset);
+
+					if (tag_start.Tag is NoteTag) {
+						((NoteTag) tag_start.Tag).Read(xml, false);
+					}
+
+					# Insert a bullet if we have reached a closing 
+					# <list-item> tag, but only if the <list-item>
+					# had content.
+					DepthNoteTag depth_tag = tag_start.Tag as DepthNoteTag;
+					
+					if (depth_tag != null && (bool) list_stack.Pop()) {
+						((NoteBuffer) buffer).InsertBullet(ref apply_start, 
+															depth_tag.Depth,
+															depth_tag.Direction);
+						buffer.RemoveAllTags(apply_start, apply_start);
+						offset += 2;
+					} else if(depth_tag == null) {
+						buffer.ApplyTag(tag_start.Tag, apply_start, apply_end);
+					}
+
+					break;
+				default:
+					Logger.Log("Unhandled element {0}. Value: '{1}'",
+						    xml.NodeType,
+						    xml.Value);
+					break;
+				}
+          end
+          end
 end
+
+          class TagStart
+            attr_reader :start, :tag
+          end
