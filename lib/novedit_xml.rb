@@ -9,12 +9,15 @@ class TreeXml < TreeNode
   end
 
   def to_s
+    str = ""
     #On ouvre l'élément
-    str = "\n<"+name
-    @attrs.each do |key, value|
-      str += " "+key+"='"+value+"'"
+    if (name!="texte")
+      str += "<"+name
+      @attrs.each do |key, value|
+        str += " "+key+"='"+value+"'"
+      end
+      str += ">"
     end
-    str += ">"
     
     #Contenu texte de l'élément
     str += @text
@@ -25,7 +28,9 @@ class TreeXml < TreeNode
     end
 
     #On ferme l'élément
-    str += "</"+@name+">\n"
+    if (name!="texte")
+      str += "</"+@name+">"
+    end
 
     return str
   end
@@ -40,20 +45,39 @@ class NoveditXml
   end
 
   def to_s
+    while @tab_nodes.length > 0
+      WriteEndElement()
+    end
     @xml.to_s
   end
 
+  def close_text
+    if @tab_nodes.length>0 && (@tab_nodes.last.name == "texte")
+      lastNode = @tab_nodes.pop
+      @tab_nodes.last.addNode(lastNode)
+    end
+  end
+
+
   def WriteStartElement(euh, name, euh2)
-#    @tab_nodes << {'node' => TreeXml.new(name), 'opened' => true}
+    close_text()
     @tab_nodes << TreeXml.new(name)
   end
 
   def WriteString(str)
-#    @tab_nodes.last['node'].text += str
+    #    @tab_nodes.last['node'].text += str
+    if (@tab_nodes.length > 0)
+      if (@tab_nodes.last.name != "texte")
+        WriteStartElement(nil, "texte", nil)
+      end
+    else
+        WriteStartElement(nil, "texte", nil)
+    end
     @tab_nodes.last.text += str
   end
 
   def WriteEndElement()
+    close_text()
     lastNode = @tab_nodes.pop
     if @tab_nodes.length == 0
       @xml = lastNode
