@@ -1,3 +1,7 @@
+require 'rexml/document'
+require 'rexml/streamlistener'
+include REXML
+
 require 'lib/tree.rb'
 
 class TreeXml < TreeNode
@@ -107,3 +111,16 @@ class NoveditXml
   end
 end
 
+class TreeXmlListener
+  include StreamListener
+  def tag_start(name, attributes)
+    puts "Start #{name}"
+  end
+  def tag_end(name)
+    puts "End #{name}"
+  end
+end
+
+#listener = Listener.new
+#parser = Parsers::StreamParser.new(File.new("bibliography2.xml"), listener)
+#parser.parse

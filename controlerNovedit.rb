@@ -186,8 +186,8 @@ class ControlerNovedit < UndoRedo
   
   def on_save_file
     xml = NoveditXml.new
-    @view.buffer.serialize(xml)
-    @model.currentNode.text = @view.buffer.text
+#    @model.currentNode.text = @view.buffer.text
+    @model.currentNode.text = @view.buffer.serialize(xml)
     while not @model.filename
       selected_file = select_file()
       if File.exists?(selected_file)
