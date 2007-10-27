@@ -1,7 +1,3 @@
-require 'rexml/document'
-require 'rexml/streamlistener'
-include REXML
-
 require 'lib/tree.rb'
 
 class TreeXml < TreeNode
@@ -15,13 +11,13 @@ class TreeXml < TreeNode
   def to_s
     str = ""
     #On ouvre l'élément
-    if (name!="texte")
+#    if (name!="t")
       str += "<"+name
       @attrs.each do |key, value|
         str += " "+key+"='"+value+"'"
       end
       str += ">"
-    end
+#    end
     
     #Contenu texte de l'élément
     str += @text
@@ -32,9 +28,9 @@ class TreeXml < TreeNode
     end
 
     #On ferme l'élément
-    if (name!="texte")
+#    if (name!="t")
       str += "</"+@name+">"
-    end
+#    end
 
     return str
   end
@@ -56,7 +52,7 @@ class NoveditXml
   end
 
   def close_text
-    if @tab_nodes.length>0 && (@tab_nodes.last.name == "texte")
+    if @tab_nodes.length>0 && (@tab_nodes.last.name == "t")
       lastNode = @tab_nodes.pop
       @tab_nodes.last.addNode(lastNode)
     end
@@ -71,11 +67,11 @@ class NoveditXml
   def WriteString(str)
     #    @tab_nodes.last['node'].text += str
     if (@tab_nodes.length > 0)
-      if (@tab_nodes.last.name != "texte")
-        WriteStartElement(nil, "texte", nil)
+      if (@tab_nodes.last.name != "t")
+        WriteStartElement(nil, "t", nil)
       end
     else
-        WriteStartElement(nil, "texte", nil)
+        WriteStartElement(nil, "t", nil)
     end
     @tab_nodes.last.text += str
   end
@@ -111,16 +107,4 @@ class NoveditXml
   end
 end
 
-class TreeXmlListener
-  include StreamListener
-  def tag_start(name, attributes)
-    puts "Start #{name}"
-  end
-  def tag_end(name)
-    puts "End #{name}"
-  end
-end
 
-#listener = Listener.new
-#parser = Parsers::StreamParser.new(File.new("bibliography2.xml"), listener)
-#parser.parse

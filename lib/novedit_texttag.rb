@@ -45,10 +45,10 @@ class NoteTag < Gtk::TextTag
     @flags = @tag_flags['CanSerialize'] | @tag_flags['CanSplit']
   end
 
-  def CanSerialize 
+  def can_serialize?
     return (@flags & @tag_flags['CanSerialize']) != 0
   end
-  def CanSerialize=(value)
+  def can_serialize=(value)
     if (value)
       @flags |= @tag_flags['CanSerialize']
     else 
@@ -122,7 +122,7 @@ class NoteTag < Gtk::TextTag
   end
 
   def Write(xml, start)
-    if (CanSerialize()) 
+    if (can_serialize?()) 
       if (start) 
         xml.WriteStartElement(nil, @element_name, nil)
       else 
@@ -132,9 +132,9 @@ class NoteTag < Gtk::TextTag
   end
 
   def Read(xml, start)
-    if (CanSerialize) 
+    if (can_serialize?) 
       if (start) 
-        @element_name = xml.Name
+        @element_name = xml.name
       end
     end
   end
@@ -241,7 +241,7 @@ class DynamicNoteTag < NoteTag
   end
 
   def Write(xml, start)
-    if (CanSerialize) 
+    if (can_serialize?) 
       super(xml, start)
       if (start && !@attributes.nil?) 
         @attributes.Keys.each do |key|
@@ -253,7 +253,7 @@ class DynamicNoteTag < NoteTag
   end
 
   def Read(xml, start)
-    if (CanSerialize) 
+    if (can_serialize?) 
       super(xml, start)
       if (start) 
         while (xml.MoveToNextAttribute()) 
@@ -268,8 +268,8 @@ class DynamicNoteTag < NoteTag
 end
 
 class DepthNoteTag < NoteTag
-  depth = -1
-  direction = Pango::DIRECTION_LTR
+  @depth = -1
+  @direction = Pango::DIRECTION_LTR
 
   def Depth
     return depth
@@ -279,14 +279,14 @@ class DepthNoteTag < NoteTag
     return direction
   end
 
-  def initialize(depth, direction)
+  def initialize(depth=-1, direction=Pango::DIRECTION_LTR)
     super("depth:" + depth + ":" + direction)
-    self.depth = depth
-    self.direction = direction
+    @depth = depth
+    @direction = direction
   end
 
   def Write(xml, start)
-    if (CanSerialize) 
+    if (can_serialize?) 
       if (start) 
         xml.WriteStartElement(nil, "list-item", nil)
 
@@ -358,7 +358,7 @@ class NoteTagTable < Gtk::TextTagTable
 #
 #    tag = NoteTag.new("find-match")
 #    tag.Background = "green"
-#    tag.CanSerialize = false
+#    tag.can_serialize? = false
 #    tag.CanSpellCheck = true
 #    add(tag)
 #
@@ -367,7 +367,7 @@ class NoteTagTable < Gtk::TextTagTable
 #    tag.Foreground = "#204a87"
 #    tag.Scale = Pango::FondDescription::SCALE_XXLARGE
 #    # FiXME: Hack around extra rewrite on open
-#    tag.CanSerialize = false
+#    tag.can_serialize? = false
 #    add(tag)
 #
 #    tag = NoteTag.new("related-to")
@@ -436,7 +436,7 @@ class NoteTagTable < Gtk::TextTagTable
 
   def NoteTagTable.TagIsSerializable(tag)
     if tag.instance_of?(NoteTag)
-   			return tag.CanSerialize
+   			return tag.can_serialize?
     end
   	return false
   end

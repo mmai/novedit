@@ -1,4 +1,5 @@
 require 'lib/novedit_texttag.rb'
+require 'lib/novedit_xml.rb'
 
 module NoveditTextbuffer
 
@@ -40,7 +41,8 @@ module NoveditTextbuffer
   # better way to do this...
   #		def Serialize (Gtk.TextBuffer buffer, Gtk.TextIter   start, Gtk.TextIter   end, XmlTextWriter  xml) 
   #def serialize(buffer, startIter, endIter, xml) 
-  def serialize(xml) 
+  def serialize() 
+    xml = NoveditXml.new
     buffer = self
     startIter = buffer.start_iter
     endIter = buffer.end_iter
@@ -253,101 +255,127 @@ module NoveditTextbuffer
     return xml.to_s
   end
 
-  def deserialize (buffer, startIter, xml) 
+  require 'rexml/document'
+
+  def deserialize (strXml) 
+    buffer = self
+    buffer.delete(buffer.start_iter, buffer.end_iter)
+    startIter = buffer.start_iter
     offset = startIter.offset
-    stack = Array.new
-    tag_start = TagStart.new
-    note_table = buffer.tag_table
+    @deserialize_stack = Array.new
     curr_depth = -1
 
     # A stack of boolean values which mark if a
     # list-item contains content other than another list
-    list_stack = Array.new
+    @list_stack = Array.new
 
-    while (xml.read()) 
-      case (xml.NodeType) 
-      when XmlNodeType.Element
-        break if (xml.Name == "note-content")
-        tag_start = TagStart.new
-        tag_start.Start = offset
-        if (!note_table.nil? && note_table.IsDynamicTagRegistered(xml.Name)) 
-          tag_start.Tag = note_table.CreateDynamicTag(xml.Name)
-        elsif (xml.Name == "list") 
-          curr_depth += 1
-          break
-        elsif (xml.Name == "list-item") 
-          if (curr_depth >= 0) 
-            if (xml.GetAttribute("dir") == "rtl") 
-              tag_start.Tag = note_table.GetDepthTag(curr_depth, Pango.Direction.Rtl)
-            else
-              tag_start.Tag = note_table.GetDepthTag(curr_depth, Pango.Direction.Ltr)
-            end							
-            list_stack << false
-          else 
-            Logger.Error("</list> tag mismatch");
-          end
-        else 
-          tag_start.Tag = buffer.TagTable.Lookup(xml.Name)
-        end
-        if (tag_start.Tag.instance_of(NoteTag)) 
-          tag_start.Tag.Read(xml, true)
-        end
+    xmldoc = REXML::Document.new(strXml)
 
-        stack << tag_start
-      when XmlNodeType.Text
-      when XmlNodeType.Whitespace
-      when XmlNodeType.SignificantWhitespace
-        insert_at = buffer.GetIterAtOffset(offset)
-        buffer.insert(insert_at, xml.Value)
+    xmldoc.elements.each do |element|
+      lireXml(element, offset)
+    end
+  end
 
-        offset += xml.Value.Length
+  def dbg(message)
+    self.insert(self.end_iter, "|"+message)
+  end
 
-        # If we are inside a <list-item> mark off 
-        # that we have encountered some content 
-        if (list_stack.Count > 0) 
-          list_stack.pop()
-          list_stack << true
-        end
-      when XmlNodeType.EndElement
-        break if (xml.Name == "note-content")
+  def lireXml(element, offset)
+    buffer = self
+    note_table = buffer.tag_table
+#    dbg(element.name)
+    case element.name
+    #when "note-content" #Noeud racine
+    when "SignificantWhitespace"
+      insert_at = buffer.get_iter_at_offset(offset)
+      buffer.insert(insert_at, xml.Value)
 
-        if (xml.Name == "list") 
-          curr_depth -=1
-          break
-        end
+      offset += xml.Value.Length
 
-        tag_start = stack.pop()
-        break if (tag_start.Tag.nil?)
+      # If we are inside a <list-item> mark off 
+      # that we have encountered some content 
+      if (@list_stack.Count > 0) 
+        @list_stack.pop()
+        @list_stack << true
+      end
+    when "t" #Noeud texte
+      buffer.insert(buffer.end_iter, element.text)
+    else
+      if (!element.name.nil?)
+      #Debut tag
+      mark_start = buffer.create_mark(nil, buffer.end_iter, true)
+      
+#      tag_start = TagStart.new
+#      tag_start.start = offset
+#      if (!note_table.nil? && note_table.IsDynamicTagRegistered(element.name)) 
+#        tag_start.tag = note_table.CreateDynamicTag(element.name)
+#      elsif (element.name == "list") 
+#        curr_depth += 1
+#        break
+#      elsif (element.name == "list-item") 
+#        if (curr_depth >= 0) 
+#          if (attributes["dir"] == "rtl") 
+#            tag_start.tag = note_table.GetDepthTag(curr_depth, Pango.Direction.Rtl)
+#          else
+#            tag_start.tag = note_table.GetDepthTag(curr_depth, Pango.Direction.Ltr)
+#          end							
+#          @list_stack << false
+#        else 
+#          puts("</list> tag mismatch")
+#        end
+#      else 
+#        tag_start.tag = buffer.tag_table.lookup(element.name)
+#        tag_start = buffer.tag_table.lookup(element.name)
+#      end
+#      if (tag_start.tag.instance_of?(NoteTag)) 
+#        tag_start.tag.Read(xml, true)
+#        tag_start.tag.Read(tag_start.tag, true)
+#      end
+#      @deserialize_stack << tag_start
 
-        apply_start = buffer.GetIterAtOffset(tag_start.Start)
-        apply_end = buffer.GetIterAtOffset(offset)
+      #Traitement des noeuds enfants
+      element.elements.each do |elem|
+        lireXml(elem, offset)
+      end
 
-        if (tag_start.Tag.instance_of(NoteTag)) 
-          tag_start.Tag.Read(xml, false)
-        end
+      #Fin tag
+#      if (element.name == "list") 
+#        curr_depth -=1
+#        break
+#      end
+
+#      if (! tag_start.tag.nil?)
+#        apply_start = buffer.get_iter_at_offset(tag_start.start)
+#        apply_end = buffer.get_iter_at_offset(offset)
+
+#        if (tag_start.tag.instance_of?(NoteTag)) 
+#          tag_start.tag.Read(xml, false)
+#          tag_start.tag.Read(tag_start.tag, false)
+#        end
 
         # Insert a bullet if we have reached a closing 
         # <list-item> tag, but only if the <list-item>
         # had content.
-        depth_tag = DepthNoteTag.new(tag_start.Tag)
+#        depth_tag = DepthNoteTag.new(tag_start.tag.name, 'direction??')
+#        depth_tag = nil
 
-        if (!depth_tag.nil? && list_stack.pop()) 
-          buffer.InsertBullet(apply_start, depth_tag.Depth, depth_tag.Direction)
-          buffer.RemoveAllTags(apply_start, apply_start)
-          offset += 2
-        elsif(depth_tag == null) 
-          buffer.ApplyTag(tag_start.Tag, apply_start, apply_end)
-        end
-        break
-      else
-        Logger.Log("Unhandled element {0}. Value: '{1}'", xml.NodeType, xml.Value)
+#        if (!depth_tag.nil? && @list_stack.pop()) 
+#          buffer.InsertBullet(apply_start, depth_tag.Depth, depth_tag.Direction)
+#          buffer.remove_all_tags(apply_start, apply_start)
+#          offset += 2
+#        elsif(depth_tag.nil?) 
+          tag = buffer.tag_table[element.name]
+          buffer.apply_tag(tag, buffer.get_iter_at_mark(mark_start), buffer.end_iter) if !tag.nil?
+#          dbg(element.name)
+#        end
+#      end
       end
     end
   end
 end
 
 class TagStart
-  attr_reader :start, :tag
+  attr_accessor :start, :tag
 end
 
 

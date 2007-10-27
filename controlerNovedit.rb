@@ -185,9 +185,8 @@ class ControlerNovedit < UndoRedo
   end
   
   def on_save_file
-    xml = NoveditXml.new
-#    @model.currentNode.text = @view.buffer.text
-    @model.currentNode.text = @view.buffer.serialize(xml)
+    @model.currentNode.text = @view.buffer.serialize()
+    @view.update #pour tests, à supprimer
     while not @model.filename
       selected_file = select_file()
       if File.exists?(selected_file)
@@ -329,10 +328,10 @@ class ControlerNovedit < UndoRedo
   
   #Sélection d'un noeud de l'arbre
   def on_select_node(selectionWidget)
-    @model.currentNode.text = @view.buffer.get_text
+    @model.currentNode.text = @view.buffer.serialize()
     iter = selectionWidget.selected
     @model.currentNode = @model.getNode(iter.path.to_s) unless iter.nil?
-    @view.buffer.set_text @model.currentNode.text
+    @view.buffer.deserialize(@model.currentNode.text)
   end
   
   #Édition d'un élément de l'arbre

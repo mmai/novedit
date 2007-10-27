@@ -160,7 +160,8 @@ class ViewNovedit
       insert_model_node(nil, modelNode)
       check_opened_nodes(modelNode)
     end
-    @buffer.set_text(@model.currentNode.text)
+#    @buffer.set_text(@model.currentNode.text)
+    @buffer.deserialize(@model.currentNode.text)
     
 #    @tabs.set_tab_label(@tabs.children[@tabs.page], Gtk::Label.new(File.basename(@currentDocument.model.filename)))
   end
