@@ -267,6 +267,17 @@ class ViewNovedit
     @controler.on_text_italic
   end
 
+  def on_text_centered(widget)
+    @controler.on_text_centered
+  end
+
+  def on_text_highlight(widget)
+    @controler.on_text_highlight
+  end
+
+  def on_text_strikethrough(widget)
+    @controler.on_text_strikethrough
+  end
     
   # Find dialog
   def on_find(widget)

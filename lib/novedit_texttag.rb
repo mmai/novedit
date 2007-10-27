@@ -334,104 +334,83 @@ class NoteTagTable < Gtk::TextTagTable
     tag.CanSpellCheck = true
     add(tag)
 
-#    tag = NoteTag.new("centered")
-#    tag.justification = Pango::FontDescription::JUSTIFICATION_CENTER
-#    tag.CanUndo = true
-#    tag.CanGrow = true
-#    tag.CanSpellCheck = true
-#    add(tag)
-#
-#
-#    tag = NoteTag.new("strikethrough")
-#    tag.Strikethrough = true
-#    tag.CanUndo = true
-#    tag.CanGrow = true
-#    tag.CanSpellCheck = true
-#    add(tag)
-#
-#    tag = NoteTag.new("highlight")
-#    tag.Background = "yellow"
-#    tag.CanUndo = true
-#    tag.CanGrow = true
-#    tag.CanSpellCheck = true
-#    add(tag)
-#
-#    tag = NoteTag.new("find-match")
-#    tag.Background = "green"
-#    tag.can_serialize? = false
-#    tag.CanSpellCheck = true
-#    add(tag)
-#
-#    tag = NoteTag.new("note-title")
-#    tag.Underline = Pango::FontDescription::UNDERLINE_SINGLE
-#    tag.Foreground = "#204a87"
-#    tag.Scale = Pango::FondDescription::SCALE_XXLARGE
-#    # FiXME: Hack around extra rewrite on open
-#    tag.can_serialize? = false
-#    add(tag)
-#
-#    tag = NoteTag.new("related-to")
-#    tag.Scale = Pango.Scale.Small
-#    tag.LeftMargin = 40
-#    tag.Editable = false
-#    add(tag)
-#
-    # Used when inserting dropped URLs/text to Start Here
-#    tag = NoteTag.new("datetime")
-#    tag.Scale = Pango.Scale.Small
-#    tag.Style = Pango.Style.Italic
-#    tag.Foreground = "#888a85"
-#    add(tag)
-#
-#    # Font sizes
-#
-#    tag = NoteTag.new("size:huge")
-#    tag.Scale = Pango.Scale.XXLarge
-#    tag.CanUndo = true
-#    tag.CanGrow = true
-#    tag.CanSpellCheck = true
-#    add(tag)
-#
-#    tag = NoteTag.new("size:large")
-#    tag.Scale = Pango.Scale.XLarge
-#    tag.CanUndo = true
-#    tag.CanGrow = true
-#    tag.CanSpellCheck = true
-#    add(tag)
-#
-#    tag = NoteTag.new("size:normal")
-#    tag.Scale = Pango.Scale.Medium
-#    tag.CanUndo = true
-#    tag.CanGrow = true
-#    tag.CanSpellCheck = true
-#    add(tag)
-#
-#    tag = NoteTag.new("size:small")
-#    tag.Scale = Pango.Scale.Small
-#    tag.CanUndo = true
-#    tag.CanGrow = true
-#    tag.CanSpellCheck = true
-#    add(tag)
-#
-#    # Links
-#
-#    tag = NoteTag.new("link:broken")
-#    tag.Underline = Pango.Underline.Single
-#    tag.Foreground = "#555753"
-#    tag.CanActivate = true
-#    add(tag)
-#
-#    tag = NoteTag.new("link:internal")
-#    tag.Underline = Pango.Underline.Single
-#    tag.Foreground = "#204a87"
-#    tag.CanActivate = true
-#    add(tag)
-#
-#    tag = NoteTag.new("link:url")
-#    tag.Underline = Pango.Underline.Single
-#    tag.Foreground = "#3465a4"
-#    tag.CanActivate = true
-#    add(tag)
+    tag = NoteTag.new("centered")
+    tag.justification = Gtk::JUSTIFY_CENTER
+    tag.CanUndo = true
+    tag.CanGrow = true
+    tag.CanSpellCheck = true
+    add(tag)
+
+
+    tag = NoteTag.new("strikethrough")
+    tag.strikethrough = true
+    tag.CanUndo = true
+    tag.CanGrow = true
+    tag.CanSpellCheck = true
+    add(tag)
+
+    tag = NoteTag.new("highlight")
+    tag.background = "yellow"
+    tag.CanUndo = true
+    tag.CanGrow = true
+    tag.CanSpellCheck = true
+    add(tag)
+
+    tag = NoteTag.new("find-match")
+    tag.background = "green"
+    tag.can_serialize = false
+    tag.CanSpellCheck = true
+    add(tag)
+
+    # Font sizes
+
+    tag = NoteTag.new("size:huge")
+    tag.scale = Pango::SCALE_XX_LARGE
+    tag.CanUndo = true
+    tag.CanGrow = true
+    tag.CanSpellCheck = true
+    add(tag)
+
+    tag = NoteTag.new("size:large")
+    tag.scale = Pango::SCALE_X_LARGE
+    tag.CanUndo = true
+    tag.CanGrow = true
+    tag.CanSpellCheck = true
+    add(tag)
+
+    tag = NoteTag.new("size:normal")
+    tag.scale = Pango::SCALE_MEDIUM
+    tag.CanUndo = true
+    tag.CanGrow = true
+    tag.CanSpellCheck = true
+    add(tag)
+
+    tag = NoteTag.new("size:small")
+    tag.scale = Pango::SCALE_SMALL
+    tag.CanUndo = true
+    tag.CanGrow = true
+    tag.CanSpellCheck = true
+    add(tag)
+
+    # Links
+
+    tag = NoteTag.new("link:broken")
+    tag.underline = Pango::UNDERLINE_SINGLE
+    tag.foreground = "#555753"
+    tag.CanActivate = true
+    add(tag)
+
+    tag = NoteTag.new("link:internal")
+    tag.underline = Pango::UNDERLINE_SINGLE
+    tag.foreground = "#204a87"
+    tag.CanActivate = true
+    add(tag)
+
+    tag = NoteTag.new("link:url")
+    tag.underline = Pango::UNDERLINE_SINGLE
+    tag.foreground = "#3465a4"
+    tag.CanActivate = true
+    add(tag)
   end
 
   def NoteTagTable.TagIsSerializable(tag)
@@ -477,7 +456,7 @@ class NoteTagTable < Gtk::TextTagTable
       end
 
       tag.PixelsBelowLines = 4
-      tag.Scale = Pango.Scale.Medium
+      tag.scale = Pango::SCALE_MEDIUM
       tag.SizePoints = 12
       add(tag)
     end

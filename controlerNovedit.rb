@@ -531,6 +531,20 @@ class ControlerNovedit < UndoRedo
     @view.buffer.apply_tag(@view.buffer.tag_table['italic'], debut, fin) if selected
   end
 
+  def on_text_centered
+    (debut, fin, selected) = @view.buffer.selection_bounds
+    @view.buffer.apply_tag(@view.buffer.tag_table['centered'], debut, fin) if selected
+  end
+
+  def on_text_highlight
+    (debut, fin, selected) = @view.buffer.selection_bounds
+    @view.buffer.apply_tag(@view.buffer.tag_table['highlight'], debut, fin) if selected
+  end
+
+  def on_text_strikethrough
+    (debut, fin, selected) = @view.buffer.selection_bounds
+    @view.buffer.apply_tag(@view.buffer.tag_table['strikethrough'], debut, fin) if selected
+  end
 
   private
   
