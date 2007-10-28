@@ -536,6 +536,17 @@ class ControlerNovedit < UndoRedo
     @view.buffer.apply_tag(@view.buffer.tag_table['centered'], debut, fin) if selected
   end
 
+  def on_justify_left
+    (debut, fin, selected) = @view.buffer.selection_bounds
+    @view.buffer.apply_tag(@view.buffer.tag_table['justify-left'], debut, fin) if selected
+  end
+
+  def on_justify_right
+    (debut, fin, selected) = @view.buffer.selection_bounds
+    @view.buffer.apply_tag(@view.buffer.tag_table['justify-right'], debut, fin) if selected
+  end
+
+
   def on_text_highlight
     (debut, fin, selected) = @view.buffer.selection_bounds
     @view.buffer.apply_tag(@view.buffer.tag_table['highlight'], debut, fin) if selected
@@ -544,6 +555,11 @@ class ControlerNovedit < UndoRedo
   def on_text_strikethrough
     (debut, fin, selected) = @view.buffer.selection_bounds
     @view.buffer.apply_tag(@view.buffer.tag_table['strikethrough'], debut, fin) if selected
+  end
+
+  def on_bulleted_list
+#    @view.buffer.apply_tag(@view.buffer.tag_table['bulleted-list'], debut, fin) if selected
+    @view.buffer.toggle_selection_bullets()
   end
 
   private

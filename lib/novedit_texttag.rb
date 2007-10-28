@@ -280,7 +280,7 @@ class DepthNoteTag < NoteTag
   end
 
   def initialize(depth=-1, direction=Pango::DIRECTION_LTR)
-    super("depth:" + depth + ":" + direction)
+    super("depth:" + depth.to_s + ":" + direction.to_s)
     @depth = depth
     @direction = direction
   end
@@ -341,6 +341,19 @@ class NoteTagTable < Gtk::TextTagTable
     tag.CanSpellCheck = true
     add(tag)
 
+    tag = NoteTag.new("justify-left")
+    tag.justification = Gtk::JUSTIFY_LEFT
+    tag.CanUndo = true
+    tag.CanGrow = true
+    tag.CanSpellCheck = true
+    add(tag)
+
+    tag = NoteTag.new("justify-right")
+    tag.justification = Gtk::JUSTIFY_RIGHT
+    tag.CanUndo = true
+    tag.CanGrow = true
+    tag.CanSpellCheck = true
+    add(tag)
 
     tag = NoteTag.new("strikethrough")
     tag.strikethrough = true
@@ -440,24 +453,24 @@ class NoteTagTable < Gtk::TextTagTable
     return tag.kind_of?(DepthNoteTag)
   end
 
-  def GetDepthTag(depth, direction)
-    name = "depth:" + depth + ":" + direction
+  def get_depth_tag(depth, direction)
+    name = "depth:" + depth.to_s + ":" + direction.to_s
     #tag = Lookup(name) as DepthNoteTag
-    tag = Lookup(name)
+    tag = self.lookup(name)
 
     if (tag.nil?) 
       tag = DepthNoteTag.new(depth, direction)
-      tag.Indent = -14
+      tag.indent = -14
 
-      if (direction == Pango.Direction.Rtl)
-        tag.RightMargin = (depth+1) * 25
+      if (direction == Pango::DIRECTION_RTL)
+        tag.right_margin = (depth+1) * 25
       else
-        tag.LeftMargin = (depth+1) * 25
+        tag.left_margin = (depth+1) * 25
       end
 
-      tag.PixelsBelowLines = 4
+      tag.pixels_below_lines = 4
       tag.scale = Pango::SCALE_MEDIUM
-      tag.SizePoints = 12
+      tag.size_points = 12
       add(tag)
     end
 

@@ -271,6 +271,16 @@ class ViewNovedit
     @controler.on_text_centered
   end
 
+  def on_justify_right(widget)
+    @controler.on_justify_right
+  end
+
+
+  def on_justify_left(widget)
+    @controler.on_justify_left
+  end
+
+
   def on_text_highlight(widget)
     @controler.on_text_highlight
   end
@@ -278,7 +288,11 @@ class ViewNovedit
   def on_text_strikethrough(widget)
     @controler.on_text_strikethrough
   end
-    
+ 
+  def on_bulleted_list(widget)
+    @controler.on_bulleted_list
+  end
+   
   # Find dialog
   def on_find(widget)
     @controler.on_find

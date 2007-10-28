@@ -1,8 +1,490 @@
 require 'lib/novedit_texttag.rb'
 require 'lib/novedit_xml.rb'
 
+# Excepté la désérialisation, ce module est essentiellement une traduction en ruby 
+# des fonctions de traitement de texte utilisées dans
+# l'application Gtk Tomboy (http:#www.gnome.org/projects/tomboy/)
 module NoveditTextbuffer
 
+  #############################################
+  #
+  # GESTION DES PUCES
+  #
+  #############################################
+
+  indent_bullets = ['\u2022', '\u2218', '\u2023']
+
+	# Returns true if the cursor is inside of a bulleted list
+  def is_bulleted_list_active?()
+    insert_mark = self.get_mark('insert')
+    iter = self.get_iter_at_mark(insert_mark)
+    iter.line_offset = 0
+    depth = find_depth_tag(iter)
+    return !depth.nil?
+  end
+
+  # Returns true if the cursor is at a position that can
+  # be made into a bulleted list
+  def	can_make_bulleted_list?()
+    insert_mark = self.get_mark('insert')
+    iter = self.get_iter_at_mark(insert_mark)
+    p iter
+    puts iter.line
+    return (iter.line!=0)
+  end
+
+  def find_depth_tag(iter)
+    depth_tag = nil
+    iter.tags.each do |tag|
+      if (NoteTagTable.TagHasDepth(tag))
+          depth_tag = tag
+          break
+      end
+    end
+    return depth_tag
+  end
+
+  def add_newline
+    return false if (!can_make_bulleted_list?)
+
+    insert_mark = self.get_mark('insert')
+		iter = self.get_iter_at_mark(insert_mark)
+    iter.line_offset = 0
+			
+		prev_depth = find_depth_tag(iter)
+
+			# If the previous line has a bullet point on it we add a bullet
+			# to the new line, unless the previous line was blank (apart from
+			# the bullet), in which case we clear the bullet/indent from the
+			# previous line.
+			if (!prev_depth.nil?)
+				iter.forward_char()
+
+				insert = self.get_iter_at_mark(insert_mark)
+				
+				# See if the line was left contentless and remove the bullet
+				# if so.
+				if (iter.ends_line() || insert.line_offset < 3 )
+					start = get_iter_at_line(iter.line)
+					fin = start
+					fin.forward_to_line_end()
+
+					if (fin.line_offset < 2) 
+						fin = start
+					else 
+						fin = self.get_iter_at_line_offset(iter.line, 2)
+          end
+					
+					self.delete(start, fin)
+					
+					iter = get_iter_at_mark(insert_mark)
+					self.insert(iter, "\n")				
+        else 
+#					Undoer.FreezeUndo();
+					iter = get_iter_at_mark(insert_mark)
+					offset = iter.offset
+					self.insert(iter, "\n")
+				
+					iter = get_iter_at_mark(insert_mark)
+					start = get_iter_at_line(iter.line)
+					
+					# Set the direction of the bullet to be the same
+					# as the first character on the new line
+#					Pango::DIRECTION_direction = prev_depth.direction
+					if (iter.char != "\n" && iter.char.length > 0)
+						direction = Pango.unichar_direction(iter.Char[0])
+          end
+
+					insert_bullet(start, prev_depth.depth, direction)
+#					Undoer.ThawUndo();
+					
+					new_bullet_inserted(self, insert_bulletEventArgs.new(offset, prev_depth.depth, direction))
+        end
+				
+				return true;
+			# Replace lines starting with '*' or '-' with bullets
+			elsif (iter.char.equals("*") || iter.char.equals("-")) 		
+				start = get_iter_at_line_offset(iter.line, 0)
+        fin = get_iter_at_line_offset(iter.line, 1)
+				
+				# Remove the '*' character and any leading white space
+				if (fin.char == " ")
+					fin.forward_char()
+        end
+				
+				# Set the direction of the bullet to be the same as
+				# the first character after the '*' or '-'
+#				Pango::DIRECTION_direction = Pango::DIRECTION_LTR
+				if (fin.char.length > 0)
+					direction = Pango.unichar_direction(fin.char[0])
+        end
+				
+				self.delete(start, fin)
+
+				if (fin.ends_line()) 
+					increase_depth(start)
+				else 
+					increase_depth(start)
+					
+					iter = get_iter_at_mark(insert_mark)
+					offset = iter.offset
+					self.insert(iter, "\n")
+					
+					iter = get_iter_at_mark(insert_mark)
+					iter.lineOffset = 0
+
+#					Undoer.FreezeUndo();
+					insert_bullet(iter, 0, direction)
+#					Undoer.ThawUndo();
+
+					new_bullet_inserted(self, insert_bulletEventArgs.new(offset, 0, direction))
+        end			
+				
+				return true
+      end
+			return false
+  end
+    
+    # Returns true if the depth of the line was increased
+		def add_tab()
+			insert_mark = self.get_mark("insert")
+			iter = get_iter_at_mark(insert_mark)
+			iter.lineOffset = 0		
+			
+			depth = find_depth_tag(iter)
+			
+			# If the cursor is at a line with a depth and a tab has been
+			# inserted then we increase the indent depth of that line.
+			if (!depth.nil?) 
+				increase_depth(iter)
+				return true
+      end		
+			
+			return false
+    end
+
+		# Returns true if the depth of the line was decreased
+		def remove_tab()
+			insert_mark = self.get_mark("insert")
+			iter = get_iter_at_mark(insert_mark)
+			iter.line_offset = 0
+			
+			depth = find_depth_tag(iter)
+			
+			# If the cursor is at a line with depth and a tab has been
+			# inserted, then we decrease the depth of that line.
+			if (!depth.nil?) 
+				decrease_depth(iter)
+				return true
+      end
+			
+			return false
+    end
+		
+		
+		# Returns true if a bullet had to be removed
+		# This is for the Delete key not Backspace
+		def delete_key_handler()
+			# See if there is a selection
+      (start, fin, selected) = self.selection_bounds
+			
+			if (selection) 
+				augment_selection(start, fin)
+				self.delete(start, fin)
+				return true
+			elsif (start.ends_line() && start.line < self.line_count)
+				suivant = get_iter_at_line(start.line + 1)
+				fin = start
+				fin.forward_chars(3)
+				
+				depth = find_depth_tag(suivant)
+				
+				if (depth != null) 
+					self.delete(start, fin)
+					return true
+        end
+			else 
+				suivant = start
+        suivant.forward_char() if (suivant.lineOffset != 0)
+				
+				depth = find_depth_tag(start)
+				nextDepth = find_depth_tag(suivant)
+				if !(depth.nil? && nextDepth.nil?) 
+					decrease_depth(start)
+					return true
+        end
+      end			
+			
+			return false
+    end
+
+		def backspace_key_handler()
+			start
+			fin
+			
+			selection = get_selection_bounds(start, fin)
+			
+			depth = find_depth_tag(start)
+			
+			if (selection) 
+				augment_selection(start, fin)
+				self.delete(start, fin)
+				return true
+			else 
+				# See if the cursor is inside or just after a bullet region
+				# ie. 
+				# |* lorum ipsum
+				#  ^^^
+				# and decrease the depth if it is.
+				
+				prev = start
+				
+				if (prev.lineOffset != 0)
+					prev.BackwardChars(1)
+        end
+				
+				DepthNoteTag prev_depth = find_depth_tag(prev);
+				if (depth != null || prev_depth != null) 
+					decrease_depth(start);
+					return true
+        end
+      end
+			
+			return false
+    end		
+
+		# On an InsertEvent we change the selection (if there is one) 
+		# so that it doesn't slice through bullets.
+#		[GLib.ConnectBefore]
+		def check_selection()
+      (start, fin, selected) = self.selection_bounds
+			
+      selection = get_selection_bounds(start, fin)
+
+			if (selection) 
+				augment_selection(start, fin)
+			else 
+				# If the cursor is at the start of a bulleted line
+				# move it so it is after the bullet.
+				if ((start.line_offset == 0 || start.line_offset == 1) && !find_depth_tag(start).nil?) 
+					start.line_offset = 2
+					self.select_range(start, start)
+        end
+      end
+    end
+
+		# Toggle the lines in the selection to have bullets or not
+		def toggle_selection_bullets()
+      (start, fin, selected) = self.selection_bounds
+
+			start = get_iter_at_line_offset(start.line, 0)
+			
+			toggle_on = true
+			if (!find_depth_tag(start).nil?) 
+				bullet_end = get_iter_at_line_offset(start.line, 2)
+				toggle_on = false
+      end
+			
+			start_line = start.line
+			end_line = fin.line
+			
+      start_line.upto(end_line) do |i|
+        curr_line = get_iter_at_line(i)
+        if(toggle_on && find_depth_tag(curr_line).nil?) 
+          puts "increase"
+          increase_depth(curr_line)
+        elsif (!toggle_on && find_depth_tag(curr_line) != null) 
+          puts "delete"
+          bullet_end = get_iter_at_line_offset(curr_line.line, 2)
+          self.delete(curr_line, bullet_end)
+        end
+      end
+    end
+
+		# Increase or decrease the depth of the line at the
+		# cursor depending on wheather it is RTL or LTR
+		def change_cursor_depth_directional(right)
+      (start, fin, selected) = self.selection_bounds
+
+			# If we are moving right then:
+			#   RTL => decrease depth
+			#   LTR => increase depth
+			# We choose to increase or decrease the depth 
+			# based on the fist line in the selection.
+			increase = right
+			start.lineOffset = 0
+			start_depth = find_depth_tag(start)
+			
+			rtl_depth = !start_depth.nil? && start_depth.direction == Pango::DIRECTION_RTL
+			first_char_rtl = start.char.length > 0 && (Pango.Global.UnicharDirection(start.char[0]) == Pango.direction.Rtl)
+			suivant = start
+			
+			if (!start_depth.nil?) 
+				suivant.forward_chars(2)
+			else 
+				# Look for the first non-space character on the line
+				# and use that to determine what direction we should go
+				suivant.forward_sentence_end()
+				suivant.backward_sentence_start()
+				first_char_rtl = suivant.char.length > 0 && (Pango.Global.UnicharDirection(suivant.char[0]) == Pango::DIRECTION_RTL);				
+      end
+			
+			if ((rtl_depth || first_char_rtl) && ((suivant.line == start.line) && !suivant.ends_line())) 
+				increase = !right
+      end
+			
+			change_cursor_depth(increase)
+    end	
+		
+		def change_cursor_depth(increase)
+      (start, fin, selected) = self.selection_bounds
+
+			get_selection_bounds(start, fin)
+			
+      curr_line = Gtk::TextIter.new
+			
+			start_line = start.line
+			end_line = fin.line
+			
+      start_line.upto(end_line) do |i|
+				curr_line = get_iter_at_line(i)
+				if (increase)
+					increase_depth(curr_line)
+				else
+					decrease_depth(curr_line)
+        end
+      end		
+    end
+
+		# Change the writing direction (ie. RTL or LTR) of a bullet.
+		# This makes the bulleted line use the correct indent
+		def change_bullet_direction(iter, direction)
+			iter.line_offset = 0
+			
+			tag = find_depth_tag(iter)
+			if (!tag.nil?) 
+				if (tag.Direction != direction && direction != Pango::DIRECTION_Neutral) 
+					note_table = self.tag_table
+					
+					# Get the depth tag for the given direction
+					new_tag = note_table.get_depth_tag(tag.Depth, direction)
+				
+					suivant = iter
+					suivant.forward_char()
+				
+					# Replace the old depth tag with the new one
+					remove_all_tags(iter, suivant)
+					apply_tag(new_tag, iter, suivant)
+        end
+      end
+    end		
+		
+		def insert_bullet(iter, depth, direction)
+			note_table = self.tag_table
+			tag = note_table.get_depth_tag(depth, direction)
+			bullet = indent_bullets[depth % indent_bullets.length] + " "
+			self.insert_with_tags(iter, bullet, tag)
+    end
+		
+		def remove_bullet(iter)
+      (start, fin, selected) = self.selection_bounds
+
+			line_end.forward_to_line_end()
+
+			if (line_end.lineOffset < 2) 
+				fin = get_iter_at_line_offset(iter.line, 1)
+			else 
+				fin = get_iter_at_line_offset(iter.line, 2)
+      end
+
+			# Go back one more character to delete the \n as well
+			iter = get_iter_at_line(iter.line - 1)
+			iter.forward_to_line_end()
+			
+			self.delete(iter, fin)
+    end	
+		
+		def increase_depth(start)
+      return if (!can_make_bulleted_list?())
+      puts "dans increase"
+				
+			start = get_iter_at_line_offset(start.line, 0)
+			
+			line_end = get_iter_at_line(start.line)
+			line_end.forward_to_line_end()
+
+			fin = start
+			fin.forward_chars(2)
+
+			curr_depth = find_depth_tag(start)
+
+#			Undoer.FreezeUndo();
+			if (curr_depth.nil?) 
+				# Insert a brand new bullet
+				suivant = start
+				suivant.forward_sentence_end()
+				suivant.backward_sentence_start()
+				
+				# Insert the bullet using the same direction
+				# as the text on the line
+				direction = Pango::DIRECTION_LTR
+				if (suivant.char.length > 0 && suivant.line == start.line)
+					direction = Pango.unichar_direction(suivant.char[0])
+        end
+								
+				insert_bullet(start, 0, direction)
+			else 
+				# Remove the previous indent
+				self.delete(start, fin)
+				
+				# Insert the indent at the new depth
+				next_depth = curr_depth.depth + 1
+				insert_bullet(start, next_depth, curr_depth.direction)
+      end	
+#			Undoer.ThawUndo();			
+
+			change_text_depth(this, ChangeDepthEventArgs.new(start.line, true))
+    end
+				
+		def decrease_depth(start)
+      return if (!can_make_bulleted_list?())
+						
+			fin = TextIter.new
+			start = get_iter_at_line_offset(start.line, 0)
+
+			line_end = start
+			line_end.forward_to_line_end()
+
+			if (line_end.line_offset < 2 || start.ends_line()) 
+				fin = start
+			else
+				fin = get_iter_at_line_offset(start.line, 2)
+      end
+
+			curr_depth = find_depth_tag(start)
+
+#			Undoer.FreezeUndo();
+			if (!curr_depth.nil?) 
+				# Remove the previous indent
+				self.delete(start, fin)
+				
+				# Insert the indent at the new depth
+				next_depth = curr_depth.depth - 1
+
+				if (next_depth != -1) 
+					insert_bullet(start, next_depth, curr_depth.direction)
+        end
+      end
+#			Undoer.ThawUndo();
+
+			change_text_depth(self, ChangeDepthEventArgs.new(start.line, false))
+    end
+
+  ##################################################
+  #
+  # SERIALISATION
+  #
+  ##################################################
  	def write_tag(tag, xml, start)
     if tag.instance_of?(NoteTag)
       note_tag = tag
@@ -20,16 +502,6 @@ module NoveditTextbuffer
     end
   end
 
-  def find_depth_tag(iter)
-    depth_tag = nil
-    iter.tags.each do |tag|
-      if (NoteTagTable.TagHasDepth(tag))
-          depth_tag = tag
-          break
-      end
-    end
-    return depth_tag
-  end
 
 	def tag_ends_here(tag, iter, next_iter)
     endshere = (iter.has_tag?(tag) and (!next_iter.has_tag?(tag))) or next_iter.end?
@@ -315,9 +787,9 @@ module NoveditTextbuffer
 #      elsif (element.name == "list-item") 
 #        if (curr_depth >= 0) 
 #          if (attributes["dir"] == "rtl") 
-#            tag_start.tag = note_table.GetDepthTag(curr_depth, Pango.Direction.Rtl)
+#            tag_start.tag = note_table.get_depth_tag(curr_depth, Pango::DIRECTION_RTL)
 #          else
-#            tag_start.tag = note_table.GetDepthTag(curr_depth, Pango.Direction.Ltr)
+#            tag_start.tag = note_table.get_depth_tag(curr_depth, Pango::DIRECTION_LTR)
 #          end							
 #          @list_stack << false
 #        else 
@@ -360,7 +832,7 @@ module NoveditTextbuffer
 #        depth_tag = nil
 
 #        if (!depth_tag.nil? && @list_stack.pop()) 
-#          buffer.InsertBullet(apply_start, depth_tag.Depth, depth_tag.Direction)
+#          buffer.insert_bullet(apply_start, depth_tag.Depth, depth_tag.Direction)
 #          buffer.remove_all_tags(apply_start, apply_start)
 #          offset += 2
 #        elsif(depth_tag.nil?) 
