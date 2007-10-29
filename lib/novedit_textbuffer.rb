@@ -1,5 +1,6 @@
 require 'lib/novedit_texttag.rb'
 require 'lib/novedit_xml.rb'
+require 'lib/unicode.rb'
 
 # Excepté la désérialisation, ce module est essentiellement une traduction en ruby 
 # des fonctions de traitement de texte utilisées dans
@@ -12,7 +13,6 @@ module NoveditTextbuffer
   #
   #############################################
 
-  indent_bullets = ['\u2022', '\u2218', '\u2023']
 
 	# Returns true if the cursor is inside of a bulleted list
   def is_bulleted_list_active?()
@@ -28,8 +28,6 @@ module NoveditTextbuffer
   def	can_make_bulleted_list?()
     insert_mark = self.get_mark('insert')
     iter = self.get_iter_at_mark(insert_mark)
-    p iter
-    puts iter.line
     return (iter.line!=0)
   end
 
@@ -291,10 +289,8 @@ module NoveditTextbuffer
       start_line.upto(end_line) do |i|
         curr_line = get_iter_at_line(i)
         if(toggle_on && find_depth_tag(curr_line).nil?) 
-          puts "increase"
           increase_depth(curr_line)
-        elsif (!toggle_on && find_depth_tag(curr_line) != null) 
-          puts "delete"
+        elsif (!toggle_on && !find_depth_tag(curr_line).nil?) 
           bullet_end = get_iter_at_line_offset(curr_line.line, 2)
           self.delete(curr_line, bullet_end)
         end
@@ -380,6 +376,7 @@ module NoveditTextbuffer
     end		
 		
 		def insert_bullet(iter, depth, direction)
+      indent_bullets = [Unicode::U2022, Unicode::U2218, Unicode::U2023]
 			note_table = self.tag_table
 			tag = note_table.get_depth_tag(depth, direction)
 			bullet = indent_bullets[depth % indent_bullets.length] + " "
@@ -406,7 +403,6 @@ module NoveditTextbuffer
 		
 		def increase_depth(start)
       return if (!can_make_bulleted_list?())
-      puts "dans increase"
 				
 			start = get_iter_at_line_offset(start.line, 0)
 			
@@ -442,8 +438,7 @@ module NoveditTextbuffer
 				insert_bullet(start, next_depth, curr_depth.direction)
       end	
 #			Undoer.ThawUndo();			
-
-			change_text_depth(this, ChangeDepthEventArgs.new(start.line, true))
+#			change_text_depth(self, ChangeDepthEventArgs.new(start.line, true))
     end
 				
 		def decrease_depth(start)
@@ -476,8 +471,7 @@ module NoveditTextbuffer
         end
       end
 #			Undoer.ThawUndo();
-
-			change_text_depth(self, ChangeDepthEventArgs.new(start.line, false))
+#			change_text_depth(self, ChangeDepthEventArgs.new(start.line, false))
     end
 
   ##################################################
@@ -622,7 +616,6 @@ module NoveditTextbuffer
       compt = 0
       while (continue_stack.length > 0 && ((depth_tag.nil? && iter.starts_line?()) || iter.line_offset == 1))
         continue_tag = continue_stack.pop()
-        puts compt+=1
 
         if (!tag_ends_here(continue_tag, iter, next_iter) && iter.has_tag(continue_tag))
           write_tag(continue_tag, xml, true)
