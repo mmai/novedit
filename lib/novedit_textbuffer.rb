@@ -14,6 +14,13 @@ module NoveditTextbuffer
   #############################################
 
 
+  def on_insert_text(iter, text)
+     case text
+     when "\n"
+       add_newline(iter)
+     end
+  end
+
 	# Returns true if the cursor is inside of a bulleted list
   def is_bulleted_list_active?()
     insert_mark = self.get_mark('insert')
@@ -42,11 +49,11 @@ module NoveditTextbuffer
     return depth_tag
   end
 
-  def add_newline
+  def add_newline(iter)
     return false if (!can_make_bulleted_list?)
 
-    insert_mark = self.get_mark('insert')
-		iter = self.get_iter_at_mark(insert_mark)
+		#iter = self.get_iter_at_mark(self.get_mark('insert'))
+    insert_mark = self.create_mark(nil, iter, false)
     iter.line_offset = 0
 			
 		prev_depth = find_depth_tag(iter)
@@ -62,7 +69,7 @@ module NoveditTextbuffer
 				
 				# See if the line was left contentless and remove the bullet
 				# if so.
-				if (iter.ends_line() || insert.line_offset < 3 )
+				if (iter.ends_line?() || insert.line_offset < 3 )
 					start = get_iter_at_line(iter.line)
 					fin = start
 					fin.forward_to_line_end()
@@ -76,12 +83,12 @@ module NoveditTextbuffer
 					self.delete(start, fin)
 					
 					iter = get_iter_at_mark(insert_mark)
-					self.insert(iter, "\n")				
+#					self.insert(iter, "\n")				
         else 
 #					Undoer.FreezeUndo();
 					iter = get_iter_at_mark(insert_mark)
 					offset = iter.offset
-					self.insert(iter, "\n")
+#					self.insert(iter, "\n")
 				
 					iter = get_iter_at_mark(insert_mark)
 					start = get_iter_at_line(iter.line)
@@ -101,7 +108,7 @@ module NoveditTextbuffer
 				
 				return true;
 			# Replace lines starting with '*' or '-' with bullets
-			elsif (iter.char.equals("*") || iter.char.equals("-")) 		
+			elsif (iter.char=='*' || iter.char=='-') 		
 				start = get_iter_at_line_offset(iter.line, 0)
         fin = get_iter_at_line_offset(iter.line, 1)
 				

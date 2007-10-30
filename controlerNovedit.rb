@@ -439,6 +439,10 @@ class ControlerNovedit < UndoRedo
     else
       @model.currentNode.undopool <<  ["insert_text", iter.offset, iter.offset + text.scan(/./).size, text]
     end
+
+    #On appelle les traitements spécifiques novedit_textbuffer
+    @view.buffer.on_insert_text(iter, text)
+
     @model.currentNode.redopool.clear
     set_not_saved
   end

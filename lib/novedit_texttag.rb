@@ -271,12 +271,12 @@ class DepthNoteTag < NoteTag
   @depth = -1
   @direction = Pango::DIRECTION_LTR
 
-  def Depth
-    return depth
+  def depth
+    return @depth
   end
 
-  def Direction
-    return direction
+  def direction
+    return @direction
   end
 
   def initialize(depth=-1, direction=Pango::DIRECTION_LTR)
