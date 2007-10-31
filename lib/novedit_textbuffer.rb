@@ -13,14 +13,26 @@ module NoveditTextbuffer
   #
   #############################################
 
-
-  def on_insert_text(iter, text)
-     case text
-     when "\n"
-       add_newline(iter)
-     end
+  def on_key_pressed(keyval)
+    insert_mark = self.get_mark('insert')
+    iter = self.get_iter_at_mark(insert_mark)
+#    puts "keypressed : "+keyval.to_s
+    case keyval
+    when 65293 #Enter
+      add_newline(iter)
+    when 65289 #Tab
+      add_tab
+    end
   end
 
+
+#  def on_insert_text(iter, text)
+#     case text
+#     when "\n"
+#       add_newline(iter)
+#     end
+#  end
+#
 	# Returns true if the cursor is inside of a bulleted list
   def is_bulleted_list_active?()
     insert_mark = self.get_mark('insert')
@@ -41,6 +53,7 @@ module NoveditTextbuffer
   def find_depth_tag(iter)
     depth_tag = nil
     iter.tags.each do |tag|
+      p tag
       if (NoteTagTable.TagHasDepth(tag))
           depth_tag = tag
           break
@@ -83,12 +96,12 @@ module NoveditTextbuffer
 					self.delete(start, fin)
 					
 					iter = get_iter_at_mark(insert_mark)
-#					self.insert(iter, "\n")				
+					self.insert(iter, "\n")				
         else 
 #					Undoer.FreezeUndo();
 					iter = get_iter_at_mark(insert_mark)
 					offset = iter.offset
-#					self.insert(iter, "\n")
+					self.insert(iter, "\n")
 				
 					iter = get_iter_at_mark(insert_mark)
 					start = get_iter_at_line(iter.line)
@@ -97,13 +110,13 @@ module NoveditTextbuffer
 					# as the first character on the new line
 #					Pango::DIRECTION_direction = prev_depth.direction
 					if (iter.char != "\n" && iter.char.length > 0)
-						direction = Pango.unichar_direction(iter.Char[0])
+						direction = Pango.unichar_direction(iter.char[0])
           end
 
 					insert_bullet(start, prev_depth.depth, direction)
 #					Undoer.ThawUndo();
 					
-					new_bullet_inserted(self, insert_bulletEventArgs.new(offset, prev_depth.depth, direction))
+#					new_bullet_inserted(self, insert_bulletEventArgs.new(offset, prev_depth.depth, direction))
         end
 				
 				return true;
@@ -154,13 +167,15 @@ module NoveditTextbuffer
 		def add_tab()
 			insert_mark = self.get_mark("insert")
 			iter = get_iter_at_mark(insert_mark)
-			iter.lineOffset = 0		
+			iter.line_offset = 0		
 			
 			depth = find_depth_tag(iter)
 			
 			# If the cursor is at a line with a depth and a tab has been
 			# inserted then we increase the indent depth of that line.
 			if (!depth.nil?) 
+        puts "avant:"+depth.depth.to_s
+        p iter
 				increase_depth(iter)
 				return true
       end		
@@ -411,18 +426,21 @@ module NoveditTextbuffer
 		def increase_depth(start)
       return if (!can_make_bulleted_list?())
 				
-			start = get_iter_at_line_offset(start.line, 0)
+#			start = get_iter_at_line_offset(start.line, 0)
 			
 			line_end = get_iter_at_line(start.line)
 			line_end.forward_to_line_end()
 
+      p start
 			fin = start
 			fin.forward_chars(2)
 
 			curr_depth = find_depth_tag(start)
+      p start
 
 #			Undoer.FreezeUndo();
 			if (curr_depth.nil?) 
+        puts "depthnil"
 				# Insert a brand new bullet
 				suivant = start
 				suivant.forward_sentence_end()
@@ -437,6 +455,7 @@ module NoveditTextbuffer
 								
 				insert_bullet(start, 0, direction)
 			else 
+        puts "depth : "+curr_depth.depth.to_s
 				# Remove the previous indent
 				self.delete(start, fin)
 				

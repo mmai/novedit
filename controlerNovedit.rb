@@ -441,7 +441,7 @@ class ControlerNovedit < UndoRedo
     end
 
     #On appelle les traitements spécifiques novedit_textbuffer
-    @view.buffer.on_insert_text(iter, text)
+#    @view.buffer.on_insert_text(iter, text)
 
     @model.currentNode.redopool.clear
     set_not_saved

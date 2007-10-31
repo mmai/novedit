@@ -102,6 +102,7 @@ class ViewNovedit
     @textview.buffer = Gtk::TextBuffer.new(NoteTagTable.new)
     @buffer = @textview.buffer
     @buffer.extend(NoveditTextbuffer)
+    @textview.signal_connect("key-press-event") { |widget, event| @buffer.on_key_pressed(event.keyval)}  #Pour les traitements de type gestion des puces
 
     @buffer.signal_connect("insert_text") do |w, iter, text, length|
       @controler.on_insert_text(iter, text) if @user_action
