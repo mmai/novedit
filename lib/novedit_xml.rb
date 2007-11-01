@@ -61,6 +61,7 @@ class NoveditXml
 
   def WriteStartElement(euh, name, euh2)
     close_text()
+    puts name
     @tab_nodes << TreeXml.new(name)
   end
 
@@ -91,6 +92,7 @@ class NoveditXml
   end
 
   def WriteFullEndElement()
+    WriteEndElement()
     puts "TODO:</full>"
   end
 

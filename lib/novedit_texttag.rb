@@ -24,7 +24,7 @@ class NoteTag < Gtk::TextTag
 #  end
 #
   def initialize(tag)
-    if !tag.instance_of?(NoteTag)
+    if !(tag.instance_of?(NoteTag) or tag.instance_of?(DepthNoteTag))
          if (tag.instance_of?(Gtk::TextTag))
            @element_name = tag.name
          else
@@ -291,13 +291,13 @@ class DepthNoteTag < NoteTag
         xml.WriteStartElement(nil, "list-item", nil)
 
         #					 Write the list items writing direction
-        xml.WriteStartAttribute(nil, "dir", nil)
-        if (Direction == Pango.Direction.Rtl)
-          xml.WriteString("rtl")
-        else
-          xml.WriteString("ltr")
-        end
-        xml.WriteEndAttribute()
+#        xml.WriteStartAttribute(nil, "dir", nil)
+#        if (Direction == Pango.Direction.Rtl)
+#          xml.WriteString("rtl")
+#        else
+#          xml.WriteString("ltr")
+#        end
+#        xml.WriteEndAttribute()
       else 
         xml.WriteEndElement()
       end
