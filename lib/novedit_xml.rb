@@ -98,7 +98,6 @@ class NoveditXml
     else
       @tab_nodes.last.addNode(lastNode)
     end
-    puts "TODO:</full>"
   end
 
   def MoveToNextAttribute()

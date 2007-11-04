@@ -27,14 +27,6 @@ module NoveditTextbuffer
     end
   end
 
-
-#  def on_insert_text(iter, text)
-#     case text
-#     when "\n"
-#       add_newline(iter)
-#     end
-#  end
-#
 	# Returns true if the cursor is inside of a bulleted list
   def is_bulleted_list_active?()
     insert_mark = self.get_mark('insert')
@@ -81,8 +73,7 @@ module NoveditTextbuffer
 
       insert = self.get_iter_at_mark(insert_mark)
 
-      # See if the line was left contentless and remove the bullet
-      # if so.
+      # See if the line was left contentless and remove the bullet if so.
       if (iter.ends_line?() || insert.line_offset < 3 )
         start = get_iter_at_line(iter.line)
         fin = start.dup
@@ -558,6 +549,17 @@ module NoveditTextbuffer
       new_list = false
       depth_tag = find_depth_tag(iter)
 
+      #Est-on sur le dernier charactère d'une ligne de liste ?
+      end_of_depth_line = line_has_depth && iter.ends_line? 
+      #La ligne est-elle vide ?
+      at_empty_line = iter.ends_line? && iter.starts_line?
+      #Est-ce que la prochaine ligne est une ligne de liste ?
+      next_line_has_depth = false
+      if (iter.line < buffer.line_count - 1) 
+        iter_next_line = buffer.get_iter_at_line(iter.line+1)
+        next_line_has_depth = !(buffer.find_depth_tag(iter_next_line).nil?)
+      end
+
       # If we are at a character with a depth tag we are at the 
       # start of a bulleted line
       if (!depth_tag.nil? && iter.starts_line?)
@@ -609,18 +611,7 @@ module NoveditTextbuffer
       end
       # fin gestion list/list-items
 
-      #Est-on sur le dernier charactère d'une ligne de liste ?
-#      end_of_depth_line = line_has_depth && (iter.ends_line? or next_iter.ends_line?())
-      end_of_depth_line = line_has_depth && iter.ends_line? 
-      #La ligne est-elle vide ?
-      at_empty_line = iter.ends_line? && iter.starts_line?
-      #Est-ce que la prochaine ligne est une ligne de liste ?
-      next_line_has_depth = false
-      if (iter.line < buffer.line_count - 1) 
-        iter_next_line = buffer.get_iter_at_line(iter.line+1)
-        next_line_has_depth = !(buffer.find_depth_tag(iter_next_line).nil?)
-      end
-
+    
       if !end_of_depth_line
         # Output any tags that begin at the current position
         iter.tags.each do |tag|
@@ -651,7 +642,7 @@ module NoveditTextbuffer
       end
 
 
-      if (end_of_depth_line || (next_line_has_depth && (next_iter.ends_line?() || at_empty_line))) 
+      if (end_of_depth_line || (next_line_has_depth && (iter.ends_line? || at_empty_line))) 
         # Close all tags in the tag_stack
         while (tag_stack.length > 0) 
           existing_tag = tag_stack.pop()
@@ -659,7 +650,7 @@ module NoveditTextbuffer
           # Any tags which continue across the indented line are added to
           # the continue_stack to be reopened at the start of the next <list-item>
           if (!tag_ends_here(existing_tag, iter, next_iter)) 
-            continue_stack.push(existing_tag)
+            continue_stack << existing_tag
           end
           write_tag(existing_tag, xml, false)
         end					
@@ -732,14 +723,9 @@ module NoveditTextbuffer
     startIter = buffer.start_iter
     offset = startIter.offset
     @deserialize_stack = Array.new
-    curr_depth = -1
-
-    # A stack of boolean values which mark if a
-    # list-item contains content other than another list
-    @list_stack = Array.new
+    @curr_depth = -1
 
     xmldoc = REXML::Document.new(strXml)
-
     xmldoc.elements.each do |element|
       lireXml(element, offset)
     end
@@ -752,92 +738,33 @@ module NoveditTextbuffer
   def lireXml(element, offset)
     buffer = self
     note_table = buffer.tag_table
-#    dbg(element.name)
     case element.name
     #when "note-content" #Noeud racine
-    when "SignificantWhitespace"
-      insert_at = buffer.get_iter_at_offset(offset)
-      buffer.insert(insert_at, xml.Value)
-
-      offset += xml.Value.Length
-
-      # If we are inside a <list-item> mark off 
-      # that we have encountered some content 
-      if (@list_stack.Count > 0) 
-        @list_stack.pop()
-        @list_stack << true
-      end
     when "t" #Noeud texte
       buffer.insert(buffer.end_iter, element.text)
-    else
-      if (!element.name.nil?)
-      #Debut tag
-      mark_start = buffer.create_mark(nil, buffer.end_iter, true)
-      
-#      tag_start = TagStart.new
-#      tag_start.start = offset
-#      if (!note_table.nil? && note_table.IsDynamicTagRegistered(element.name)) 
-#        tag_start.tag = note_table.CreateDynamicTag(element.name)
-#      elsif (element.name == "list") 
-#        curr_depth += 1
-#        break
-#      elsif (element.name == "list-item") 
-#        if (curr_depth >= 0) 
-#          if (attributes["dir"] == "rtl") 
-#            tag_start.tag = note_table.get_depth_tag(curr_depth, Pango::DIRECTION_RTL)
-#          else
-#            tag_start.tag = note_table.get_depth_tag(curr_depth, Pango::DIRECTION_LTR)
-#          end							
-#          @list_stack << false
-#        else 
-#          puts("</list> tag mismatch")
-#        end
-#      else 
-#        tag_start.tag = buffer.tag_table.lookup(element.name)
-#        tag_start = buffer.tag_table.lookup(element.name)
-#      end
-#      if (tag_start.tag.instance_of?(NoteTag)) 
-#        tag_start.tag.Read(xml, true)
-#        tag_start.tag.Read(tag_start.tag, true)
-#      end
-#      @deserialize_stack << tag_start
-
-      #Traitement des noeuds enfants
+    when "list"
+      @curr_depth += 1
       element.elements.each do |elem|
         lireXml(elem, offset)
       end
-
-      #Fin tag
-#      if (element.name == "list") 
-#        curr_depth -=1
-#        break
-#      end
-
-#      if (! tag_start.tag.nil?)
-#        apply_start = buffer.get_iter_at_offset(tag_start.start)
-#        apply_end = buffer.get_iter_at_offset(offset)
-
-#        if (tag_start.tag.instance_of?(NoteTag)) 
-#          tag_start.tag.Read(xml, false)
-#          tag_start.tag.Read(tag_start.tag, false)
-#        end
-
-        # Insert a bullet if we have reached a closing 
-        # <list-item> tag, but only if the <list-item>
-        # had content.
-#        depth_tag = DepthNoteTag.new(tag_start.tag.name, 'direction??')
-#        depth_tag = nil
-
-#        if (!depth_tag.nil? && @list_stack.pop()) 
-#          buffer.insert_bullet(apply_start, depth_tag.Depth, depth_tag.Direction)
-#          buffer.remove_all_tags(apply_start, apply_start)
-#          offset += 2
-#        elsif(depth_tag.nil?) 
-          tag = buffer.tag_table[element.name]
-          buffer.apply_tag(tag, buffer.get_iter_at_mark(mark_start), buffer.end_iter) if !tag.nil?
-#          dbg(element.name)
-#        end
-#      end
+      @curr_depth -= 1
+    when "list-item"
+      buffer.insert_bullet(buffer.end_iter, @curr_depth,direction = Pango::DIRECTION_LTR)
+      element.elements.each do |elem|
+        lireXml(elem, offset)
+      end
+      buffer.insert(buffer.end_iter, "\n")
+    else
+      if (!element.name.nil?)
+        #Debut tag
+        mark_start = buffer.create_mark(nil, buffer.end_iter, true)
+        #Traitement des noeuds enfants
+        element.elements.each do |elem|
+          lireXml(elem, offset)
+        end
+        #Fin tag
+        tag = buffer.tag_table[element.name]
+        buffer.apply_tag(tag, buffer.get_iter_at_mark(mark_start), buffer.end_iter) if !tag.nil?
       end
     end
   end
