@@ -52,7 +52,7 @@ class NoveditXml
   end
 
   def close_text
-    if @tab_nodes.length>0 && (@tab_nodes.last.name == "t")
+    if @tab_nodes.length>1 && (@tab_nodes.last.name == "t")
       lastNode = @tab_nodes.pop
       @tab_nodes.last.addNode(lastNode)
     end
@@ -61,7 +61,6 @@ class NoveditXml
 
   def WriteStartElement(euh, name, euh2)
     close_text()
-    puts name
     @tab_nodes << TreeXml.new(name)
   end
 
@@ -81,7 +80,7 @@ class NoveditXml
     close_text()
     lastNode = @tab_nodes.pop
     if @tab_nodes.length == 0
-      @xml = lastNode
+      @xml = lastNode if !lastNode.nil?
     else
       @tab_nodes.last.addNode(lastNode)
     end
@@ -92,7 +91,13 @@ class NoveditXml
   end
 
   def WriteFullEndElement()
-    WriteEndElement()
+    lastNode = @tab_nodes.pop
+    if @tab_nodes.length == 0
+      puts "pppu rien!"
+      @xml = lastNode if !lastNode.nil?
+    else
+      @tab_nodes.last.addNode(lastNode)
+    end
     puts "TODO:</full>"
   end
 

@@ -514,6 +514,7 @@ module NoveditTextbuffer
         xml.WriteEndElement()
       end
     end
+#    puts tag.name
   end
 
 
@@ -522,14 +523,10 @@ module NoveditTextbuffer
     return endshere
   end
 
-
-  # This is taken almost directly from GAIM.  There must be a
-  # better way to do this...
-  #		def Serialize (Gtk.TextBuffer buffer, Gtk.TextIter   start, Gtk.TextIter   end, XmlTextWriter  xml) 
-  #def serialize(buffer, startIter, endIter, xml) 
   def serialize() 
     xml = NoveditXml.new
     buffer = self
+#   buffer.extend(NoveditTextbuffer)
     startIter = buffer.start_iter
     endIter = buffer.end_iter
 
@@ -556,48 +553,37 @@ module NoveditTextbuffer
       end
     end
 
-#    while (!iter.equal?(endIter) && !iter.char.nil?)
     while (iternext_ok and !iter.equal?(endIter) )
+#      xml.WriteString("char:"+iter.char)
       new_list = false
-
-      buffer.extend(NoveditTextbuffer)
-      depth_tag = buffer.find_depth_tag(iter)
+      depth_tag = find_depth_tag(iter)
 
       # If we are at a character with a depth tag we are at the 
       # start of a bulleted line
       if (!depth_tag.nil? && iter.starts_line?)
         line_has_depth = true
-
         if (iter.line == prev_depth_line + 1) 
           # Line part of existing list
-
           if (depth_tag.depth == prev_depth)
-            # Line same depth as previous
-            # Close previous <list-item>
-            xml.WriteEndElement()
-
+            # Line same depth as previous, close previous <list-item>
+            #xml.WriteEndElement()
           elsif (depth_tag.depth > prev_depth)
             # Line of greater depth								
             xml.WriteStartElement(nil, "list", nil)
-
-            i = prev_depth + 2
-            while (i <= depth_tag.depth)
+            i = prev_depth + 1
+            while (i < depth_tag.depth)
               # Start a new nested list
               xml.WriteStartElement(nil, "list-item", nil)
               xml.WriteStartElement(nil, "list", nil)
               i+=1
             end			
           else 
-            # Line of lesser depth
-            # Close previous <list-item>
-            # and nested <list>s
+            # Line of lesser depth, close previous <list-item> and nested <list>s
             xml.WriteEndElement()
-
-            int i = prev_depth
+            i = prev_depth
             while (i > depth_tag.depth) 
               # Close nested <list>
               xml.WriteEndElement()
-
               # Close <list-item>
               xml.WriteEndElement()
               i-=1
@@ -618,65 +604,63 @@ module NoveditTextbuffer
         prev_depth = depth_tag.depth
 
         # Start a new <list-item>
-        write_tag(depth_tag, xml, true)
+#        write_tag(depth_tag, xml, true)
+#        puts "---"
       end
+      # fin gestion list/list-items
 
-      # Output any tags that begin at the current position
-      iter.tags.each do |tag|
-        if (iter.begins_tag?(tag)) 
-#          if (!(tag.instance_of?(DepthNoteTag)) && NoteTagTable.TagIsSerializable(tag)) 
-#          if (NoteTagTable.TagIsSerializable(tag)) 
-            write_tag(tag, xml, true)
-            tag_stack << tag
-          #end
-        end
-      end
-
-      # Reopen tags that continued across indented lines 
-      # or into or out of lines with a depth
-      compt = 0
-      while (continue_stack.length > 0 && ((depth_tag.nil? && iter.starts_line?()) || iter.line_offset == 1))
-        continue_tag = continue_stack.pop()
-
-        if (!tag_ends_here(continue_tag, iter, next_iter) && iter.has_tag?(continue_tag))
-          write_tag(continue_tag, xml, true)
-          tag_stack.push(continue_tag)
-        end
-      end			
-
-      # Hidden character representing an anchor
-      if (iter.char[0] == 0xFFFC) 
-        puts("Got child anchor!!!")
-        if (iter.child_anchor != nil) 
-          string serialize = iter.child_anchor.data["serialize"].to_s
-          xml.WriteRaw(serialize) unless serialize.nil? 
-        end
-      elsif (depth_tag.nil?) 
-        xml.WriteString(iter.char)
-      end
-
-      end_of_depth_line = line_has_depth && next_iter.ends_line?()
-
+      #Est-on sur le dernier charactère d'une ligne de liste ?
+#      end_of_depth_line = line_has_depth && (iter.ends_line? or next_iter.ends_line?())
+      end_of_depth_line = line_has_depth && iter.ends_line? 
+      #La ligne est-elle vide ?
+      at_empty_line = iter.ends_line? && iter.starts_line?
+      #Est-ce que la prochaine ligne est une ligne de liste ?
       next_line_has_depth = false
       if (iter.line < buffer.line_count - 1) 
-        next_line = buffer.get_iter_at_line(iter.line+1)
-        next_line_has_depth = !(buffer.find_depth_tag(next_line).nil?)
+        iter_next_line = buffer.get_iter_at_line(iter.line+1)
+        next_line_has_depth = !(buffer.find_depth_tag(iter_next_line).nil?)
       end
 
-      at_empty_line = iter.ends_line? && iter.starts_line?
+      if !end_of_depth_line
+        # Output any tags that begin at the current position
+        iter.tags.each do |tag|
+          if (iter.begins_tag?(tag)) 
+            #          if (!(tag.instance_of?(DepthNoteTag)) && NoteTagTable.TagIsSerializable(tag)) 
+            #          if (NoteTagTable.TagIsSerializable(tag)) 
+            write_tag(tag, xml, true)
+            tag_stack << tag
+            #end
+          end
+        end
+
+        # Reopen tags that continued across indented lines 
+        # or into or out of lines with a depth
+        compt = 0
+        while (continue_stack.length > 0 && ((depth_tag.nil? && iter.starts_line?()) || iter.line_offset == 1))
+          continue_tag = continue_stack.pop()
+          if (!tag_ends_here(continue_tag, iter, next_iter) && iter.has_tag?(continue_tag))
+            write_tag(continue_tag, xml, true)
+            tag_stack << continue_tag
+          end
+        end			
+
+        #On ecrit le caractère si ce n'est pas un caractère de liste
+        if (depth_tag.nil?) 
+          xml.WriteString(iter.char)
+        end
+      end
+
 
       if (end_of_depth_line || (next_line_has_depth && (next_iter.ends_line?() || at_empty_line))) 
         # Close all tags in the tag_stack
         while (tag_stack.length > 0) 
           existing_tag = tag_stack.pop()
 
-          # Any tags which continue across the indented
-          # line are added to the continue_stack to be
-          # reopened at the start of the next <list-item>
+          # Any tags which continue across the indented line are added to
+          # the continue_stack to be reopened at the start of the next <list-item>
           if (!tag_ends_here(existing_tag, iter, next_iter)) 
             continue_stack.push(existing_tag)
           end
-
           write_tag(existing_tag, xml, false)
         end					
       else 
@@ -684,21 +668,17 @@ module NoveditTextbuffer
           if (tag_ends_here(tag, iter, next_iter) && NoteTagTable.TagIsSerializable(tag) && !(tag.instance_of?(DepthNoteTag))) 
             while (tag_stack.length > 0) 
               existing_tag = tag_stack.pop()
-
               if (!tag_ends_here(existing_tag, iter, next_iter)) 
-                replay_stack.push(existing_tag)
+                replay_stack << existing_tag
               end
-
               write_tag(existing_tag, xml, false)
             end
 
             # Replay the replay queue.
-            # Restart any tags that
-            # overlapped with the ended
-            # tag...
+            # Restart any tags that overlapped with the ended tag...
             while (replay_stack.length > 0) 
               replay_tag = replay_stack.pop()
-              tag_stack.push(replay_tag)
+              tag_stack << replay_tag
               write_tag(replay_tag, xml, true)
             end				
           end
@@ -721,7 +701,7 @@ module NoveditTextbuffer
           # Close <list>
           xml.WriteFullEndElement()
           # Close <list-item>
-          xml.WriteFullEndElement()
+#          xml.WriteFullEndElement()
           i-=1
         end
         prev_depth = -1
@@ -730,6 +710,7 @@ module NoveditTextbuffer
       iternext_ok  = iter.forward_char()
       next_iter.forward_char()
     end
+    # Fin de la boucle de traitement de chaque iter
 
     # Empty any trailing tags left in tag_stack..
     while (tag_stack.length > 0) 
@@ -738,6 +719,8 @@ module NoveditTextbuffer
     end
 
     xml.WriteEndElement() # </note-content>
+    
+    puts "["+xml.to_s+"]"
     return xml.to_s
   end
 
