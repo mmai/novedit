@@ -565,17 +565,17 @@ module NoveditTextbuffer
       if (!depth_tag.nil? && iter.starts_line?)
         line_has_depth = true
         if (iter.line == prev_depth_line + 1) 
-          # Line part of existing list
+          # Line part of existing list, close previous <list-item>
+          xml.WriteEndElement()
           if (depth_tag.depth == prev_depth)
-            # Line same depth as previous, close previous <list-item>
-            #xml.WriteEndElement()
+            # Line same depth as previous
           elsif (depth_tag.depth > prev_depth)
             # Line of greater depth								
-            xml.WriteStartElement(nil, "list", nil)
-            i = prev_depth + 1
+#            xml.WriteStartElement(nil, "list", nil)
+            i = prev_depth 
             while (i < depth_tag.depth)
               # Start a new nested list
-              xml.WriteStartElement(nil, "list-item", nil)
+#              xml.WriteStartElement(nil, "list-item", nil)
               xml.WriteStartElement(nil, "list", nil)
               i+=1
             end			
@@ -593,13 +593,14 @@ module NoveditTextbuffer
           end	
         else 
           # Start of new list
-          xml.WriteStartElement(nil, "list", nil)
-          i = 1
+#          xml.WriteStartElement(nil, "list", nil)
+          i = 0
           while ( i <= depth_tag.depth) 
-            xml.WriteStartElement(nil, "list-item", nil)
+#            xml.WriteStartElement(nil, "list-item", nil)
             xml.WriteStartElement(nil, "list", nil)
             i += 1
           end
+#            xml.WriteStartElement(nil, "list-item", nil)
           new_list = true
         end
 
@@ -616,11 +617,11 @@ module NoveditTextbuffer
         # Output any tags that begin at the current position
         iter.tags.each do |tag|
           if (iter.begins_tag?(tag)) 
-            #          if (!(tag.instance_of?(DepthNoteTag)) && NoteTagTable.TagIsSerializable(tag)) 
             #          if (NoteTagTable.TagIsSerializable(tag)) 
-            write_tag(tag, xml, true)
-            tag_stack << tag
-            #end
+              write_tag(tag, xml, true)
+            if (!(tag.instance_of?(DepthNoteTag)) && NoteTagTable.TagIsSerializable(tag)) 
+              tag_stack << tag
+            end
           end
         end
 
