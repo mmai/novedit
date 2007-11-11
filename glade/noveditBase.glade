@@ -303,7 +303,7 @@
             <child>
               <widget class="GtkToolButton" id="quit_button">
                 <property name="visible">True</property>
-                <property name="tooltip" translatable="yes">Exit Simple Text Editor</property>
+                <property name="tooltip" translatable="yes">Exit</property>
                 <property name="stock_id">gtk-quit</property>
                 <signal name="clicked" handler="on_quit"/>
               </widget>
@@ -365,7 +365,7 @@
                           <widget class="GtkToolButton" id="button_bold">
                             <property name="visible">True</property>
                             <property name="tooltip" translatable="yes">Bold</property>
-                            <property name="stock_id">gtk-bold</property>
+                            <property name="icon">text_bold.png</property>
                             <signal name="clicked" handler="on_text_bold"/>
                           </widget>
                           <packing>
@@ -376,7 +376,7 @@
                           <widget class="GtkToolButton" id="button_italic">
                             <property name="visible">True</property>
                             <property name="tooltip" translatable="yes">Italic</property>
-                            <property name="stock_id">gtk-italic</property>
+                            <property name="icon">text_italic.png</property>
                             <signal name="clicked" handler="on_text_italic"/>
                           </widget>
                           <packing>
@@ -387,7 +387,7 @@
                           <widget class="GtkToolButton" id="button_justify-left">
                             <property name="visible">True</property>
                             <property name="tooltip" translatable="yes">Italic</property>
-                            <property name="stock_id">gtk-justify-left</property>
+                            <property name="icon">text_align_left.png</property>
                             <signal name="clicked" handler="on_justify-left"/>
                           </widget>
                           <packing>
@@ -398,18 +398,18 @@
                           <widget class="GtkToolButton" id="button_justify-right">
                             <property name="visible">True</property>
                             <property name="tooltip" translatable="yes">Italic</property>
-                            <property name="stock_id">gtk-justify-right</property>
+                            <property name="icon">text_align_right.png</property>
                             <signal name="clicked" handler="on_justify-right"/>
                           </widget>
                           <packing>
                             <property name="expand">False</property>
                           </packing>
-                          </child>
-                          <child>
+                        </child>
+                        <child>
                           <widget class="GtkToolButton" id="button_centered">
                             <property name="visible">True</property>
                             <property name="tooltip" translatable="yes">Italic</property>
-                            <property name="stock_id">gtk-justify-center</property>
+                            <property name="icon">text_align_center.png</property>
                             <signal name="clicked" handler="on_text_centered"/>
                           </widget>
                           <packing>
@@ -420,7 +420,7 @@
                           <widget class="GtkToolButton" id="button_strikethrough">
                             <property name="visible">True</property>
                             <property name="tooltip" translatable="yes">Italic</property>
-                            <property name="stock_id">gtk-strikethrough</property>
+                            <property name="icon">text_strikethrough.png</property>
                             <signal name="clicked" handler="on_text_strikethrough"/>
                           </widget>
                           <packing>
@@ -431,7 +431,7 @@
                           <widget class="GtkToolButton" id="button_highlight">
                             <property name="visible">True</property>
                             <property name="tooltip" translatable="yes">Italic</property>
-                            <property name="stock_id">gtk-select-color</property>
+                            <property name="icon">tag_yellow.png</property>
                             <signal name="clicked" handler="on_text_highlight"/>
                           </widget>
                           <packing>
@@ -442,7 +442,7 @@
                           <widget class="GtkToolButton" id="button_bulleted-list">
                             <property name="visible">True</property>
                             <property name="tooltip" translatable="yes">Italic</property>
-                            <property name="stock_id">gnome-stock-text-bulleted-list</property>
+                            <property name="icon">text_list_bullets.png</property>
                             <signal name="clicked" handler="on_bulleted-list"/>
                           </widget>
                           <packing>
@@ -524,18 +524,6 @@
                                   <placeholder/>
                                 </child>
                                 <child>
-                                  <widget class="GtkLabel" id="labelNbWordsValue">
-                                    <property name="visible">True</property>
-                                    <property name="xalign">0</property>
-                                  </widget>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="right_attach">2</property>
-                                    <property name="x_options">GTK_FILL</property>
-                                    <property name="y_options"></property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <widget class="GtkLabel" id="labelNbWords">
                                     <property name="visible">True</property>
                                     <property name="xalign">0</property>
@@ -543,6 +531,18 @@
                                     <property name="use_markup">True</property>
                                   </widget>
                                   <packing>
+                                    <property name="x_options">GTK_FILL</property>
+                                    <property name="y_options"></property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <widget class="GtkLabel" id="labelNbWordsValue">
+                                    <property name="visible">True</property>
+                                    <property name="xalign">0</property>
+                                  </widget>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="right_attach">2</property>
                                     <property name="x_options">GTK_FILL</property>
                                     <property name="y_options"></property>
                                   </packing>
