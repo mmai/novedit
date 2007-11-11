@@ -637,8 +637,10 @@ module NoveditTextbuffer
         end			
 
         #On ecrit le caractère si ce n'est pas un caractère de liste
-        if (depth_tag.nil?) 
-          xml.WriteString(iter.char)
+        if (depth_tag.nil? )
+#          if !(iter.char=="\n" and (prev_depth_line>-1) and (iter.line=prev_depth_line+1))
+            xml.WriteString(iter.char)
+#          end
         end
       end
 
@@ -688,14 +690,8 @@ module NoveditTextbuffer
       # next line does not have a depth line close all <list> 
       # and <list-item> tags that remain open
       if (end_of_depth_line && !next_line_has_depth) 
-        i = prev_depth
-        while (i>-1)
-          # Close <list>
-          xml.WriteFullEndElement()
-          # Close <list-item>
-#          xml.WriteFullEndElement()
-          i-=1
-        end
+        xml.WriteFullEndElement()
+        xml.WriteString("\n")
         prev_depth = -1
       end
 
@@ -712,7 +708,7 @@ module NoveditTextbuffer
 
     xml.WriteEndElement() # </note-content>
     
-    puts "["+xml.to_s+"]"
+#    puts "["+xml.to_s+"]"
     return xml.to_s
   end
 
