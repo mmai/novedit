@@ -13,20 +13,7 @@ module NoveditTextbuffer
   #
   #############################################
 
-  def on_key_pressed(keyval)
-    insert_mark = self.get_mark('insert')
-    iter = self.get_iter_at_mark(insert_mark)
-#    puts "keypressed : "+keyval.to_s
-    case keyval
-    when 65293 #Enter
-      add_newline(iter)
-    when 65289 #Tab
-      add_tab
-    when 65288 #Backspace
-      remove_tab
-    end
-  end
-
+  
 	# Returns true if the cursor is inside of a bulleted list
   def is_bulleted_list_active?()
     insert_mark = self.get_mark('insert')
@@ -400,9 +387,7 @@ module NoveditTextbuffer
 		
 		def remove_bullet(iter)
       (start, fin, selected) = self.selection_bounds
-
 			line_end.forward_to_line_end()
-
 			if (line_end.line_offset < 2) 
 				fin = get_iter_at_line_offset(iter.line, 1)
 			else 

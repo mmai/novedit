@@ -446,7 +446,25 @@ class ControlerNovedit < UndoRedo
     @model.currentNode.redopool.clear
     set_not_saved
   end
-  
+
+  def on_key_pressed(keyval)
+    key_inserted = false
+    insert_mark = @view.buffer.get_mark('insert')
+    iter = @view.buffer.get_iter_at_mark(insert_mark)
+#    puts "keypressed : "+keyval.to_s
+    @view.user_action = true
+    case keyval
+    when 65293 #Enter
+      key_inserted = @view.buffer.add_newline(iter)
+    when 65289 #Tab
+      key_inserted = @view.buffer.add_tab
+    when 65288 #Backspace
+      key_inserted = @view.buffer.remove_tab
+    end
+    @view.user_action = false
+    return key_inserted
+  end
+
   def on_delete_range(start_iter, end_iter)
     text = @view.buffer.get_text(start_iter, end_iter)
     @model.currentNode.undopool <<  ["delete_range", start_iter.offset, end_iter.offset, text]

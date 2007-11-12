@@ -6,7 +6,7 @@ require 'libglade2'
 require 'lib/novedit_textbuffer.rb'
 
 class ViewNovedit
-  attr_accessor :treeview, :textview, :buffer, :wordcount_value, :appwindow
+  attr_accessor :treeview, :textview, :buffer, :wordcount_value, :appwindow, :user_action
   
   #
   # Common
@@ -102,7 +102,10 @@ class ViewNovedit
     @textview.buffer = Gtk::TextBuffer.new(NoteTagTable.new)
     @buffer = @textview.buffer
     @buffer.extend(NoveditTextbuffer)
-    @textview.signal_connect("key-press-event") { |widget, event| @buffer.on_key_pressed(event.keyval)}  #Pour les traitements de type gestion des puces
+    @textview.signal_connect("key-press-event") do |widget, event|
+#      @buffer.on_key_pressed(event.keyval)  #Pour les traitements de type gestion des puces
+      @controler.on_key_pressed(event.keyval)  #Pour les traitements de type gestion des puces
+    end
 
     @buffer.signal_connect("insert_text") do |w, iter, text, length|
       @controler.on_insert_text(iter, text) if @user_action
