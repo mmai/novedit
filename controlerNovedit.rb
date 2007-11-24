@@ -43,7 +43,6 @@ class ControlerNovedit < UndoRedo
   
   @model
   @view
-  @treemodel
   
   @tab_infos
   
