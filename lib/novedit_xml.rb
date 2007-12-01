@@ -90,9 +90,9 @@ class NoveditXml
     @tab_nodes.last.attrs[cle] = valeur
   end
 
-  def WriteFullEndElement(list_names=['list', 'list-item'])
+  def WriteFullEndElement(list_names=['list', 'list-item', 't'])
     while (list_names.include?(@tab_nodes.last.name))
-      WriteEndElement
+      WriteEndElement()
     end
   end
 

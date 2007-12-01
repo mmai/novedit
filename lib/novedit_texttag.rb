@@ -199,13 +199,10 @@ class NoteTag < Gtk::TextTag
     return retval
   end
 
-  def Activated
-  end
-
   def Image
     return image
   end
-  def Image=
+  def Image=(value)
     image = value
     if (!Changed.nil?) 
       args = Gtk::TagChangedArgs.new
@@ -229,7 +226,7 @@ end
 class DynamicNoteTag < NoteTag
   @attributes
 
-  def DynamicNoteTag()
+  def initialize
     super
   end
 

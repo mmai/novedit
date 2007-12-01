@@ -3,8 +3,9 @@
 #
 
 require 'observer'
-require 'yaml'
 require 'lib/tree'
+
+require 'lib/novedit_io_base'
 
 class NoveditNode < TreeNode
   attr_accessor :name, :undopool, :redopool, :text, :is_open
@@ -111,23 +112,24 @@ class NoveditModel
       rescue
         errmes=$!.to_s
         case errmes
-          when "novedit:modules:io:Bad format"
-            err_message = _("Bad file format")
+        when "novedit:modules:io:Bad format"
+          err_message = _("Bad file format")
         end
       end
-      
-        if lu.nil?
-          dialog = Gtk::MessageDialog.new(@appwindow, Gtk::Dialog::MODAL, 
-                                        Gtk::MessageDialog::ERROR, 
-                                        Gtk::MessageDialog::BUTTONS_CLOSE, 
-                                        "Cannot open " + @filename + ((err_message.nil?)?errmes:err_message))
-          dialog.run
-          dialog.destroy
-          open_file(nil)
-        else
-          @rootNode = lu
-          @is_saved = true
-        end
+
+      if lu.nil?
+#        dialog = Gtk::MessageDialog.new(@appwindow, Gtk::Dialog::MODAL, 
+#                                        Gtk::MessageDialog::ERROR, 
+#                                        Gtk::MessageDialog::BUTTONS_CLOSE, 
+#                                        "Cannot open " + @filename + ((err_message.nil?)?errmes:err_message))
+#        dialog.run
+#        dialog.destroy
+        raise("Cannot open " + @filename + ((err_message.nil?)?(errmes.to_s):err_message))
+        open_file(nil)
+      else
+        @rootNode = lu
+        @is_saved = true
+      end
     end
   end
   

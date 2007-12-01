@@ -18,7 +18,7 @@ $KCODE = "U"
 
 $TITLE = "Novedit"
 $NAME = "Novedit"
-$VERSION = "0.0.3"
+$VERSION = "0.1.0"
 
 $DEFAULT_NODE_NAME = _("New node")
 $: << File.dirname($0)
