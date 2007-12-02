@@ -16,10 +16,11 @@ class TestNoveditBuffer < Test::Unit::TestCase
   end
 
   def showdiff(a, b)
-    puts "-----comparaison---------------"
-    p a
-    puts "EGAL ?"
-    p b
+    str = "-------Differents-------------"
+    str += "\n" + a.to_s
+    str += "\n-------------------------"
+    str += "\n" + b.to_s
+    return str
   end
 
   def test_serializer

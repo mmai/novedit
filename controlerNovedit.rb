@@ -14,7 +14,7 @@ require "lib/novedit_xml.rb"
 
 bindtextdomain("controlerNovedit", "./locale")
 
-#Ce module utilisé par le controlleur fait office de proxy pour les plugins
+#Ce module utilisé par le controleur fait office de proxy pour les plugins
 #Il traduit les modifications de l'interface et les ajouts de fonctions demandées par les plugins
 #dans l'implémentation du controlleur et de la vue. 
 module NoveditPluginsProxy
@@ -427,23 +427,6 @@ class ControlerNovedit < UndoRedo
       end
     end
   end
-          
-  def on_insert_text(iter, text)
-    separators_list = [" ", "\n", "\t"]
-    #On met toutes les lettres d'un même mot dans le même undo/redo
-    if (not @model.currentNode.undopool.empty?) and (not separators_list.include?(text)) and (@model.currentNode.undopool.last[0] == "insert_text")
-      last_text = @model.currentNode.undopool.pop
-      @model.currentNode.undopool <<  ["insert_text", last_text[1], last_text[1] + last_text[2] + text.scan(/./).size, last_text[3] + text]
-    else
-      @model.currentNode.undopool <<  ["insert_text", iter.offset, iter.offset + text.scan(/./).size, text]
-    end
-
-    #On appelle les traitements spécifiques novedit_textbuffer
-#    @view.buffer.on_insert_text(iter, text)
-
-    @model.currentNode.redopool.clear
-    set_not_saved
-  end
 
   def on_key_pressed(keyval)
     key_inserted = false
@@ -461,6 +444,23 @@ class ControlerNovedit < UndoRedo
     end
     @view.user_action = false
     return key_inserted
+  end          
+
+  def on_insert_text(iter, text)
+    separators_list = [" ", "\n", "\t"]
+    #On met toutes les lettres d'un même mot dans le même undo/redo
+    if (not @model.currentNode.undopool.empty?) and (not separators_list.include?(text)) and (@model.currentNode.undopool.last[0] == "insert_text")
+      last_text = @model.currentNode.undopool.pop
+      @model.currentNode.undopool <<  ["insert_text", last_text[1], last_text[1] + last_text[2] + text.scan(/./).size, last_text[3] + text]
+    else
+      @model.currentNode.undopool <<  ["insert_text", iter.offset, iter.offset + text.scan(/./).size, text]
+    end
+
+    #On appelle les traitements spécifiques novedit_textbuffer
+#    @view.buffer.on_insert_text(iter, text)
+
+    @model.currentNode.redopool.clear
+    set_not_saved
   end
 
   def on_delete_range(start_iter, end_iter)
@@ -477,6 +477,14 @@ class ControlerNovedit < UndoRedo
       start_iter = @view.buffer.get_iter_at_offset(action[1])
       end_iter = @view.buffer.get_iter_at_offset(action[2])
       @view.buffer.delete(start_iter, end_iter)
+    when "apply_style_text"
+      start_iter = @view.buffer.get_iter_at_offset(action[1])
+      end_iter = @view.buffer.get_iter_at_offset(action[2])
+      @view.buffer.remove_tag(@view.buffer.tag_table[action[3]], start_iter, end_iter)
+    when "remove_style_text"
+      start_iter = @view.buffer.get_iter_at_offset(action[1])
+      end_iter = @view.buffer.get_iter_at_offset(action[2])
+      @view.buffer.apply_tag(@view.buffer.tag_table[action[3]], start_iter, end_iter)
     when "delete_range"
       start_iter = @view.buffer.get_iter_at_offset(action[1])
       @view.buffer.insert(start_iter, action[3])
@@ -493,6 +501,14 @@ class ControlerNovedit < UndoRedo
       start_iter = @view.buffer.get_iter_at_offset(action[1])
       end_iter = @view.buffer.get_iter_at_offset(action[2])
       @view.buffer.insert(start_iter, action[3])
+    when "apply_style_text"
+      start_iter = @view.buffer.get_iter_at_offset(action[1])
+      end_iter = @view.buffer.get_iter_at_offset(action[2])
+      @view.buffer.apply_tag(@view.buffer.tag_table[action[3]], start_iter, end_iter)
+    when "remove_style_text"
+      start_iter = @view.buffer.get_iter_at_offset(action[1])
+      end_iter = @view.buffer.get_iter_at_offset(action[2])
+      @view.buffer.remove_tag(@view.buffer.tag_table[action[3]], start_iter, end_iter)
     when "delete_range"
       start_iter = @view.buffer.get_iter_at_offset(action[1])
       end_iter = @view.buffer.get_iter_at_offset(action[2])
@@ -500,6 +516,52 @@ class ControlerNovedit < UndoRedo
     end
     @view.iter_on_screen(start_iter, "insert")
     @model.currentNode.undopool << action
+  end
+
+  
+  def on_show_tabinfos
+    @model.currentNode.text = @view.buffer.get_text
+    @view.wordcount_value.label = @tab_infos[0].to_s(@model.currentNode)
+  end
+  
+  def on_find()
+    @find_dialog.show
+  end
+  
+  def on_replace()
+    @replace_dialog.show
+  end
+
+  def on_text_bold
+    style_text('bold')
+  end
+
+  def on_text_italic
+    style_text('italic')
+  end
+
+  def on_text_centered
+    style_text('centered')
+  end
+
+  def on_justify_left
+    style_text('justify-left')
+  end
+
+  def on_justify_right
+    style_text('justify-right')
+  end
+
+  def on_text_highlight
+    style_text('highlight')
+  end
+
+  def on_text_strikethrough
+    style_text('strikethrough')
+  end
+
+  def on_bulleted_list
+    @view.buffer.toggle_selection_bullets()
   end
   
   def on_quit
@@ -527,68 +589,46 @@ class ControlerNovedit < UndoRedo
     end
     return true
   end
-  
-  def on_show_tabinfos
-    @model.currentNode.text = @view.buffer.get_text
-    @view.wordcount_value.label = @tab_infos[0].to_s(@model.currentNode)
-  end
-  
-  def on_find()
-    @find_dialog.show
-  end
-  
-  def on_replace()
-    @replace_dialog.show
-  end
-  
-  def on_text_bold
-    (debut, fin, selected) = @view.buffer.selection_bounds
-    @view.buffer.apply_tag(@view.buffer.tag_table['bold'], debut, fin) if selected
-  end
-
-  def on_text_italic
-    (debut, fin, selected) = @view.buffer.selection_bounds
-    @view.buffer.apply_tag(@view.buffer.tag_table['italic'], debut, fin) if selected
-  end
-
-  def on_text_centered
-    (debut, fin, selected) = @view.buffer.selection_bounds
-    @view.buffer.apply_tag(@view.buffer.tag_table['centered'], debut, fin) if selected
-  end
-
-  def on_justify_left
-    (debut, fin, selected) = @view.buffer.selection_bounds
-    @view.buffer.apply_tag(@view.buffer.tag_table['justify-left'], debut, fin) if selected
-  end
-
-  def on_justify_right
-    (debut, fin, selected) = @view.buffer.selection_bounds
-    @view.buffer.apply_tag(@view.buffer.tag_table['justify-right'], debut, fin) if selected
-  end
-
-
-  def on_text_highlight
-    (debut, fin, selected) = @view.buffer.selection_bounds
-    @view.buffer.apply_tag(@view.buffer.tag_table['highlight'], debut, fin) if selected
-  end
-
-  def on_text_strikethrough
-    (debut, fin, selected) = @view.buffer.selection_bounds
-    @view.buffer.apply_tag(@view.buffer.tag_table['strikethrough'], debut, fin) if selected
-  end
-
-  def on_bulleted_list
-#    @view.buffer.apply_tag(@view.buffer.tag_table['bulleted-list'], debut, fin) if selected
-    @view.buffer.toggle_selection_bullets()
-  end
 
   private
-  
+ 
+  def style_text(style)
+    (debut, fin, selected) = @view.buffer.selection_bounds
+     if selected
+       #La selection a-t-elle déjà le style appliqué ?
+       style_tag = @view.buffer.tag_table[style]
+       already_styled = true
+       iter = debut.dup
+       while (already_styled and (iter != fin))
+         if (!iter.has_tag?(style_tag))
+           already_styled = false
+         end
+         iter.forward_char
+       end
+
+       if (already_styled)
+         remove_style_text(style, debut, fin)
+       else
+         apply_style_text(style, debut, fin)
+       end
+     end
+  end
+
+  def remove_style_text(style, debut, fin)
+    @view.buffer.remove_tag(@view.buffer.tag_table[style], debut, fin)
+    @model.currentNode.undopool <<  ["remove_style_text", debut.offset, fin.offset, style]
+  end
+
+  def apply_style_text(style, debut, fin)
+    @view.buffer.apply_tag(@view.buffer.tag_table[style], debut, fin)
+    @model.currentNode.undopool <<  ["apply_style_text", debut.offset, fin.offset, style]
+  end
+
   #Find Dialog
   def on_find_quit()
     @find_dialog.hide
   end
-  
+ 
   def on_find_execute(widget)
     string_to_find = @gladeDialogs.get_widget('find_entry').text
     backward = @gladeDialogs.get_widget('backwards_checkbutton').active?
