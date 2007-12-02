@@ -185,7 +185,6 @@ class ControlerNovedit < UndoRedo
   
   def on_save_file
     @model.currentNode.text = @view.buffer.serialize()
-    @view.update #pour tests, à supprimer
     while not @model.filename
       selected_file = select_file()
       if File.exists?(selected_file)
@@ -213,7 +212,7 @@ class ControlerNovedit < UndoRedo
         @model.save_file
         set_saved
       end
-      @view.update
+#      @view.update
   end
   
 

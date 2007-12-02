@@ -531,7 +531,6 @@ module NoveditTextbuffer
 
     while (iternext_ok and !iter.equal?(endIter) )
       #      xml.WriteString("char:"+iter.char)
-      print iter.char
       new_list = false
       depth_tag = find_depth_tag(iter)
 
@@ -567,13 +566,13 @@ module NoveditTextbuffer
             end			
           else 
             # Line of lesser depth, close previous <list-item> and nested <list>s
-            xml.WriteEndElement()
+#            xml.WriteEndElement()
             i = prev_depth
             while (i > depth_tag.depth) 
               # Close nested <list>
               xml.WriteEndElement()
               # Close <list-item>
-              xml.WriteEndElement()
+              #xml.WriteEndElement()#corrigé? : il n'y a pas tjrs un list-item pour un list
               i-=1
             end
           end	
@@ -696,9 +695,9 @@ module NoveditTextbuffer
 
     #    puts "["+xml.to_s+"]"
     #    TTT
-    File.open('tests/noveditbuffer.xml', 'w') do |f|
-      f << xml.to_s
-    end
+#    File.open('tmp/noveditbuffer.xml', 'w') do |f|
+#      f << xml.to_s
+#    end
     #/TTT
     return xml.to_s
   end

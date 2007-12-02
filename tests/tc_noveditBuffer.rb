@@ -8,7 +8,7 @@ require 'lib/novedit_texttag.rb'
 class TestNoveditBuffer < Test::Unit::TestCase
 
   def setup
-    location = 'tests/noveditbuffer.xml'
+    location = 'tests/jeux/noveditbuffer.xml'
     @txt = File.read(location)
     @buffer = Gtk::TextBuffer.new(NoteTagTable.new)
     @buffer.extend(NoveditTextbuffer)

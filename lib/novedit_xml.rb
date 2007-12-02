@@ -91,7 +91,7 @@ class NoveditXml
   end
 
   def WriteFullEndElement(list_names=['list', 'list-item', 't'])
-    while (list_names.include?(@tab_nodes.last.name))
+    while (!@tab_nodes.last.nil? and list_names.include?(@tab_nodes.last.name))
       WriteEndElement()
     end
   end
