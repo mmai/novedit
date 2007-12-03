@@ -114,7 +114,15 @@ class ViewNovedit
     @buffer.signal_connect("delete_range") do |w, start_iter, end_iter|
       @controler.on_delete_range(start_iter, end_iter) if @user_action
     end
-    
+
+    @buffer.signal_connect("apply_tag") do |w, tag, start_iter, end_iter|
+      @controler.on_apply_tag(tag, start_iter, end_iter) if @user_action
+    end
+
+    @buffer.signal_connect("remove_tag") do |w, tag, start_iter, end_iter|
+      @controler.on_remove_tag(tag, start_iter, end_iter) if @user_action
+    end
+
     @buffer.signal_connect("begin_user_action") do
       @user_action = true
     end

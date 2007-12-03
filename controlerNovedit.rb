@@ -463,6 +463,18 @@ class ControlerNovedit < UndoRedo
     set_not_saved
   end
 
+  def on_apply_tag(tag, start_iter, end_iter)
+#    start_mark = @view.buffer.create_mark(nil, debut, true)
+#    end_mark = @view.buffer.create_mark(nil, fin, true)
+    @model.currentNode.undopool <<  ["apply_tag", start_iter.offset, end_iter.offset, tag]
+  end
+
+  def on_remove_tag(tag, start_iter, end_iter)
+#    start_mark = @view.buffer.create_mark(nil, debut, true)
+#    end_mark = @view.buffer.create_mark(nil, fin, true)
+    @model.currentNode.undopool <<  ["remove_tag", start_iter.offset, end_iter.offset, tag]
+  end
+
   def on_delete_range(start_iter, end_iter)
     text = @view.buffer.get_text(start_iter, end_iter)
     @model.currentNode.undopool <<  ["delete_range", start_iter.offset, end_iter.offset, text]
@@ -477,19 +489,23 @@ class ControlerNovedit < UndoRedo
       start_iter = @view.buffer.get_iter_at_offset(action[1])
       end_iter = @view.buffer.get_iter_at_offset(action[2])
       @view.buffer.delete(start_iter, end_iter)
-    when "apply_style_text"
-      start_iter = @view.buffer.get_iter_at_offset(action[1])
-      end_iter = @view.buffer.get_iter_at_offset(action[2])
-      @view.buffer.remove_tag(@view.buffer.tag_table[action[3]], start_iter, end_iter)
-    when "remove_style_text"
-      start_iter = @view.buffer.get_iter_at_offset(action[1])
-      end_iter = @view.buffer.get_iter_at_offset(action[2])
-      @view.buffer.apply_tag(@view.buffer.tag_table[action[3]], start_iter, end_iter)
     when "delete_range"
       start_iter = @view.buffer.get_iter_at_offset(action[1])
       @view.buffer.insert(start_iter, action[3])
+    when "remove_tag"
+      @view.buffer.apply_tag(action[3], @view.buffer.get_iter_at_offset(action[1]), @view.buffer.get_iter_at_offset(action[2]))
+    when "apply_tag"
+      @view.buffer.remove_tag(action[3], @view.buffer.get_iter_at_offset(action[1]), @view.buffer.get_iter_at_offset(action[2]))
+#    when "apply_style_text"
+#      start_iter = @view.buffer.get_iter_at_offset(action[1])
+#      end_iter = @view.buffer.get_iter_at_offset(action[2])
+#      @view.buffer.remove_tag(@view.buffer.tag_table[action[3]], start_iter, end_iter)
+#    when "remove_style_text"
+#      start_iter = @view.buffer.get_iter_at_offset(action[1])
+#      end_iter = @view.buffer.get_iter_at_offset(action[2])
+#      @view.buffer.apply_tag(@view.buffer.tag_table[action[3]], start_iter, end_iter)
     end
-    @view.iter_on_screen(start_iter, "insert")
+    @view.iter_on_screen(start_iter, "insert") if !start_iter.nil?
     @model.currentNode.redopool << action
   end
 
@@ -501,20 +517,24 @@ class ControlerNovedit < UndoRedo
       start_iter = @view.buffer.get_iter_at_offset(action[1])
       end_iter = @view.buffer.get_iter_at_offset(action[2])
       @view.buffer.insert(start_iter, action[3])
-    when "apply_style_text"
-      start_iter = @view.buffer.get_iter_at_offset(action[1])
-      end_iter = @view.buffer.get_iter_at_offset(action[2])
-      @view.buffer.apply_tag(@view.buffer.tag_table[action[3]], start_iter, end_iter)
-    when "remove_style_text"
-      start_iter = @view.buffer.get_iter_at_offset(action[1])
-      end_iter = @view.buffer.get_iter_at_offset(action[2])
-      @view.buffer.remove_tag(@view.buffer.tag_table[action[3]], start_iter, end_iter)
     when "delete_range"
       start_iter = @view.buffer.get_iter_at_offset(action[1])
       end_iter = @view.buffer.get_iter_at_offset(action[2])
       @view.buffer.delete(start_iter, end_iter)
+    when "remove_tag"
+      @view.buffer.remove_tag(action[3], @view.buffer.get_iter_at_offset(action[1]), @view.buffer.get_iter_at_offset(action[2]))
+    when "apply_tag"
+      @view.buffer.apply_tag(action[3], @view.buffer.get_iter_at_offset(action[1]), @view.buffer.get_iter_at_offset(action[2]))
+#    when "apply_style_text"
+#      start_iter = @view.buffer.get_iter_at_offset(action[1])
+#      end_iter = @view.buffer.get_iter_at_offset(action[2])
+#      @view.buffer.apply_tag(@view.buffer.tag_table[action[3]], start_iter, end_iter)
+#    when "remove_style_text"
+#      start_iter = @view.buffer.get_iter_at_offset(action[1])
+#      end_iter = @view.buffer.get_iter_at_offset(action[2])
+#      @view.buffer.remove_tag(@view.buffer.tag_table[action[3]], start_iter, end_iter)
     end
-    @view.iter_on_screen(start_iter, "insert")
+    @view.iter_on_screen(start_iter, "insert") if !start_iter.nil?
     @model.currentNode.undopool << action
   end
 
@@ -593,6 +613,7 @@ class ControlerNovedit < UndoRedo
   private
  
   def style_text(style)
+    @view.buffer.begin_user_action
     (debut, fin, selected) = @view.buffer.selection_bounds
      if selected
        #La selection a-t-elle déjà le style appliqué ?
@@ -612,16 +633,17 @@ class ControlerNovedit < UndoRedo
          apply_style_text(style, debut, fin)
        end
      end
+     @view.buffer.end_user_action
   end
 
   def remove_style_text(style, debut, fin)
     @view.buffer.remove_tag(@view.buffer.tag_table[style], debut, fin)
-    @model.currentNode.undopool <<  ["remove_style_text", debut.offset, fin.offset, style]
+#    @model.currentNode.undopool <<  ["remove_style_text", debut.offset, fin.offset, style]
   end
 
   def apply_style_text(style, debut, fin)
     @view.buffer.apply_tag(@view.buffer.tag_table[style], debut, fin)
-    @model.currentNode.undopool <<  ["apply_style_text", debut.offset, fin.offset, style]
+#    @model.currentNode.undopool <<  ["apply_style_text", debut.offset, fin.offset, style]
   end
 
   #Find Dialog
