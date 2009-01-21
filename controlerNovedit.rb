@@ -187,6 +187,7 @@ class ControlerNovedit < UndoRedo
     @model.currentNode.text = @view.buffer.serialize()
     while not @model.filename
       selected_file = select_file()
+      return false if selected_file.nil? #Annulation
       if File.exists?(selected_file)
         dialog = Gtk::MessageDialog.new(@appwindow, Gtk::Dialog::MODAL, 
                                         Gtk::MessageDialog::QUESTION, 

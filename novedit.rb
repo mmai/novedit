@@ -9,6 +9,9 @@ rescue LoadError
   $stderr.puts "RubyGems is not found."
 end
 
+#XXX À commenter en production
+require "ruby-debug"
+
 require 'gettext'
 include GetText
 bindtextdomain("novedit", "./locale")
