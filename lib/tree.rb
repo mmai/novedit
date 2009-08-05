@@ -4,6 +4,7 @@ class TreeNode
     @parent = nil
     @leftchild = nil
     @rightbrother = nil
+    @childs_computed = false
   end
   
   def nodes_do(&func)
@@ -161,37 +162,81 @@ class TreeNode
       leftbrother.rightbrother = @rightbrother
     end
     @rightbrother = nil
-   end
+  end
   
+  # Génération dynamique des fils
+  def compute_childs
+    if not @childs_computed
+      computedchilds = yield(self)
+      computedchilds.each {|compchild| self.addNode(compchild) }
+      @childs_computed = true
+    end
+  end
+
+  # Recherche d'une suite de noeuds (= extration d'un parcours)
+  def findcourse(property, depth = -1, computer = nil)
+    current_child = @leftchild
+    course_found = Array.new
+    if property.call(self)
+      if depth > 1 
+        compute_childs {|node| computer.call(node)} unless computer.nil?
+        subcourse_found = Array.new
+        while subcourse_found.empty?
+          break if current_child.nil?
+          subcourse_found = current_child.findcourse(property, depth -1, computer)
+          current_child = current_child.rightbrother
+        end
+        course_found = subcourse_found
+      end
+      course_found.unshift(self)
+    end
+    return course_found.size == depth ? course_found : Array.new
+  end
 end
 
 class TreeNodeException < RuntimeError
   
 end
 
-#class TreeTexte < TreeNode
-#  def initialize(texte)
-#    super()
-#    @texte = texte
-#  end
-#  
-#  def print(level=0)
-#    puts "-"*level + @texte
-#    tabChilds = childs
-#    tabChilds.each do |child|
-#      child.print(level+1)
-#    end
-#  end
-#end
-#
+class TreeTexte < TreeNode
+  attr_accessor :texte
+  def initialize(texte)
+    super()
+    @texte = texte
+  end
+  
+  def print(level=0)
+    puts "-"*level + @texte
+    tabChilds = childs
+    tabChilds.each do |child|
+      child.print(level+1)
+    end
+  end
+end
+
 #arbre = TreeTexte.new('racine')
 #fils1 = TreeTexte.new('fils1')
-#fils2 = TreeTexte.new('fils2')
+#fils2 = TreeTexte.new('fils2a')
 #fifils = TreeTexte.new('fifils')
 #fifils2 = TreeTexte.new('fifils2')
 #arbre.addNode(fils1)
 #arbre.addNode(fils2)
 #fils1.addNode(fifils)
 #fils1.addNode(fifils2)
+
+#computer = lambda do |node|
+#  childs = Array.new
+#  "a".upto("c") {|x| childs << TreeTexte.new(node.texte + "_" + x)}
+#  return childs
+#end
+
+#hasB = lambda  { |node| node.texte =~ /a/ }
+
+#fifils2.compute_childs { |node| computer.call(node) }
+#fils2.compute_childs  { |node| computer.call(node) }
+
 #arbre.print
-#arbre.nodes_do {|node| node.print}
+
+#arbre.findcourse(hasB, 2, computer).each { |node| print node.texte + "::" }
+#puts
+
