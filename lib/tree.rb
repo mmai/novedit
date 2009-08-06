@@ -175,11 +175,11 @@ class TreeNode
 
   # Recherche d'une suite de noeuds (= extration d'un parcours)
   def findcourse(property, depth = -1, computer = nil)
-    current_child = @leftchild
     course_found = Array.new
     if property.call(self)
       if depth > 1 
         compute_childs {|node| computer.call(node)} unless computer.nil?
+        current_child = @leftchild
         subcourse_found = Array.new
         while subcourse_found.empty?
           break if current_child.nil?
