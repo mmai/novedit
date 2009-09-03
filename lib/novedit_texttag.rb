@@ -23,6 +23,8 @@ class NoteTag < Gtk::TextTag
 #    initialize(tag_name)
 #  end
 #
+
+
   def initialize(tag)
     if !(tag.instance_of?(NoteTag) or tag.instance_of?(DepthNoteTag))
          if (tag.instance_of?(Gtk::TextTag))
@@ -138,6 +140,14 @@ class NoteTag < Gtk::TextTag
         @element_name = xml.name
       end
     end
+  end
+
+  def marshal_dump
+    [element_name]
+  end
+
+  def marshal_load(ary)
+    @element_name = ary[0]
   end
 
   #		protected override bool OnTextEvent (GLib.Object  sender, Gdk.Event    ev, Gtk.TextIter iter)
