@@ -40,7 +40,7 @@ class ViewNovedit
     @appbar = @glade.get_widget("statusbar")
     @appbar_context_id = @appbar.get_context_id('status_context')
     
-    #Temporaire
+    #XXX Temporaire
     @wordcount_value = @glade.get_widget("labelNbWordsValue")
     
     #Arbre - composé de noeuds texte éditables

@@ -497,6 +497,8 @@ class ControlerNovedit < UndoRedo
       @view.buffer.apply_tag(action[3], @view.buffer.get_iter_at_offset(action[1]), @view.buffer.get_iter_at_offset(action[2]))
     when "apply_tag"
       @view.buffer.remove_tag(action[3], @view.buffer.get_iter_at_offset(action[1]), @view.buffer.get_iter_at_offset(action[2]))
+    when "toogle_bulleted_list"
+      toogle_bulleted_list
 #    when "apply_style_text"
 #      start_iter = @view.buffer.get_iter_at_offset(action[1])
 #      end_iter = @view.buffer.get_iter_at_offset(action[2])
@@ -526,6 +528,8 @@ class ControlerNovedit < UndoRedo
       @view.buffer.remove_tag(action[3], @view.buffer.get_iter_at_offset(action[1]), @view.buffer.get_iter_at_offset(action[2]))
     when "apply_tag"
       @view.buffer.apply_tag(action[3], @view.buffer.get_iter_at_offset(action[1]), @view.buffer.get_iter_at_offset(action[2]))
+    when "toogle_bulleted_list"
+      toogle_bulleted_list
 #    when "apply_style_text"
 #      start_iter = @view.buffer.get_iter_at_offset(action[1])
 #      end_iter = @view.buffer.get_iter_at_offset(action[2])
@@ -582,6 +586,11 @@ class ControlerNovedit < UndoRedo
   end
 
   def on_bulleted_list
+    toogle_bulleted_list
+    @model.currentNode.undopool <<  ["toogle_bulleted_list"]
+  end
+
+  def toogle_bulleted_list
     @view.buffer.toggle_selection_bullets()
   end
   
