@@ -226,23 +226,19 @@ class ControlerNovedit < UndoRedo
   ##############################
   # Évènements sur l'arbre
   #############################
-#  def on_tree_key_pressed(keyval)
+  def on_tree_key_pressed(keyval)
 #    puts "keypressed : "+keyval.to_s
-#      case keyval
-#      when 65471 #F2
-#        rename_node
-#      when 65379 #Ins
-#        on_insert_child
-#      when 65293 #Enter
-#        on_insert_sibling
-#      when 65535 #Suppr
-#        on_delete_node
-#      when 122 # z
-#        undo_command
-#      when 121 # y
-#        redo_command
-#      end
-#    end
+    case keyval
+    when 65471 #F2
+      rename_node
+    when 65379 #Ins
+      on_insert_child
+    when 65293 #Enter
+      on_insert_sibling
+    when 65535 #Suppr
+      on_delete_node
+    end
+  end
  
   #Edition d'un noeud
   def rename_node
@@ -321,7 +317,19 @@ class ControlerNovedit < UndoRedo
       }
       todo.call
       @tabUndo << Command.new(todo, toundo)
+
       set_not_saved
+
+      #Focus on parent or brother
+      node_focus = node.parent
+      if node_focus.parent.nil? 
+        node_focus = node_focus.leftchild
+        if not node_focus.nil?
+          @view.treeview.set_cursor(Gtk::TreePath.new(node_focus.path), @view.treeview.get_column(0), false)
+        end
+      else
+        @view.treeview.set_cursor(Gtk::TreePath.new(node_focus.path), @view.treeview.get_column(0), false)
+      end
     end
   end
   
@@ -387,6 +395,7 @@ class ControlerNovedit < UndoRedo
       #On met à jour le modèle
       todo = lambda {
         node.move_to(node_newparent, node_newpos)
+        @view.treeview.set_cursor(Gtk::TreePath.new(node_newparent.path), @view.treeview.get_column(0), false)
         @view.update
       }
       toundo = lambda {
@@ -400,6 +409,7 @@ class ControlerNovedit < UndoRedo
       rescue TreeNodeException
         @view.write_appbar _("Mouvement interdit!")
       end
+
      end
   end
   
