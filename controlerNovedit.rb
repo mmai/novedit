@@ -226,23 +226,23 @@ class ControlerNovedit < UndoRedo
   ##############################
   # Évènements sur l'arbre
   #############################
-  def on_tree_key_pressed(keyval)
+#  def on_tree_key_pressed(keyval)
 #    puts "keypressed : "+keyval.to_s
-      case keyval
-      when 65471 #F2
-        rename_node
-      when 65379 #Ins
-        on_insert_child
-      when 65293 #Enter
-        on_insert_sibling
-      when 65535 #Suppr
-        on_delete_node
-      when 122 # z
-        undo_command
-      when 121 # y
-        redo_command
-      end
-    end
+#      case keyval
+#      when 65471 #F2
+#        rename_node
+#      when 65379 #Ins
+#        on_insert_child
+#      when 65293 #Enter
+#        on_insert_sibling
+#      when 65535 #Suppr
+#        on_delete_node
+#      when 122 # z
+#        undo_command
+#      when 121 # y
+#        redo_command
+#      end
+#    end
  
   #Edition d'un noeud
   def rename_node
@@ -460,6 +460,8 @@ class ControlerNovedit < UndoRedo
     #On appelle les traitements spécifiques novedit_textbuffer
 #    @view.buffer.on_insert_text(iter, text)
 
+    store_text_redo()
+   
     @model.currentNode.redopool.clear
     set_not_saved
   end
@@ -468,21 +470,38 @@ class ControlerNovedit < UndoRedo
 #    start_mark = @view.buffer.create_mark(nil, debut, true)
 #    end_mark = @view.buffer.create_mark(nil, fin, true)
     @model.currentNode.undopool <<  ["apply_tag", start_iter.offset, end_iter.offset, tag]
+    store_text_redo()
   end
 
   def on_remove_tag(tag, start_iter, end_iter)
 #    start_mark = @view.buffer.create_mark(nil, debut, true)
 #    end_mark = @view.buffer.create_mark(nil, fin, true)
     @model.currentNode.undopool <<  ["remove_tag", start_iter.offset, end_iter.offset, tag]
+    store_text_redo()
   end
 
   def on_delete_range(start_iter, end_iter)
     text = @view.buffer.get_text(start_iter, end_iter)
     @model.currentNode.undopool <<  ["delete_range", start_iter.offset, end_iter.offset, text]
+    store_text_redo()
     set_not_saved
   end
   
-  def on_undo(widget)
+  def store_text_redo()
+   textnode = @model.currentNode
+    todo = lambda {
+      @model.currentNode = textnode
+      redo_text
+    }
+    toundo = lambda {
+      @model.currentNode = textnode
+      undo_text
+    }
+    #todo.call
+    @tabUndo << Command.new(todo, toundo)
+  end
+
+  def undo_text()
     return if @model.currentNode.undopool.size == 0
     action = @model.currentNode.undopool.pop 
     case action[0]
@@ -512,7 +531,7 @@ class ControlerNovedit < UndoRedo
     @model.currentNode.redopool << action
   end
 
-  def on_redo(widget)
+  def redo_text()
     return if @model.currentNode.redopool.size == 0
     action = @model.currentNode.redopool.pop 
     case action[0]
@@ -543,6 +562,15 @@ class ControlerNovedit < UndoRedo
     @model.currentNode.undopool << action
   end
 
+  def on_undo(widget)
+    undo_command
+#    undo_text
+  end
+
+  def on_redo(widget)
+#    redo_text
+    redo_command
+  end
   
   def on_show_tabinfos
     @model.currentNode.text = @view.buffer.get_text
