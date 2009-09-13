@@ -260,14 +260,16 @@ class ControlerNovedit < UndoRedo
         parent.addNode(newnode)
         parent.is_open = true
         @view.update
+        @view.treeview.set_cursor(Gtk::TreePath.new(newnode.path), @view.treeview.get_column(0), true)
       }
       toundo = lambda {
+        nparent = newnode.parent
         newnode.detach
         @view.update
+        @view.treeview.set_cursor(Gtk::TreePath.new(nparent.path), @view.treeview.get_column(0), false)
       }
       todo.call
       @tabUndo << Command.new(todo, toundo)
-      @view.treeview.set_cursor(Gtk::TreePath.new(newnode.path), @view.treeview.get_column(0), true)
       set_not_saved
     end
   end
@@ -287,14 +289,16 @@ class ControlerNovedit < UndoRedo
       todo = lambda {
         @model.insert_node(pathparent, newnode)
         @view.update
+        @view.treeview.set_cursor(Gtk::TreePath.new(newnode.path), @view.treeview.get_column(0), true)
       }
       toundo = lambda{
+        nsibling = newnode.leftbrother
         newnode.detach
         @view.update
+        @view.treeview.set_cursor(Gtk::TreePath.new(nsibling.path), @view.treeview.get_column(0), false)
       }
       todo.call
       @tabUndo << Command.new(todo, toundo)
-      @view.treeview.set_cursor(Gtk::TreePath.new(newnode.path), @view.treeview.get_column(0), true)
       set_not_saved
     end
   end
@@ -307,29 +311,27 @@ class ControlerNovedit < UndoRedo
       nodepos = node.path.split(":").last.to_i
       nodeparent = node.parent
       todo = lambda {
-  #      @model.remove_node(selectedIter.path.to_s)
         node.detach
         @view.update
+
+        #Focus on parent or brother
+        node_focus = node.parent
+        if node_focus.parent.nil? 
+          node_focus = node_focus.leftchild
+          @view.treeview.set_cursor(Gtk::TreePath.new(node_focus.path), @view.treeview.get_column(0), false) unless node_focus.nil?
+        else
+          @view.treeview.set_cursor(Gtk::TreePath.new(node_focus.path), @view.treeview.get_column(0), false)
+        end
       }
       toundo = lambda {
         nodeparent.addNode(node, nodepos)
         @view.update
+        @view.treeview.set_cursor(Gtk::TreePath.new(node.path), @view.treeview.get_column(0), false)
       }
       todo.call
       @tabUndo << Command.new(todo, toundo)
 
       set_not_saved
-
-      #Focus on parent or brother
-      node_focus = node.parent
-      if node_focus.parent.nil? 
-        node_focus = node_focus.leftchild
-        if not node_focus.nil?
-          @view.treeview.set_cursor(Gtk::TreePath.new(node_focus.path), @view.treeview.get_column(0), false)
-        end
-      else
-        @view.treeview.set_cursor(Gtk::TreePath.new(node_focus.path), @view.treeview.get_column(0), false)
-      end
     end
   end
   
@@ -395,12 +397,14 @@ class ControlerNovedit < UndoRedo
       #On met à jour le modèle
       todo = lambda {
         node.move_to(node_newparent, node_newpos)
-        @view.treeview.set_cursor(Gtk::TreePath.new(node_newparent.path), @view.treeview.get_column(0), false)
+        node_newparent.is_open = true
         @view.update
+        @view.treeview.set_cursor(Gtk::TreePath.new(node.path), @view.treeview.get_column(0), false)
       }
       toundo = lambda {
         node.move_to(node_parent, node_pos)
         @view.update
+        @view.treeview.set_cursor(Gtk::TreePath.new(node.path), @view.treeview.get_column(0), false)
       }
       begin
         todo.call

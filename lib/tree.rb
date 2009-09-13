@@ -149,16 +149,21 @@ class TreeNode
     end
     return position
   end
-  
+
+  def leftbrother
+    leftbro = @parent.leftchild
+    return nil if leftbro == self 
+    while leftbro.rightbrother != self
+      leftbro = leftbro.rightbrother
+    end
+    return leftbro
+  end
+
   def detach
     #On détache le noeud de son emplacement actuel
     if @parent.leftchild == self
       @parent.leftchild = @rightbrother
     else
-      leftbrother = @parent.leftchild
-      while leftbrother.rightbrother != self
-        leftbrother = leftbrother.rightbrother
-      end
       leftbrother.rightbrother = @rightbrother
     end
     @rightbrother = nil
