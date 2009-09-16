@@ -321,6 +321,10 @@ class ViewNovedit
   def on_about(widget)
     @controler.on_about
   end
+
+  def on_edit_plugins(widget)
+    @controler.on_edit_plugins
+  end
 end
 
 

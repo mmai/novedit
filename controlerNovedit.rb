@@ -86,6 +86,7 @@ class ControlerNovedit < UndoRedo
     @find_dialog = @gladeDialogs.get_widget("find_dialog")
     @replace_dialog = @gladeDialogs.get_widget("replace_dialog")
     @about_dialog = @gladeDialogs.get_widget("aboutdialog1")
+    @edit_plugins_dialog = @gladeDialogs.get_widget("edit_plugins")
     
     #Raccourcis clavier
     #ag = Gtk::AccelGroup.new
@@ -216,6 +217,12 @@ class ControlerNovedit < UndoRedo
 #      @view.update
   end
   
+
+  #Preferences Dialog
+  def on_edit_plugins()
+    ret = @edit_plugins_dialog.run
+    @edit_plugins_dialog.hide
+  end
 
   #About Dialog
   def on_about()
