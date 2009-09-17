@@ -24,6 +24,9 @@ $NAME = "Novedit"
 $VERSION = "0.1.0"
 
 $DEFAULT_NODE_NAME = _("New node")
+
+$DIR_PLUGINS =  File.dirname($0) + "/plugins/"
+
 $: << File.dirname($0)
 
 require  "controlerNovedit"

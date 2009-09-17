@@ -104,28 +104,37 @@ class ControlerNovedit < UndoRedo
     init_plugins
   end
 
+  def detect_plugins(force=false)
+    if force or @plugins.nil?
+      @plugins = Array.new 
+      Find.find($DIR_PLUGINS) do |path|
+        if FileTest.directory?(path)
+          if File.basename(path)[0] == ?.
+            Find.prune       # Don't look any further into this directory.
+          else
+            next
+          end
+        elsif File.basename(path) == "init.rb"
+          @plugins << File.basename(File.dirname(path))
+        end
+      end
+    end
+    return @plugins
+  end
+
   def init_plugins
+    detect_plugins
     #Initialisation des plugins : on exécute la fonction plugin_init() des fichiers 'init.rb'
     # de chaque dossier(=plugin) du répertoire 'plugins'.   
-    dirPlugins = File.dirname($0) + "/plugins"
-    Find.find(dirPlugins) do |path|
-      if FileTest.directory?(path)
-        if File.basename(path)[0] == ?.
-          Find.prune       # Don't look any further into this directory.
-        else
-          next
+    @plugins.each do |plugin_name|
+      #Initiate plugin if it is enabled in user settings
+      begin
+        if @settings['plugins'][plugin_name]['enabled']
+          require $DIR_PLUGINS + plugin_name
+          plugin_init(self)
         end
-      elsif File.basename(path) == "init.rb"
-        #Initiate plugin if it is enabled in user settings
-        plugin_name = File.basename(File.dirname(path))
-        begin
-          if @settings['plugins'][plugin_name]['enabled']
-            require path
-            plugin_init(self)
-          end
-        rescue NoMethodError
-          #puts plugin_name + " plugin init : Undefined setting"
-        end
+      rescue NoMethodError
+        #puts plugin_name + " plugin init : Undefined setting"
       end
     end
   end
@@ -230,9 +239,15 @@ class ControlerNovedit < UndoRedo
   end
   
 
-  #Preferences Dialog
+  #Edit plugins Dialog
   def on_edit_plugins()
-    #Plugins listing
+    detect_plugins
+    vbox = @edit_plugins_dialog.children[0].children[0].children[0].children[0]
+    @plugins.each do |plugin|
+      checkbutton = Gtk::CheckButton.new(plugin)
+      vbox << checkbutton
+    end
+    vbox.show_all
     
     ret = @edit_plugins_dialog.run
     @edit_plugins_dialog.hide
