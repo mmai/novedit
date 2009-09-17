@@ -5,6 +5,7 @@
 require "find" #Pour la détection des plugins
 
 require "viewNovedit.rb"
+require "lib/settings.rb"
 
 require "modules/io/novedit_io_yaml.rb"
 #require "modules/io/novedit_io_html.rb"
@@ -50,6 +51,7 @@ class ControlerNovedit < UndoRedo
     super()
     #Model association (MVC)
     @model = model
+    @settings = Settings.instance
     #Mode d'enregistrement
     @model.set_io(NoveditIOYaml.new)
 #    @model.set_io(NoveditIOHtml.new)
