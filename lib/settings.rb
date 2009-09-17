@@ -3,10 +3,10 @@ require 'yaml'
 
 # Simple application settings class
 # Usage : 
-#    @settings = Settings.instance
-#    @settings.set('test', 'testvalue')
-#    puts @settings.get('test')
-#    @settings.save
+#    @mysettings = Settings.instance
+#    @mysettings['test'] =  'testvalue'
+#    puts @mysettings['test']
+#    @mysettings.save
 class Settings
   include Singleton
 
@@ -25,11 +25,11 @@ class Settings
     end
   end
 
-  def get(name)
+  def [](name)
     return @settings[name]
   end
 
-  def set(name, value)
+  def []=(name, value)
     @settings[name] = value
   end
 

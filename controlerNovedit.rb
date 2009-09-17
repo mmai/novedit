@@ -101,7 +101,10 @@ class ControlerNovedit < UndoRedo
 #     on_redo(nil) 
 #    }
 #    @view.appwindow.add_accel_group(ag)
-    
+    init_plugins
+  end
+
+  def init_plugins
     #Initialisation des plugins : on exécute la fonction plugin_init() des fichiers 'init.rb'
     # de chaque dossier(=plugin) du répertoire 'plugins'.   
     dirPlugins = File.dirname($0) + "/plugins"
@@ -112,14 +115,21 @@ class ControlerNovedit < UndoRedo
         else
           next
         end
-      elsif path =~ /init\.rb/
-         require path
-         plugin_init(self)
+      elsif File.basename(path) == "init.rb"
+        #Initiate plugin if it is enabled in user settings
+        plugin_name = File.basename(File.dirname(path))
+        begin
+          if @settings['plugins'][plugin_name]['enabled']
+            require path
+            plugin_init(self)
+          end
+        rescue NoMethodError
+          #puts plugin_name + " plugin init : Undefined setting"
+        end
       end
     end
-    #Fin plugins
   end
-  
+
   def populateTree(nodeModel, nodeView)
     nodeModel.childs.each do |node|
       iter = @treestore.append(nodeView)
@@ -222,6 +232,8 @@ class ControlerNovedit < UndoRedo
 
   #Preferences Dialog
   def on_edit_plugins()
+    #Plugins listing
+    
     ret = @edit_plugins_dialog.run
     @edit_plugins_dialog.hide
   end
