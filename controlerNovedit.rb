@@ -83,12 +83,15 @@ class ControlerNovedit < UndoRedo
      
     #Boites de dialogues
     pathgladeDialogs = File.dirname($0) + "/glade/noveditDialogs.glade"
-    @gladeDialogs = GladeXML.new(pathgladeDialogs) {|handler| method(handler)}
-    @fileselection = @gladeDialogs.get_widget("fileselection")
-    @find_dialog = @gladeDialogs.get_widget("find_dialog")
-    @replace_dialog = @gladeDialogs.get_widget("replace_dialog")
-    @about_dialog = @gladeDialogs.get_widget("aboutdialog1")
-    @edit_plugins_dialog = @gladeDialogs.get_widget("edit_plugins")
+#    @gladeDialogs = GladeXML.new(pathgladeDialogs) {|handler| method(handler)}
+    @gladeDialogs = Gtk::Builder.new()
+    @gladeDialogs << pathgladeDialogs
+    @gladeDialogs.connect_signals{|handler| method(handler)}
+    @fileselection = @gladeDialogs.get_object("filechooser")
+    @find_dialog = @gladeDialogs.get_object("find_dialog")
+    @replace_dialog = @gladeDialogs.get_object("replace_dialog")
+    @about_dialog = @gladeDialogs.get_object("aboutdialog1")
+    @edit_plugins_dialog = @gladeDialogs.get_object("edit_plugins")
     
     #Raccourcis clavier
     #ag = Gtk::AccelGroup.new
@@ -224,8 +227,6 @@ class ControlerNovedit < UndoRedo
     end
     @model.save_file
     set_saved
-    # Pourquoi avais-je écrit la ligne suivante ? Elle fait perdre la position du curseur et la selection sur le noeud courant...
-    # @view.update
   end
 
   def on_save_as
@@ -242,9 +243,12 @@ class ControlerNovedit < UndoRedo
   #Edit plugins Dialog
   def on_edit_plugins()
     detect_plugins
-    vbox = @edit_plugins_dialog.children[0].children[0].children[0].children[0]
+    vbox = @gladeDialogs.get_object("checkbuttons_vbox")
     @plugins.each do |plugin|
       checkbutton = Gtk::CheckButton.new(plugin)
+      checkbutton.signal_connect("clicked") {
+        @gladeDialogs.get_object("plugin_title_label").label = plugin
+      }
       vbox << checkbutton
     end
     vbox.show_all
@@ -740,8 +744,8 @@ class ControlerNovedit < UndoRedo
   end
  
   def on_find_execute(widget)
-    string_to_find = @gladeDialogs.get_widget('find_entry').text
-    backward = @gladeDialogs.get_widget('backwards_checkbutton').active?
+    string_to_find = @gladeDialogs.get_object('find_entry').text
+    backward = @gladeDialogs.get_object('backwards_checkbutton').active?
     if (backward)
       #On recherche à partir du début de la section courante (= position du curseur s'il n'y a pas de sélection)
       iterDebut =  @view.buffer.get_iter_at_mark(@view.buffer.get_mark('insert'))
@@ -768,9 +772,9 @@ class ControlerNovedit < UndoRedo
   end
   
   def on_replace_execute(widget)
-    string_to_find = @gladeDialogs.get_widget('replace_find_entry').text
-    string_replace = @gladeDialogs.get_widget('replace_replace_entry').text
-    backward = @gladeDialogs.get_widget('replace_backwards_checkbutton').active?
+    string_to_find = @gladeDialogs.get_object('replace_find_entry').text
+    string_replace = @gladeDialogs.get_object('replace_replace_entry').text
+    backward = @gladeDialogs.get_object('replace_backwards_checkbutton').active?
     if (backward)
       iterDebut =  @view.buffer.get_iter_at_mark(@view.buffer.get_mark('insert'))
       itersFound = iterDebut.backward_search(string_to_find, Gtk::TextIter::SEARCH_TEXT_ONLY) 

@@ -35,16 +35,20 @@ class ViewNovedit
     
     #Construction de l'interface à partir du modèle Glade
     @pathglade = File.dirname($0) + "/glade/noveditBase.glade"
-    @glade = GladeXML.new(@pathglade) {|handler| method(handler)}
-    @appwindow = @glade.get_widget("appwindow")
-    @appbar = @glade.get_widget("statusbar")
+    @glade = Gtk::Builder.new() << @pathglade
+    @glade.connect_signals{|handler| method(handler)}
+    @fileselection = @glade.get_object("fileselection")
+
+#    @glade = GladeXML.new(@pathglade) {|handler| method(handler)}
+    @appwindow = @glade.get_object("appwindow")
+    @appbar = @glade.get_object("statusbar")
     @appbar_context_id = @appbar.get_context_id('status_context')
     
     #XXX Temporaire
-    @wordcount_value = @glade.get_widget("labelNbWordsValue")
+    @wordcount_value = @glade.get_object("labelNbWordsValue")
     
     #Arbre - composé de noeuds texte éditables
-    @treeview = @glade.get_widget('treeview')
+    @treeview = @glade.get_object('treeview')
     cellrenderer = Gtk::CellRendererText.new
     cellrenderer.editable=true
     cellrenderer.signal_connect("edited"){ |cell, path, newtext| @controler.on_cell_edited(path, newtext) }
@@ -93,9 +97,9 @@ class ViewNovedit
     @treeview.signal_connect("key-press-event") { |widget, event| @controler.on_tree_key_pressed(event.keyval)}  
     
     #Tabs document
-    @tabs = @glade.get_widget('notebook1')
-    undoc = @glade.get_widget('scrolledwindow')
-    @textview = @glade.get_widget('textview')
+    @tabs = @glade.get_object('notebook1')
+    undoc = @glade.get_object('scrolledwindow')
+    @textview = @glade.get_object('textview')
     
     @filename = nil
       
@@ -246,10 +250,10 @@ class ViewNovedit
   end
 
   def find_and_select(find, backwards, parent)
-    text = @glade.get_widget(find).text
+    text = @glade.get_object(find).text
     search_flags = Gtk::TextIter::SEARCH_TEXT_ONLY
     iter = @buffer.get_iter_at_mark(@buffer.get_mark("insert"))
-    if @glade.get_widget(backwards).active?
+    if @glade.get_object(backwards).active?
       match_iters = iter.backward_search(text, search_flags)
       next_iter = match_iters if match_iters
     else
