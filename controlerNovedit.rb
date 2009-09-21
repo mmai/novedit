@@ -93,17 +93,19 @@ class ControlerNovedit < UndoRedo
     @about_dialog = @gladeDialogs.get_object("aboutdialog1")
     @edit_plugins_dialog = @gladeDialogs.get_object("edit_plugins")
     
-    #Raccourcis clavier
-    #ag = Gtk::AccelGroup.new
+    #Keyboard shortcuts : XXX ctrl-z and ctrl-y are not supported by glade menus (like ctrl-x for example) ?!?
+    ag = Gtk::AccelGroup.new
     #Undo : Ctrl-Z
-#    ag.connect(Gdk::Keyval::GDK_Z, Gdk::Window::CONTROL_MASK, Gtk::ACCEL_VISIBLE) {
-#     on_undo(nil) 
-#    }
+    ag.connect(Gdk::Keyval::GDK_Z, Gdk::Window::CONTROL_MASK, Gtk::ACCEL_VISIBLE) {
+     on_undo(nil) 
+    }
     #Redo : Ctrl-Y 
-#    ag.connect(Gdk::Keyval::GDK_Y, Gdk::Window::CONTROL_MASK, Gtk::ACCEL_VISIBLE) {
-#     on_redo(nil) 
-#    }
-#    @view.appwindow.add_accel_group(ag)
+    ag.connect(Gdk::Keyval::GDK_Y, Gdk::Window::CONTROL_MASK, Gtk::ACCEL_VISIBLE) {
+     on_redo(nil) 
+    }
+    @view.appwindow.add_accel_group(ag)
+    #Fin raccourcis clavier
+
     init_plugins
   end
 

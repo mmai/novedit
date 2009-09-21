@@ -389,12 +389,13 @@
                       <object class="GtkToolbar" id="toolbartext">
                         <property name="visible">True</property>
                         <property name="border_width">1</property>
-                        <property name="icon_size">0</property>
+                        <property name="toolbar_style">icons</property>
+                        <property name="icon_size">1</property>
                         <child>
                           <object class="GtkToolButton" id="button_bold">
                             <property name="visible">True</property>
                             <property name="tooltip_text" translatable="yes">Bold</property>
-                            <property name="stock_id">gtk-bold</property>
+                            <property name="icon_widget">bold_image</property>
                             <signal name="clicked" handler="on_text_bold"/>
                           </object>
                           <packing>
@@ -406,7 +407,7 @@
                           <object class="GtkToolButton" id="button_italic">
                             <property name="visible">True</property>
                             <property name="tooltip_text" translatable="yes">Italic</property>
-                            <property name="stock_id">gtk-italic</property>
+                            <property name="icon_widget">italic_image</property>
                             <signal name="clicked" handler="on_text_italic"/>
                           </object>
                           <packing>
@@ -418,7 +419,7 @@
                           <object class="GtkToolButton" id="button_justify-left">
                             <property name="visible">True</property>
                             <property name="tooltip_text" translatable="yes">Italic</property>
-                            <property name="stock_id">gtk-justify-left</property>
+                            <property name="icon_widget">align_left_image</property>
                             <signal name="clicked" handler="on_justify-left"/>
                           </object>
                           <packing>
@@ -430,7 +431,7 @@
                           <object class="GtkToolButton" id="button_justify-right">
                             <property name="visible">True</property>
                             <property name="tooltip_text" translatable="yes">Italic</property>
-                            <property name="stock_id">gtk-justify-right</property>
+                            <property name="icon_widget">align_right_image</property>
                             <signal name="clicked" handler="on_justify-right"/>
                           </object>
                           <packing>
@@ -442,7 +443,7 @@
                           <object class="GtkToolButton" id="button_centered">
                             <property name="visible">True</property>
                             <property name="tooltip_text" translatable="yes">Italic</property>
-                            <property name="stock_id">gtk-justify-center</property>
+                            <property name="icon_widget">align_center_image</property>
                             <signal name="clicked" handler="on_text_centered"/>
                           </object>
                           <packing>
@@ -454,7 +455,7 @@
                           <object class="GtkToolButton" id="button_strikethrough">
                             <property name="visible">True</property>
                             <property name="tooltip_text" translatable="yes">Italic</property>
-                            <property name="stock_id">gtk-strikethrough</property>
+                            <property name="icon_widget">strikethrough_image</property>
                             <signal name="clicked" handler="on_text_strikethrough"/>
                           </object>
                           <packing>
@@ -466,7 +467,7 @@
                           <object class="GtkToolButton" id="button_highlight">
                             <property name="visible">True</property>
                             <property name="tooltip_text" translatable="yes">Italic</property>
-                            <property name="stock_id">gtk-select-color</property>
+                            <property name="icon_widget">yellow_image</property>
                             <signal name="clicked" handler="on_text_highlight"/>
                           </object>
                           <packing>
@@ -478,7 +479,7 @@
                           <object class="GtkToolButton" id="button_bulleted-list">
                             <property name="visible">True</property>
                             <property name="tooltip_text" translatable="yes">Italic</property>
-                            <property name="stock_id">gtk-indent</property>
+                            <property name="icon_widget">list_bullets_image</property>
                             <signal name="clicked" handler="on_bulleted-list"/>
                           </object>
                           <packing>
@@ -665,4 +666,36 @@
   </object>
   <object class="GtkAccelGroup" id="accelgroup1"/>
   <object class="GtkAction" id="action1"/>
+  <object class="GtkImage" id="bold_image">
+    <property name="visible">True</property>
+    <property name="pixbuf">text_bold.png</property>
+  </object>
+  <object class="GtkImage" id="italic_image">
+    <property name="visible">True</property>
+    <property name="pixbuf">text_italic.png</property>
+  </object>
+  <object class="GtkImage" id="list_bullets_image">
+    <property name="visible">True</property>
+    <property name="pixbuf">text_list_bullets.png</property>
+  </object>
+  <object class="GtkImage" id="strikethrough_image">
+    <property name="visible">True</property>
+    <property name="pixbuf">text_strikethrough.png</property>
+  </object>
+  <object class="GtkImage" id="align_right_image">
+    <property name="visible">True</property>
+    <property name="pixbuf">text_align_right.png</property>
+  </object>
+  <object class="GtkImage" id="align_left_image">
+    <property name="visible">True</property>
+    <property name="pixbuf">text_align_left.png</property>
+  </object>
+  <object class="GtkImage" id="align_center_image">
+    <property name="visible">True</property>
+    <property name="pixbuf">text_align_center.png</property>
+  </object>
+  <object class="GtkImage" id="yellow_image">
+    <property name="visible">True</property>
+    <property name="pixbuf">tag_yellow.png</property>
+  </object>
 </interface>
