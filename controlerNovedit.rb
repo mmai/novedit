@@ -87,7 +87,7 @@ class ControlerNovedit < UndoRedo
     @gladeDialogs = Gtk::Builder.new()
     @gladeDialogs << pathgladeDialogs
     @gladeDialogs.connect_signals{|handler| method(handler)}
-    @fileselection = @gladeDialogs.get_object("filechooser")
+#    @fileselection = @gladeDialogs.get_object("filechooser")
     @find_dialog = @gladeDialogs.get_object("find_dialog")
     @replace_dialog = @gladeDialogs.get_object("replace_dialog")
     @about_dialog = @gladeDialogs.get_object("aboutdialog1")
@@ -175,24 +175,31 @@ class ControlerNovedit < UndoRedo
   
   def select_file
     filename = nil
-    @fileselection.set_filename(Dir.pwd + "/")
-    ret = @fileselection.run
-    if ret == Gtk::Dialog::RESPONSE_OK
-      if File.directory?(@fileselection.filename)
+    filedialog = Gtk::FileChooserDialog.new("Open File",
+                                        nil,
+                                        Gtk::FileChooser::ACTION_OPEN,
+                                        nil,
+                                        [Gtk::Stock::CANCEL, Gtk::Dialog::RESPONSE_CANCEL],
+                                        [Gtk::Stock::OPEN, Gtk::Dialog::RESPONSE_ACCEPT])
+
+    filedialog.set_filename(Dir.pwd + "/")
+    ret = filedialog.run
+    if ret == Gtk::Dialog::RESPONSE_ACCEPT 
+      if File.directory?(filedialog.filename)
         dialog = Gtk::MessageDialog.new(@appwindow, Gtk::Dialog::MODAL, 
                                         Gtk::MessageDialog::ERROR, 
                                         Gtk::MessageDialog::BUTTONS_CLOSE, 
                                         _("Directory was selected. Select a text file."))
         dialog.run
         dialog.destroy
-        @fileselection.hide
+        filedialog.hide
         select_file
       else
-        filename = @fileselection.filename
-        @fileselection.hide
+        filename = filedialog.filename
+        filedialog.hide
       end
     else
-      @fileselection.hide
+      filedialog.hide
     end
     return filename
   end
