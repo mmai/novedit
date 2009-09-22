@@ -83,11 +83,9 @@ class ControlerNovedit < UndoRedo
      
     #Boites de dialogues
     pathgladeDialogs = File.dirname($0) + "/glade/noveditDialogs.glade"
-#    @gladeDialogs = GladeXML.new(pathgladeDialogs) {|handler| method(handler)}
     @gladeDialogs = Gtk::Builder.new()
     @gladeDialogs << pathgladeDialogs
     @gladeDialogs.connect_signals{|handler| method(handler)}
-#    @fileselection = @gladeDialogs.get_object("filechooser")
     @find_dialog = @gladeDialogs.get_object("find_dialog")
     @replace_dialog = @gladeDialogs.get_object("replace_dialog")
     @about_dialog = @gladeDialogs.get_object("aboutdialog1")

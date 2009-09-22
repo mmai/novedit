@@ -317,11 +317,17 @@
                 <property name="vscrollbar_policy">automatic</property>
                 <property name="shadow_type">in</property>
                 <child>
-                  <object class="GtkVBox" id="checkbuttons_vbox">
+                  <object class="GtkViewport" id="viewport1">
                     <property name="visible">True</property>
-                    <property name="orientation">vertical</property>
+                    <property name="resize_mode">queue</property>
                     <child>
-                      <placeholder/>
+                      <object class="GtkVBox" id="checkbuttons_vbox">
+                        <property name="visible">True</property>
+                        <property name="orientation">vertical</property>
+                        <child>
+                          <placeholder/>
+                        </child>
+                      </object>
                     </child>
                   </object>
                 </child>
