@@ -3,6 +3,7 @@
 #
 
 require "find" #Pour la détection des plugins
+require "lib/pluginsystem.rb"
 
 require "viewNovedit.rb"
 require "lib/settings.rb"
@@ -107,34 +108,30 @@ class ControlerNovedit < UndoRedo
     init_plugins
   end
 
-  def detect_plugins(force=false)
-    if force or @plugins.nil?
-      @plugins = Array.new 
-      Find.find($DIR_PLUGINS) do |path|
-        if FileTest.directory?(path)
-          if File.basename(path)[0] == ?.
-            Find.prune       # Don't look any further into this directory.
-          else
-            next
-          end
-        elsif File.basename(path) == "init.rb"
-          @plugins << File.basename(File.dirname(path))
+  def load_plugins(force=false)
+    Find.find($DIR_PLUGINS) do |path|
+      if FileTest.directory?(path)
+        if File.basename(path)[0] == ?.
+          Find.prune       # Don't look any further into this directory.
+        else
+          next
         end
+      elsif File.basename(path) == "init.rb"
+        require path
       end
     end
-    return @plugins
   end
 
   def init_plugins
-    detect_plugins
+    load_plugins
     #Initialisation des plugins : on exécute la fonction plugin_init() des fichiers 'init.rb'
     # de chaque dossier(=plugin) du répertoire 'plugins'.   
-    @plugins.each do |plugin_name|
+    Plugin.registered_plugins.keys do |plugin_name|
       #Initiate plugin if it is enabled in user settings
       begin
         if @settings['plugins'][plugin_name]['enabled']
-          require $DIR_PLUGINS + plugin_name
-          plugin_init(self)
+          plugin = Plugin.registered_plugins[plugin_name]
+          plugin.init(self)
         end
       rescue NoMethodError
         #puts plugin_name + " plugin init : Undefined setting"
@@ -249,12 +246,14 @@ class ControlerNovedit < UndoRedo
 
   #Edit plugins Dialog
   def on_edit_plugins()
-    detect_plugins
     vbox = @gladeDialogs.get_object("checkbuttons_vbox")
-    @plugins.each do |plugin|
-      checkbutton = Gtk::CheckButton.new(plugin)
+    Plugin.registered_plugins.keys.each do |plugin_name|
+      plugin = Plugin.registered_plugins[plugin_name]
+      checkbutton = Gtk::CheckButton.new(plugin_name)
       checkbutton.signal_connect("clicked") {
-        @gladeDialogs.get_object("plugin_title_label").label = plugin
+        @gladeDialogs.get_object("plugin_title_label").label = plugin.title
+        @gladeDialogs.get_object("plugin_authors_text").label = plugin.author
+        show_message(plugin.author)
       }
       vbox << checkbutton
     end

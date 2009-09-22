@@ -389,7 +389,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="description_text">
+                          <object class="GtkLabel" id="plugin_description_text">
                             <property name="visible">True</property>
                           </object>
                           <packing>
@@ -417,7 +417,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="authors_text">
+                          <object class="GtkLabel" id="plugin_authors_text">
                             <property name="visible">True</property>
                           </object>
                           <packing>
@@ -445,7 +445,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="copyright_text">
+                          <object class="GtkLabel" id="plugin_copyright_text">
                             <property name="visible">True</property>
                           </object>
                           <packing>
@@ -473,7 +473,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="site_text">
+                          <object class="GtkLabel" id="plugin_site_text">
                             <property name="visible">True</property>
                           </object>
                           <packing>
