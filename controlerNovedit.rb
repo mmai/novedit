@@ -20,15 +20,15 @@ bindtextdomain("controlerNovedit", "./locale")
 #Il traduit les modifications de l'interface et les ajouts de fonctions demandées par les plugins
 #dans l'implémentation du controlleur et de la vue. 
 module NoveditPluginsProxy
-  #Ajoute une entrée de menu menant à une action :
-  # ne peut pas contenir de sous-menus (utiliser addMenuContainer)
+  #Add a menu entry leading to an action :
+  # can't contain submenus (use addMenuContainer instead)
   def addMenu(name, function=nil, parent=nil)
     newmenu = Gtk::MenuItem.new(name)
     parent << newmenu
     parent.show_all
   end
   
-  #Ajoute un menu contenant des entrées ou des sous-menus
+  #Add a menu containing entries or submenus
   def addMenuContainer(name, parent=nil)
     parent = @view.appwindow.children[0].children[0] if parent.nil?
     top_menu = Gtk::MenuItem.new(name)
@@ -37,6 +37,16 @@ module NoveditPluginsProxy
     top_menu.set_submenu( newmenu )
     parent.show_all
     return newmenu
+  end
+
+  #Remove menu container and all its submenus
+  def removeElement(name)
+    removeWidget(@view.glade.get_object(name))
+  end
+
+  def removeWidget(widget)
+    widget.children.each { |widg| removeWidget(widg) }
+    widget.destroy
   end
 end
 
@@ -124,14 +134,20 @@ class ControlerNovedit < UndoRedo
 
   def init_plugins
     load_plugins
+    #Plugins settings creation
+    @settings['plugins'] = Hash.new if (@settings['plugins'].nil?) 
+
     #Initialisation des plugins : on exécute la fonction plugin_init() des fichiers 'init.rb'
     # de chaque dossier(=plugin) du répertoire 'plugins'.   
-    Plugin.registered_plugins.keys do |plugin_name|
+    Plugin.registered_plugins.keys.each do |plugin_name|
+      if @settings['plugins'][plugin_name].nil?
+        @settings['plugins'][plugin_name] = {'enabled' => false} 
+      end
       #Initiate plugin if it is enabled in user settings
       begin
         if @settings['plugins'][plugin_name]['enabled']
           plugin = Plugin.registered_plugins[plugin_name]
-          plugin.init(self)
+          plugin.enable(self)
         end
       rescue NoMethodError
         #puts plugin_name + " plugin init : Undefined setting"
@@ -250,10 +266,13 @@ class ControlerNovedit < UndoRedo
     Plugin.registered_plugins.keys.each do |plugin_name|
       plugin = Plugin.registered_plugins[plugin_name]
       checkbutton = Gtk::CheckButton.new(plugin_name)
+      checkbutton.active = @settings['plugins'][plugin_name]['enabled']
       checkbutton.signal_connect("clicked") {
         @gladeDialogs.get_object("plugin_title_label").label = plugin.title
         @gladeDialogs.get_object("plugin_authors_text").label = plugin.author
-        show_message(plugin.author)
+        @gladeDialogs.get_object("plugin_site_text").label = plugin.site
+        @gladeDialogs.get_object("plugin_description_text").label = plugin.description
+        @gladeDialogs.get_object("plugin_version_text").label = plugin.version
       }
       vbox << checkbutton
     end
@@ -261,6 +280,25 @@ class ControlerNovedit < UndoRedo
     
     ret = @edit_plugins_dialog.run
     @edit_plugins_dialog.hide
+  end
+
+  def on_edit_plugins_ok()
+    #Save plugins status settings and enable / disable them
+    vbox = @gladeDialogs.get_object("checkbuttons_vbox")
+    vbox.children.each do |checkbutton|
+      plugin_name = checkbutton.label
+      if checkbutton.active?
+        if  not @settings['plugins'][plugin_name]['enabled']
+          Plugin.registered_plugins[plugin_name].enable(self)
+        end
+      else
+        if @settings['plugins'][plugin_name]['enabled']
+          Plugin.registered_plugins[plugin_name].disable(self)
+        end
+      end
+      @settings['plugins'][plugin_name]['enabled'] = checkbutton.active?
+    end
+    @settings.save
   end
 
   #About Dialog

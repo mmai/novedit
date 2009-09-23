@@ -7,6 +7,7 @@ require 'lib/novedit_textbuffer.rb'
 
 class ViewNovedit
   attr_accessor :treeview, :textview, :buffer, :wordcount_value, :appwindow, :user_action
+  attr_reader :glade
   
   #
   # Common
