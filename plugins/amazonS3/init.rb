@@ -1,8 +1,8 @@
 Plugin.define "amazonS3" do
-  title = "Amazon S3"
-  description = "Amazon S3 backup"
-  author = "Henri Bourcereau http://henri.websiteburo.com"
-  version = 0.01
+  title "Amazon S3"
+  description "Amazon S3 backup"
+  author "Henri Bourcereau http://henri.websiteburo.com"
+  version 0.01
 
   def init(plugins_proxy)
     rootMenu = plugins_proxy.addMenuContainer('Amazon S3')
