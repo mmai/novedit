@@ -6,13 +6,13 @@ Plugin.define "amazonS3" do
   version "0.01"
 
   def enable(plugins_proxy)
-    rootMenu = plugins_proxy.addMenuContainer('Amazon S3')
-    plugins_proxy.addMenu(_('Load'), nil, rootMenu)
-    plugins_proxy.addMenu(_('Save'), nil, rootMenu)
+    @rootMenu = plugins_proxy.addMenuContainer('Amazon S3')
+    plugins_proxy.addMenu(_('Load'), nil, @rootMenu)
+    plugins_proxy.addMenu(_('Save'), nil, @rootMenu)
   end
 
   def disable(plugins_proxy)
-    plugins_proxy.removeElement('Amazon S3')
+    plugins_proxy.removeMenuContainer(@rootMenu)
   end
 
 end

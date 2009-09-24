@@ -23,6 +23,9 @@ module NoveditPluginsProxy
   #Add a menu entry leading to an action :
   # can't contain submenus (use addMenuContainer instead)
   def addMenu(name, function=nil, parent=nil)
+    if parent.class == Gtk::MenuItem
+      parent = parent.submenu
+    end
     newmenu = Gtk::MenuItem.new(name)
     parent << newmenu
     parent.show_all
@@ -36,16 +39,19 @@ module NoveditPluginsProxy
     newmenu = Gtk::Menu.new
     top_menu.set_submenu( newmenu )
     parent.show_all
-    return newmenu
+    return top_menu
   end
 
   #Remove menu container and all its submenus
-  def removeElement(name)
-    removeWidget(@view.glade.get_object(name))
+  def removeMenuContainer(menu)
+    removeWidget(menu.submenu) 
+    removeWidget(menu)
   end
 
   def removeWidget(widget)
-    widget.children.each { |widg| removeWidget(widg) }
+    if widget.class  == Gtk::Container
+      widget.children.each { |widg| removeWidget(widg) }
+    end
     widget.destroy
   end
 end
@@ -259,10 +265,10 @@ class ControlerNovedit < UndoRedo
 #      @view.update
   end
   
-
-  #Edit plugins Dialog
-  def on_edit_plugins()
+  #Redraw plugins dialog window
+  def edit_plugins_redraw()
     vbox = @gladeDialogs.get_object("checkbuttons_vbox")
+    vbox.children.each {|checkbutton| checkbutton.destroy}
     Plugin.registered_plugins.keys.each do |plugin_name|
       plugin = Plugin.registered_plugins[plugin_name]
       checkbutton = Gtk::CheckButton.new(plugin_name)
@@ -277,7 +283,11 @@ class ControlerNovedit < UndoRedo
       vbox << checkbutton
     end
     vbox.show_all
-    
+  end
+
+  #Edit plugins Dialog
+  def on_edit_plugins()
+    edit_plugins_redraw() 
     ret = @edit_plugins_dialog.run
     @edit_plugins_dialog.hide
   end
