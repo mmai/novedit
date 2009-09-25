@@ -179,8 +179,7 @@ class ControlerNovedit < UndoRedo
       @view.maj_title
   end
 
-  def open_file()
-    filename = select_file
+  def load_file(filename)
     if filename
       @model.open_file(filename)
     end
@@ -188,6 +187,13 @@ class ControlerNovedit < UndoRedo
     @view.textview.has_focus = true
     @view.update
     set_saved
+  end
+
+  def open_file()
+    if @model.is_saved
+      filename = select_file
+      load_file(filename)
+    end
   end
   
   def select_file
@@ -269,20 +275,29 @@ class ControlerNovedit < UndoRedo
   def edit_plugins_redraw()
     vbox = @gladeDialogs.get_object("checkbuttons_vbox")
     vbox.children.each {|checkbutton| checkbutton.destroy}
+    first_done = false
     Plugin.registered_plugins.keys.each do |plugin_name|
       plugin = Plugin.registered_plugins[plugin_name]
       checkbutton = Gtk::CheckButton.new(plugin_name)
       checkbutton.active = @settings['plugins'][plugin_name]['enabled']
       checkbutton.signal_connect("clicked") {
-        @gladeDialogs.get_object("plugin_title_label").label = plugin.title
-        @gladeDialogs.get_object("plugin_authors_text").label = plugin.author
-        @gladeDialogs.get_object("plugin_site_text").label = plugin.site
-        @gladeDialogs.get_object("plugin_description_text").label = plugin.description
-        @gladeDialogs.get_object("plugin_version_text").label = plugin.version
+        edit_plugins_show_plugin(plugin)
       }
       vbox << checkbutton
+      if !first_done
+        edit_plugins_show_plugin(plugin)
+        first_done = true
+      end
     end
     vbox.show_all
+  end
+
+  def edit_plugins_show_plugin(plugin)
+    @gladeDialogs.get_object("plugin_title_label").label = plugin.title
+    @gladeDialogs.get_object("plugin_authors_text").label = plugin.author
+    @gladeDialogs.get_object("plugin_site_text").label = plugin.site
+    @gladeDialogs.get_object("plugin_description_text").label = plugin.description
+    @gladeDialogs.get_object("plugin_version_text").label = plugin.version
   end
 
   #Edit plugins Dialog
@@ -309,6 +324,13 @@ class ControlerNovedit < UndoRedo
       @settings['plugins'][plugin_name]['enabled'] = checkbutton.active?
     end
     @settings.save
+  end
+
+  #Help
+  def on_help()
+    if @model.is_saved
+      load_file($HELP_FILE)
+    end
   end
 
   #About Dialog

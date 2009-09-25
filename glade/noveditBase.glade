@@ -126,13 +126,22 @@
                       </object>
                     </child>
                     <child>
+                      <object class="GtkImageMenuItem" id="plugins">
+                        <property name="label" translatable="yes">Plugins</property>
+                        <property name="visible">True</property>
+                        <property name="image">image1</property>
+                        <property name="use_stock">False</property>
+                        <property name="accel_group">accelgroup1</property>
+                        <signal name="activate" handler="on_edit_plugins"/>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkImageMenuItem" id="preferences">
                         <property name="label">gtk-preferences</property>
                         <property name="visible">True</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="accel_group">accelgroup1</property>
-                        <signal name="activate" handler="on_edit_plugins"/>
                       </object>
                     </child>
                   </object>
@@ -178,6 +187,16 @@
                 <child type="submenu">
                   <object class="GtkMenu" id="menu4">
                     <child>
+                      <object class="GtkImageMenuItem" id="help">
+                        <property name="label">gtk-help</property>
+                        <property name="visible">True</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                        <property name="accel_group">accelgroup1</property>
+                        <signal name="activate" handler="on_help"/>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkImageMenuItem" id="A_propos1">
                         <property name="label">gtk-about</property>
                         <property name="visible">True</property>
@@ -202,7 +221,8 @@
           <object class="GtkToolbar" id="toolbar">
             <property name="visible">True</property>
             <property name="border_width">1</property>
-            <property name="toolbar_style">both</property>
+            <property name="toolbar_style">icons</property>
+            <property name="icon_size">2</property>
             <child>
               <object class="GtkToolButton" id="button_create">
                 <property name="visible">True</property>
@@ -697,5 +717,9 @@
   <object class="GtkImage" id="yellow_image">
     <property name="visible">True</property>
     <property name="pixbuf">tag_yellow.png</property>
+  </object>
+  <object class="GtkImage" id="image1">
+    <property name="visible">True</property>
+    <property name="pixbuf">plugin.png</property>
   </object>
 </interface>

@@ -26,6 +26,7 @@ $VERSION = "0.1.0"
 $DEFAULT_NODE_NAME = _("New node")
 
 $DIR_PLUGINS =  File.dirname($0) + "/plugins/"
+$HELP_FILE =  File.dirname($0) + "/doc/documentation_fr.nov"
 
 $: << File.dirname($0)
 
