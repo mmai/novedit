@@ -1,0 +1,51 @@
+#    Novedit
+--- &id001 !ruby/object:NoveditNode 
+childs_computed: false
+is_open: true
+leftchild: !ruby/object:NoveditNode 
+  childs_computed: false
+  is_open: false
+  leftchild: 
+  name: Introduction
+  parent: *id001
+  redopool: []
+
+  rightbrother: !ruby/object:NoveditNode 
+    childs_computed: false
+    is_open: false
+    leftchild: 
+    name: Plugins
+    parent: *id001
+    redopool: []
+
+    rightbrother: !ruby/object:NoveditNode 
+      childs_computed: false
+      is_open: false
+      leftchild: 
+      name: Raccourcis clavier
+      parent: *id001
+      redopool: []
+
+      rightbrother: 
+      text: "<note-content version='0.1'><bold><t>G\xC3\xA9n\xC3\xA9ral</t></bold><t>\n\
+        </t><list><list-item><bold><t>CTRL-s</t></bold><t> : Sauvegarde du document</t></list-item><list-item><bold><t>CTRL-z</t></bold><t> : Annulation de la derni\xC3\xA8re commande</t></list-item><list-item><bold><t>CTRL-Y</t></bold><t> : Annulation de la derni\xC3\xA8re annulation </t></list-item></list><t>\n\
+        </t><bold><t>Actions sur le texte</t></bold><t>\n\
+        </t><list><list-item><bold><t>TAB</t></bold><t> : Sur une ligne de liste : ajout d'un niveau de sous-liste</t></list-item></list><t>\n\n\
+        </t><bold><t>Actions sur l'arborescence </t></bold><t>\n\
+        </t><list><list-item><bold><t>CTRL-INS</t></bold><t> : insertion d'un noeud fils</t></list-item><list-item><bold><t>= </t></bold><t>: ajout d'un \xC3\xA9l\xC3\xA9ment de m\xC3\xAAme niveau</t></list-item><list-item><bold><t>SUPPR</t></bold><t> : suppression de l'\xC3\xA9l\xC3\xA9ment s\xC3\xA9lectionn\xC3\xA9</t></list-item></list></note-content>"
+      undopool: []
+
+    text: <note-content version='0.1'></note-content>
+    undopool: []
+
+  text: <note-content version='0.1'></note-content>
+  undopool: []
+
+name: root
+parent: 
+redopool: []
+
+rightbrother: 
+text: ""
+undopool: []
+

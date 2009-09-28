@@ -20,6 +20,12 @@ bindtextdomain("controlerNovedit", "./locale")
 #Il traduit les modifications de l'interface et les ajouts de fonctions demandées par les plugins
 #dans l'implémentation du controlleur et de la vue. 
 module NoveditPluginsProxy
+  def addTab(title, widget)
+  end
+
+  def removeTab(widget)
+  end
+
   #Add a menu entry leading to an action :
   # can't contain submenus (use addMenuContainer instead)
   def addMenu(name, function=nil, parent=nil)
@@ -74,6 +80,8 @@ class ControlerNovedit < UndoRedo
 #    @model.set_io(NoveditIOHtml.new)
     #Association à l'interface visuelle (MVC)
     @view = ViewNovedit.new(self, model)
+
+    @view.tabs.show_tabs = @view.tabs.n_pages > 2
 
     #Association des fonctions de mise en forme à la barre d'outils texte
 #    @text_tags = Hash.new
