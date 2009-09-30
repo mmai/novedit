@@ -26,7 +26,32 @@ leftchild: !ruby/object:NoveditNode
       parent: *id001
       redopool: []
 
-      rightbrother: 
+      rightbrother: !ruby/object:NoveditNode 
+        childs_computed: false
+        is_open: false
+        leftchild: 
+        name: mime-type
+        parent: *id001
+        redopool: []
+
+        rightbrother: 
+        text: |-
+          <note-content version='0.1'><t>Under ubuntu : 
+          </t><list><list-item><t>edit /usr/share/mime/packages/freedesktop.org.xml</t></list-item><list-item><t>add the folowing lines : </t></list-item></list><t><mime-type type="application/novedit">
+              <comment>Novedit document</comment>
+              <comment xml:lang="en_GB">Novedit document</comment>
+              <comment xml:lang="fr">Document Novedit</comment>
+              <sub-class-of type="text/plain"/>
+              <generic-icon name="x-office-document"/>
+              <glob pattern="*.nov"/>
+              <magic priority="50">
+                <match value="Novedit" type="string" offset="5"/>
+              </magic>
+              <alias type="application/novedit"/>
+            </mime-type>
+          </t><list><list-item><t>run 'sudo update-mime-database /usr/share/mime'</t></list-item><list-item><t>Right clic on novedit file, select 'Properties' => 'Open with'</t></list-item><list-item><t>clic 'add'</t></list-item><list-item><t>navigate to the novedit executable file and select it</t></list-item><list-item><t>that's all</t></list-item></list></note-content>
+        undopool: []
+
       text: "<note-content version='0.1'><bold><t>G\xC3\xA9n\xC3\xA9ral</t></bold><t>\n\
         </t><list><list-item><bold><t>CTRL-s</t></bold><t> : Sauvegarde du document</t></list-item><list-item><bold><t>CTRL-z</t></bold><t> : Annulation de la derni\xC3\xA8re commande</t></list-item><list-item><bold><t>CTRL-Y</t></bold><t> : Annulation de la derni\xC3\xA8re annulation </t></list-item></list><t>\n\
         </t><bold><t>Actions sur le texte</t></bold><t>\n\

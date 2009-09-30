@@ -20,10 +20,16 @@ bindtextdomain("controlerNovedit", "./locale")
 #Il traduit les modifications de l'interface et les ajouts de fonctions demandées par les plugins
 #dans l'implémentation du controlleur et de la vue. 
 module NoveditPluginsProxy
-  def addTab(title, widget)
+  def addTab(widget, title)
+    label = Gtk::Label.new(title)
+    @view.tabs.append_page(widget, label)
+    @view.tabs.show_tabs = @view.tabs.n_pages > 2
+    return @view.tabs.page_num(widget)
   end
 
   def removeTab(widget)
+    @view.tabs.remove_page(widget)
+    @view.tabs.show_tabs = @view.tabs.n_pages > 2
   end
 
   #Add a menu entry leading to an action :

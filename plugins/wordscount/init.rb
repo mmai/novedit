@@ -6,11 +6,15 @@ Plugin.define "wordscount" do
   version "0.01"
 
   def enable(plugins_proxy)
-    @tab = plugins_proxy.addTab('Words count', widget)
+    glade = Gtk::Builder.new() << File.dirname(__FILE__) + "/wordscount.glade"
+    #glade.connect_signals{|handler| method(handler)}
+    widget = glade.get_object("tabinfos")
+
+    @tab_id = plugins_proxy.addTab(widget, 'Words count')
   end
 
   def disable(plugins_proxy)
-    plugins_proxy.removeTab(@tab)
+    plugins_proxy.removeTab(@tab_id)
   end
 
 end
