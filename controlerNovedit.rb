@@ -80,7 +80,8 @@ class ControlerNovedit < UndoRedo
     super()
     #Model association (MVC)
     @model = model
-    @settings = Settings.instance
+    @settings = Settings.new($SETTINGS_FILE)
+#    @mysettings['test'] =  'testvalue'
     #Mode d'enregistrement
     @model.set_io(NoveditIOYaml.new)
 #    @model.set_io(NoveditIOHtml.new)

@@ -29,6 +29,8 @@ class NoveditIOHtml < NoveditIOBase
       #exemple dans freedesktop.org.xml : <match value="Novedit" type="string" offset="5" />
       #
       f.puts "<!-- Novedit -->"
+      f.puts "<!-- " + $VERSION + " -->"
+      f.puts "<!-- HTML -->"
       f.puts html
     end
   end

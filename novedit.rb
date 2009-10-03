@@ -9,14 +9,14 @@ rescue LoadError
   $stderr.puts "RubyGems is not found."
 end
 
-#XXX À commenter en production
+#XXX To comment in production
 require "ruby-debug"
 
 require 'gettext'
 include GetText
 bindtextdomain("novedit", "./locale")
 
-#Utilisation de UTF-8
+# UTF-8
 $KCODE = "U"
 
 $TITLE = "Novedit"
@@ -27,6 +27,7 @@ $DEFAULT_NODE_NAME = _("New node")
 
 $DIR_PLUGINS =  File.dirname($0) + "/plugins/"
 $HELP_FILE =  File.dirname($0) + "/doc/documentation_fr.nov"
+$SETTINGS_FILE = File.expand_path('~/.novedit_settings.yaml')
 
 $: << File.dirname($0)
 

@@ -1,26 +1,24 @@
-require 'singleton'
 require 'yaml'
 
 # Simple application settings class
 # Usage : 
-#    @mysettings = Settings.instance
+#    @mysettings = Settings.new(File.expand_path('~/.settings.yaml'))
 #    @mysettings['test'] =  'testvalue'
 #    puts @mysettings['test']
 #    @mysettings.save
 class Settings
-  include Singleton
 
-  def initialize
-    @config_file = File.expand_path('~/.novedit_settings.yaml')
-     if File.exist? @config_file
-       @settings = YAML.load(File.open(@config_file))
+  def initialize(settings_file)
+    @settings_file = settings_file
+     if File.exist? @settings_file
+       @settings = YAML.load(File.open(@settings_file))
      else
        @settings = Hash.new
      end
   end
 
   def save
-    File.open(@config_file, "w")do|f|
+    File.open(@settings_file, "w")do|f|
       f.puts @settings.to_yaml
     end
   end
