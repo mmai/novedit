@@ -10,7 +10,6 @@ require "lib/settings.rb"
 
 require "modules/io/novedit_io_yaml.rb"
 #require "modules/io/novedit_io_html.rb"
-require "modules/infos/novedit_info_word_count.rb"
 require "lib/undo_redo.rb"
 require "lib/novedit_xml.rb"
 
@@ -20,18 +19,23 @@ bindtextdomain("controlerNovedit", "./locale")
 #Il traduit les modifications de l'interface et les ajouts de fonctions demandées par les plugins
 #dans l'implémentation du controlleur et de la vue. 
 module NoveditPluginsProxy
-  def addTab(widget, title)
+  attr_accessor :model, :view
+
+  def addTab(widget, title, on_click_handler)
     label = Gtk::Label.new(title)
     @view.tabs.append_page(widget, label)
-    @view.tabs.show_tabs = @view.tabs.n_pages > 2
-    return @view.tabs.page_num(widget)
+    @view.tabs.show_tabs = @view.tabs.n_pages > 1
+    page_num = @view.tabs.page_num(widget)
+    @notebook_actions[page_num] = on_click_handler
+    return page_num
   end
 
   def removeTab(widget)
     @view.tabs.remove_page(widget)
-    @view.tabs.show_tabs = @view.tabs.n_pages > 2
+    @view.tabs.show_tabs = @view.tabs.n_pages > 1
   end
 
+  #Menu
   #Add a menu entry leading to an action :
   # can't contain submenus (use addMenuContainer instead)
   def addMenu(name, function=nil, parent=nil)
@@ -74,8 +78,7 @@ class ControlerNovedit < UndoRedo
   @model
   @view
   
-  @tab_infos
-  
+ 
   def initialize(model)
     super()
     #Model association (MVC)
@@ -88,7 +91,7 @@ class ControlerNovedit < UndoRedo
     #Association à l'interface visuelle (MVC)
     @view = ViewNovedit.new(self, model)
 
-    @view.tabs.show_tabs = @view.tabs.n_pages > 2
+    @view.tabs.show_tabs = @view.tabs.n_pages > 1
 
     #Association des fonctions de mise en forme à la barre d'outils texte
 #    @text_tags = Hash.new
@@ -101,9 +104,6 @@ class ControlerNovedit < UndoRedo
 
 #    @view.buffer.tag_table = NoteTagTable.new
 
-    #Elements de l'onglet infos
-    @tab_infos = [NoveditInfoWordCount.new]
-    
     #Initialisation de l'arbre 
     @treestore = Gtk::TreeStore.new(String)
     @view.treeview.model = @treestore
@@ -112,6 +112,9 @@ class ControlerNovedit < UndoRedo
     
     #On ouvre le fichier passé en paramètre
     @model.open_file($*[0])
+
+    #Notebook
+    @notebook_actions = Array.new
      
     #Boites de dialogues
     pathgladeDialogs = File.dirname($0) + "/glade/noveditDialogs.glade"
@@ -717,11 +720,6 @@ class ControlerNovedit < UndoRedo
     redo_command
   end
   
-  def on_show_tabinfos
-    @model.currentNode.text = @view.buffer.get_text
-    @view.wordcount_value.label = @tab_infos[0].to_s(@model.currentNode)
-  end
-  
   def on_find()
     @find_dialog.show
   end
@@ -791,6 +789,13 @@ class ControlerNovedit < UndoRedo
       end
     end
     return true
+  end
+
+
+  def on_notebook_switch_page(widget, page, page_num)
+    if not @notebook_actions[page_num].nil?
+      @notebook_actions[page_num].call
+    end
   end
 
   private

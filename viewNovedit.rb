@@ -211,9 +211,7 @@ class ViewNovedit
   end
   
   def on_notebook_switch_page(widget, page, page_num)
-    if page_num == 1
-      @controler.on_show_tabinfos
-    end    
+    @controler.on_notebook_switch_page(widget, page, page_num)
   end
   
   def on_clear()

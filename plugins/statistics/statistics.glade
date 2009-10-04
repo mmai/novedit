@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <interface>
   <requires lib="gtk+" version="2.16"/>
-  <object class="GtkVBox" id="tabinfos">
+  <object class="GtkVBox" id="tabstats">
     <property name="visible">True</property>
     <property name="orientation">vertical</property>
     <child>

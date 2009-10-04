@@ -26,6 +26,7 @@ $VERSION = "0.1.0"
 $DEFAULT_NODE_NAME = _("New node")
 
 $DIR_PLUGINS =  File.dirname($0) + "/plugins/"
+$DIR_MODULES =  File.dirname($0) + "/modules/"
 $HELP_FILE =  File.dirname($0) + "/doc/documentation_fr.nov"
 $SETTINGS_FILE = File.expand_path('~/.novedit_settings.yaml')
 
