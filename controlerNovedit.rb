@@ -92,6 +92,21 @@ class ControlerNovedit < UndoRedo
     #Association à l'interface visuelle (MVC)
     @view = ViewNovedit.new(self, model)
 
+    #Add a recent projects menu item
+    manager = Gtk::RecentManager.default
+    #define a RecentChooserMenu object
+    recent_menu_chooser = Gtk::RecentChooserMenu.new(manager)
+    #define a file filter, otherwise all file types will show up
+    filter = Gtk::RecentFilter.new()
+    filter.add_pattern("*.nov") #set this to whatever file type you want
+    #add the filter to the RecentChooserMenu object
+    recent_menu_chooser.add_filter(filter)
+    #add a signal to open the selected file
+    recent_menu_chooser.signal_connect('item-activated', recent_item_activated)
+    #Attach the RecentChooserMenu to the main menu item
+    menu_recents = @view.glade.get_object("recents")
+    menu_recents.set_submenu(recent_menu_chooser) 
+
     @view.tabs.show_tabs = @view.tabs.n_pages > 1
 
     #Association des fonctions de mise en forme à la barre d'outils texte
@@ -201,6 +216,8 @@ class ControlerNovedit < UndoRedo
   def load_file(filename)
     if filename
       @model.open_file(filename)
+      manager = Gtk::RecentManager.default()
+      manager.add_item('file://' + filename)
     end
     @view.buffer.place_cursor(@view.buffer.start_iter)
     @view.textview.has_focus = true
@@ -797,6 +814,17 @@ class ControlerNovedit < UndoRedo
   def on_notebook_switch_page(widget, page, page_num)
     if not @notebook_actions[page_num].nil?
       @notebook_actions[page_num].call
+    end
+  end
+
+  def recent_item_activated(widget)
+    #Activated when an item from the recent projects menu is clicked
+    uri = widget.get_current_item().get_uri()
+    # Strip 'file://' from the beginning of the uri
+    file_to_open = uri[7..-1]
+    #code here to open the selected file
+    if @model.is_saved
+      load_file(file_to_open)
     end
   end
 
