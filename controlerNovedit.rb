@@ -2,6 +2,7 @@
 # Novedit
 #
 
+require "rbconfig" #For launching another instance of Novedit (See on_help)
 require "find" #Pour la détection des plugins
 require "lib/pluginsystem.rb"
 
@@ -346,8 +347,9 @@ class ControlerNovedit < UndoRedo
 
   #Help
   def on_help()
-    if @model.is_saved
-      load_file($HELP_FILE)
+    ruby_bin =  File.join(Config::CONFIG["bindir"], Config::CONFIG["ruby_install_name"])
+    Thread.new do
+      system(ruby_bin + " " + $0 + " " + $HELP_FILE)
     end
   end
 
