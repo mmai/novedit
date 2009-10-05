@@ -47,12 +47,9 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="recents">
+                      <object class="GtkMenuItem" id="recents">
                         <property name="label">R&#xE9;cemment ouverts</property>
                         <property name="visible">True</property>
-                        <property name="image">image2</property>
-                        <property name="use_stock">False</property>
-                        <property name="accel_group">accelgroup1</property>
                       </object>
                     </child>
                     <child>
@@ -629,9 +626,5 @@
   <object class="GtkImage" id="image1">
     <property name="visible">True</property>
     <property name="pixbuf">plugin.png</property>
-  </object>
-  <object class="GtkImage" id="image2">
-    <property name="visible">True</property>
-    <property name="stock">gtk-missing-image</property>
   </object>
 </interface>

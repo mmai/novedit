@@ -98,11 +98,10 @@ class ControlerNovedit < UndoRedo
     recent_menu_chooser = Gtk::RecentChooserMenu.new(manager)
     #define a file filter, otherwise all file types will show up
     filter = Gtk::RecentFilter.new()
-    filter.add_pattern("*.nov") #set this to whatever file type you want
-    #add the filter to the RecentChooserMenu object
+    filter.add_application($PROGNAME) 
     recent_menu_chooser.add_filter(filter)
     #add a signal to open the selected file
-    recent_menu_chooser.signal_connect('item-activated', recent_item_activated)
+    recent_menu_chooser.signal_connect('item-activated'){ recent_item_activated(recent_menu_chooser)}
     #Attach the RecentChooserMenu to the main menu item
     menu_recents = @view.glade.get_object("recents")
     menu_recents.set_submenu(recent_menu_chooser) 
@@ -213,11 +212,15 @@ class ControlerNovedit < UndoRedo
       @view.maj_title
   end
 
+  def remember_file(filename)
+    manager = Gtk::RecentManager.default()
+    manager.add_item('file://' + filename)
+  end
+
   def load_file(filename)
     if filename
       @model.open_file(filename)
-      manager = Gtk::RecentManager.default()
-      manager.add_item('file://' + filename)
+      remember_file(filename)
     end
     @view.buffer.place_cursor(@view.buffer.start_iter)
     @view.textview.has_focus = true
@@ -291,6 +294,7 @@ class ControlerNovedit < UndoRedo
         @model.filename = selected_file if response == Gtk::Dialog::RESPONSE_YES
       else
         @model.filename = selected_file
+        remember_file(@model.filename)
       end
     end
     @model.save_file
@@ -302,6 +306,7 @@ class ControlerNovedit < UndoRedo
       @model.filename = select_file()
       if @model.filename
         @model.save_file
+        remember_file(@model.filename)
         set_saved
       end
 #      @view.update
@@ -819,7 +824,7 @@ class ControlerNovedit < UndoRedo
 
   def recent_item_activated(widget)
     #Activated when an item from the recent projects menu is clicked
-    uri = widget.get_current_item().get_uri()
+    uri = widget.current_item.uri
     # Strip 'file://' from the beginning of the uri
     file_to_open = uri[7..-1]
     #code here to open the selected file
