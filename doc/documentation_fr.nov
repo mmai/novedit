@@ -1,4 +1,6 @@
 #    Novedit
+# 0.1.0
+#    YAML
 --- &id001 !ruby/object:NoveditNode 
 childs_computed: false
 is_open: true
@@ -35,21 +37,14 @@ leftchild: !ruby/object:NoveditNode
         redopool: []
 
         rightbrother: 
-        text: |-
-          <note-content version='0.1'><t>Under ubuntu : 
-          </t><list><list-item><t>edit /usr/share/mime/packages/freedesktop.org.xml</t></list-item><list-item><t>add the folowing lines : </t></list-item></list><t><mime-type type="application/novedit">
-              <comment>Novedit document</comment>
-              <comment xml:lang="en_GB">Novedit document</comment>
-              <comment xml:lang="fr">Document Novedit</comment>
-              <sub-class-of type="text/plain"/>
-              <generic-icon name="x-office-document"/>
-              <glob pattern="*.nov"/>
-              <magic priority="50">
-                <match value="Novedit" type="string" offset="5"/>
-              </magic>
-              <alias type="application/novedit"/>
-            </mime-type>
-          </t><list><list-item><t>run 'sudo update-mime-database /usr/share/mime'</t></list-item><list-item><t>Right clic on novedit file, select 'Properties' => 'Open with'</t></list-item><list-item><t>clic 'add'</t></list-item><list-item><t>navigate to the novedit executable file and select it</t></list-item><list-item><t>that's all</t></list-item></list></note-content>
+        text: "<note-content version='0.1'><t>Sous ubuntu : \n\
+          </t><list><list-item><t>editer /usr/share/mime/packages/freedesktop.org.xml</t></list-item><list-item><t>ajouter les lignes suivantes : </t></list-item></list><centered><justify-left><t>smdfjksmdfk jqsdf\n\
+          sdqf\n\
+          qsd\n\
+          fqs\n\
+          df\n\
+          qsd</t></justify-left></centered><t>\n\
+          </t><list><list-item><t>ex\xC3\xA9cuter la commande 'sudo update-mime-database /usr/share/mime'</t></list-item><list-item><t>Faites un clic droit sur un fichier novedit , selectionnez 'Propri\xC3\xA9t\xC3\xA9s' => 'Ouvrir avec'</t></list-item><list-item><t>cliquer sur  'ajouter'</t></list-item><list-item><t>s\xC3\xA9lectionnez le fichier ex\xC3\xA9cutable novedit</t></list-item><list-item><t>c'est tout</t></list-item></list></note-content>"
         undopool: []
 
       text: "<note-content version='0.1'><bold><t>G\xC3\xA9n\xC3\xA9ral</t></bold><t>\n\
