@@ -621,11 +621,16 @@ module NoveditTextbuffer
           end
         end			
 
-        #On ecrit le caractère si ce n'est pas un caractère de liste
+        #Write charcter if it isn't a list character
         if (depth_tag.nil? )
-          #          if !(iter.char=="\n" and (prev_depth_line>-1) and (iter.line=prev_depth_line+1))
-          xml.WriteString(iter.char)
-          #          end
+          case iter.char
+          when "<":
+            xml.WriteString("&lt;")
+          when ">":
+            xml.WriteString("&gt;")
+          else
+            xml.WriteString(iter.char)
+          end
         end
       end
 

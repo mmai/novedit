@@ -368,11 +368,15 @@ class ControlerNovedit < UndoRedo
   end
 
   #Help
-  def on_help()
+  def new_instance(file)
     ruby_bin =  File.join(Config::CONFIG["bindir"], Config::CONFIG["ruby_install_name"])
     Thread.new do
-      system(ruby_bin + " " + $0 + " " + $HELP_FILE)
+      system(ruby_bin + " " + $0 + " " + file)
     end
+  end
+
+  def on_help()
+    new_instance($HELP_FILE)
   end
 
   #About Dialog
@@ -382,7 +386,7 @@ class ControlerNovedit < UndoRedo
   end
   
   ##############################
-  # Évènements sur l'arbre
+  # Tree events
   #############################
   def on_tree_key_pressed(keyval)
 #    puts "keypressed : "+keyval.to_s
