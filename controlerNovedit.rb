@@ -573,7 +573,7 @@ class ControlerNovedit < UndoRedo
         set_not_saved
         @tabUndo << Command.new(todo, toundo)
       rescue TreeNodeException
-        @view.write_appbar _("Mouvement interdit!")
+        @view.write_appbar _("Forbidden move!")
       end
 
      end
@@ -797,7 +797,7 @@ class ControlerNovedit < UndoRedo
     if @model.is_saved
       Gtk.main_quit
     else
-      titre = (@model.filename.nil?)?_("Sans titre"):@model.filename
+      titre = (@model.filename.nil?)?_("No title"):@model.filename
       dialog = Gtk::MessageDialog.new(@appwindow, Gtk::Dialog::MODAL, 
                                         Gtk::MessageDialog::QUESTION, 
                                         Gtk::MessageDialog::BUTTONS_NONE, 
