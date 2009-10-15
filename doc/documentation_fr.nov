@@ -36,7 +36,33 @@ leftchild: !ruby/object:NoveditNode
         parent: *id001
         redopool: []
 
-        rightbrother: 
+        rightbrother: &id002 !ruby/object:NoveditNode 
+          childs_computed: false
+          is_open: true
+          leftchild: !ruby/object:NoveditNode 
+            childs_computed: false
+            is_open: false
+            leftchild: 
+            name: Windows
+            parent: *id002
+            redopool: []
+
+            rightbrother: 
+            text: "<note-content version='0.1'><t>Installation TortoiseSvn\n\
+              R\xC3\xA9cup fichiers dans dossier novedit\n\n\
+              Installation de http://rubyforge.org/frs/download.php/29263/ruby186-26.exe\n\
+              Installation de http://sourceforge.net/projects/ruby-gnome2/files/ruby-gnome2/ruby-gnome2-0.16.0/ruby-gnome2-0.16.0-1-i386-mswin32.exe/download : case 'register environment variables' coch\xC3\xA9e\n\
+              gem install gettext</t></note-content>"
+            undopool: []
+
+          name: Installation
+          parent: *id001
+          redopool: []
+
+          rightbrother: 
+          text: <note-content version='0.1'></note-content>
+          undopool: []
+
         text: "<note-content version='0.1'><t>Sous ubuntu : \n\
           </t><list><list-item><t>editer /usr/share/mime/packages/freedesktop.org.xml</t></list-item><list-item><t>ajouter les lignes suivantes : </t></list-item></list><centered><justify-left><t> &lt;mime-type type=\"application/novedit\"&gt;\n    &lt;comment&gt;Novedit document&lt;/comment&gt;\n    &lt;comment xml:lang=\"en_GB\"&gt;Novedit document&lt;/comment&gt;\n    &lt;comment xml:lang=\"fr\"&gt;Document Novedit&lt;/comment&gt;\n    &lt;sub-class-of type=\"text/plain\"/&gt;\n    &lt;generic-icon name=\"x-office-document\"/&gt;\n    &lt;glob pattern=\"*.nov\"/&gt;\n    &lt;magic priority=\"50\"&gt;\n    &lt;match value=\"Novedit\" type=\"string\" offset=\"5\"/&gt;\n    &lt;/magic&gt;\n    &lt;alias type=\"application/novedit\"/&gt;\n  &lt;/mime-type&gt;\n\
           </t></justify-left></centered><t>\n\
