@@ -10,7 +10,7 @@ rescue LoadError
 end
 
 #XXX À commenter en production
-require "ruby-debug"
+#require "ruby-debug"
 
 require 'gettext'
 include GetText

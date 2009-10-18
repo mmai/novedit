@@ -36,7 +36,6 @@
 
 ; Language files
 !insertmacro MUI_LANGUAGE "English"
-!insertmacro MUI_LANGUAGE "French"
 
 ; MUI end ------
 
@@ -80,7 +79,7 @@ SectionEnd
 
 Section "GTK" SEC02
   ; read the registry to check if there is not already a local installation of GTK
-  readRegStr $0 HKLM "SOFTWARE\GTK" Path
+  readRegStr $0 HKLM "SOFTWARE\GTK\2.0" Path
   ${If} $0 != ''
     ; GTK installed
     MessageBox MB_OK 'GTK is already installed on the system. The automated installation of GTK will not proceed'
@@ -88,7 +87,7 @@ Section "GTK" SEC02
     ; no GTK installer
     MessageBox MB_OK 'The GTK installer will now be downloaded and executed. This might take a few moments.'
     ; download and install GTK
-    NSISdl::download /NOIEPROXY "http://sourceforge.net/projects/ruby-gnome2/files/ruby-gnome2/ruby-gnome2-0.16.0/ruby-gnome2-0.16.0-1-i386-mswin32.exe/download" "ruby-gnome2-0.16.0-1-i386-mswin32.exe"
+    NSISdl::download /NOIEPROXY "http://downloads.sourceforge.net/project/ruby-gnome2/ruby-gnome2/ruby-gnome2-0.16.0/ruby-gnome2-0.16.0-1-i386-mswin32.exe?use_mirror=freefr" "ruby-gnome2-0.16.0-1-i386-mswin32.exe"
     Pop $R0
     ${If} $R0 == 'success'
       ; GTK download successful
@@ -108,27 +107,24 @@ Section "GTK" SEC02
   ${EndIf}
 SectionEnd
 
-;Section "MyGem" SEC03
- ; SetOutPath "$INSTDIR\client"
-  ;File "my_gem-x86-mswin32-60.gem"
-  # check if ruby is installed and install the mygem gem locally if so
-  ;readRegStr $0 HKLM "SOFTWARE\RubyInstaller" Path
-  ;${If} $0 != ''
+Section "MyGem" SEC03
+  # check if ruby is installed and install the  gem  if so
+  readRegStr $0 HKLM "SOFTWARE\RubyInstaller" Path
+  ${If} $0 != ''
     ; ruby installed
-   ; StrCpy $1 ''
-    ; install the mygem locally
-    ;ExecWait '"$0\bin\gem.bat" install my_gem-x86-mswin32-60.gem' $1
-    ;${If} $1 == ''
-    ;  MessageBox MB_OK "Gem install failed. Please install the MyGem gem manually"
-    ;${EndIf}
-  ;${Else}
-  ;  ; ruby not installed
-   ; MessageBox MB_OK "Ruby is not installed. Please install ruby and then run the installer again or install the MyGem gem manually"
-  ;${EndIf}
-  ;Delete "my_gem-x86-mswin32-60.gem"
-;SectionEnd
+    ; install the gem locally
+    MessageBox MB_OK 'The gettext gem will be downloaded and installed. This might take some time. Please answer "Y" when prompted for installing dependencies.'
+    ExecWait '"$0\bin\gem.bat" install gettext' $1
+    ${If} $1 == ''
+      MessageBox MB_OK "Gem install failed. Please install the MyGem gem manually"
+    ${EndIf}
+  ${Else}
+    ; ruby not installed
+    MessageBox MB_OK "Ruby is not installed. Please install ruby and then run the installer again or install the MyGem gem manually"
+  ${EndIf}
+SectionEnd
 
-Section "SectionPrincipale" SEC03
+Section "SectionPrincipale" SEC04
   SetOutPath "$INSTDIR"
   SetOverwrite try
   File "controlerNovedit.rb"
