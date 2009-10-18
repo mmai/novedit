@@ -3,13 +3,13 @@
 #
 require "rbconfig" #For launching another instance of Novedit (See on_help)
 require "find" #Pour la détection des plugins
+require "lib/pluginsystem.rb"
 
 require "viewNovedit.rb"
 require "lib/settings.rb"
 
 require "modules/io/novedit_io_yaml.rb"
 #require "modules/io/novedit_io_html.rb"
-require "modules/infos/novedit_info_word_count.rb"
 require "lib/undo_redo.rb"
 require "lib/novedit_xml.rb"
 
@@ -19,15 +19,33 @@ bindtextdomain("controlerNovedit", "./locale")
 #Il traduit les modifications de l'interface et les ajouts de fonctions demandées par les plugins
 #dans l'implémentation du controlleur et de la vue. 
 module NoveditPluginsProxy
-  #Ajoute une entrée de menu menant à une action :
-  # ne peut pas contenir de sous-menus (utiliser addMenuContainer)
+  attr_accessor :model, :view
+  def addTab(widget, title, on_click_handler)
+    label = Gtk::Label.new(title)
+    @view.tabs.append_page(widget, label)
+    @view.tabs.show_tabs = @view.tabs.n_pages > 1
+    page_num = @view.tabs.page_num(widget)
+    @notebook_actions[page_num] = on_click_handler
+    return page_num
+  end
+
+  def removeTab(widget)
+    @view.tabs.remove_page(widget)
+    @view.tabs.show_tabs = @view.tabs.n_pages > 1
+  end
+  
+  #Add a menu entry leading to an action :
+  # can't contain submenus (use addMenuContainer instead)
   def addMenu(name, function=nil, parent=nil)
+    if parent.class == Gtk::MenuItem
+      parent = parent.submenu
+    end
     newmenu = Gtk::MenuItem.new(name)
     parent << newmenu
     parent.show_all
   end
   
-  #Ajoute un menu contenant des entrées ou des sous-menus
+  #Add a menu containing entries or submenus
   def addMenuContainer(name, parent=nil)
     parent = @view.appwindow.children[0].children[0] if parent.nil?
     top_menu = Gtk::MenuItem.new(name)
@@ -35,7 +53,20 @@ module NoveditPluginsProxy
     newmenu = Gtk::Menu.new
     top_menu.set_submenu( newmenu )
     parent.show_all
-    return newmenu
+    return top_menu
+  end
+  
+  #Remove menu container and all its submenus
+  def removeMenuContainer(menu)
+    removeWidget(menu.submenu)
+    removeWidget(menu)
+  end
+
+  def removeWidget(widget)
+    if widget.class  == Gtk::Container
+      widget.children.each { |widg| removeWidget(widg) }
+    end
+    widget.destroy
   end
 end
 
@@ -44,8 +75,6 @@ class ControlerNovedit < UndoRedo
   
   @model
   @view
-  
-  @tab_infos
   
   def initialize(model)
     super()
@@ -58,6 +87,22 @@ class ControlerNovedit < UndoRedo
     #Association à l'interface visuelle (MVC)
     @view = ViewNovedit.new(self, model)
 
+    #Add a recent projects menu item
+    manager = Gtk::RecentManager.default
+    #define a RecentChooserMenu object
+    recent_menu_chooser = Gtk::RecentChooserMenu.new(manager)
+    #define a file filter, otherwise all file types will show up
+    filter = Gtk::RecentFilter.new()
+    filter.add_application($PROGNAME)
+    recent_menu_chooser.add_filter(filter)
+    #add a signal to open the selected file
+    recent_menu_chooser.signal_connect('item-activated'){ recent_item_activated(recent_menu_chooser)}
+    #Attach the RecentChooserMenu to the main menu item
+    menu_recents = @view.glade.get_widget("recents")
+    menu_recents.set_submenu(recent_menu_chooser)
+
+    @view.tabs.show_tabs = @view.tabs.n_pages > 1
+
     #Association des fonctions de mise en forme à la barre d'outils texte
 #    @text_tags = Hash.new
 #    @text_tags['Bold'] = Gtk::TextTag.new;
@@ -68,9 +113,6 @@ class ControlerNovedit < UndoRedo
 #    @view.buffer.tag_table.add(@text_tags['Italic']);
 
 #    @view.buffer.tag_table = NoteTagTable.new
-
-    #Elements de l'onglet infos
-    @tab_infos = [NoveditInfoWordCount.new]
     
     #Initialisation de l'arbre 
     @treestore = Gtk::TreeStore.new(String)
@@ -80,11 +122,13 @@ class ControlerNovedit < UndoRedo
     
     #On ouvre le fichier passé en paramètre
     @model.open_file($*[0])
-     
+    
+    #Notebook
+    @notebook_actions = Array.new
+    
     #Boites de dialogues
     pathgladeDialogs = File.dirname($0) + "/glade/noveditDialogs.glade"
     @gladeDialogs = GladeXML.new(pathgladeDialogs) {|handler| method(handler)}
-    @fileselection = @gladeDialogs.get_widget("fileselection")
     @find_dialog = @gladeDialogs.get_widget("find_dialog")
     @replace_dialog = @gladeDialogs.get_widget("replace_dialog")
     @about_dialog = @gladeDialogs.get_widget("aboutdialog1")
@@ -104,34 +148,35 @@ class ControlerNovedit < UndoRedo
     init_plugins
   end
 
-  def detect_plugins(force=false)
-    if force or @plugins.nil?
-      @plugins = Array.new 
-      Find.find($DIR_PLUGINS) do |path|
-        if FileTest.directory?(path)
-          if File.basename(path)[0] == ?.
-            Find.prune       # Don't look any further into this directory.
-          else
-            next
-          end
-        elsif File.basename(path) == "init.rb"
-          @plugins << File.basename(File.dirname(path))
+  def load_plugins(force=false)
+    Find.find($DIR_PLUGINS) do |path|
+      if FileTest.directory?(path)
+        if File.basename(path)[0] == ?.
+          Find.prune       # Don't look any further into this directory.
+        else
+          next
         end
+      elsif File.basename(path) == "init.rb"
+        require path
       end
     end
-    return @plugins
   end
 
   def init_plugins
-    detect_plugins
+    load_plugins
+    #Plugins settings creation
+    @settings['plugins'] = Hash.new if (@settings['plugins'].nil?)
     #Initialisation des plugins : on exécute la fonction plugin_init() des fichiers 'init.rb'
     # de chaque dossier(=plugin) du répertoire 'plugins'.   
-    @plugins.each do |plugin_name|
+    Plugin.registered_plugins.keys.each do |plugin_name|
+      if @settings['plugins'][plugin_name].nil?
+        @settings['plugins'][plugin_name] = {'enabled' => false}
+      end
       #Initiate plugin if it is enabled in user settings
       begin
         if @settings['plugins'][plugin_name]['enabled']
-          require $DIR_PLUGINS + plugin_name
-          plugin_init(self)
+          plugin = Plugin.registered_plugins[plugin_name]
+          plugin.enable(self)
         end
       rescue NoMethodError
         #puts plugin_name + " plugin init : Undefined setting"
@@ -156,11 +201,16 @@ class ControlerNovedit < UndoRedo
       @model.is_saved = false
       @view.maj_title
   end
-
-  def open_file()
-    filename = select_file
+    
+  def remember_file(filename)
+    manager = Gtk::RecentManager.default()
+    manager.add_item('file://' + filename)
+  end
+  
+ def load_file(filename)
     if filename
       @model.open_file(filename)
+      remember_file(filename)
     end
     @view.buffer.place_cursor(@view.buffer.start_iter)
     @view.textview.has_focus = true
@@ -168,26 +218,39 @@ class ControlerNovedit < UndoRedo
     set_saved
   end
   
+  def open_file()
+    if @model.is_saved
+      filename = select_file
+      load_file(filename)
+    end
+  end
+  
   def select_file
     filename = nil
-    @fileselection.set_filename(Dir.pwd + "/")
-    ret = @fileselection.run
-    if ret == Gtk::Dialog::RESPONSE_OK
-      if File.directory?(@fileselection.filename)
+    filedialog = Gtk::FileChooserDialog.new("Open File",
+                                        nil,
+                                        Gtk::FileChooser::ACTION_OPEN,
+                                        nil,
+                                        [Gtk::Stock::CANCEL, Gtk::Dialog::RESPONSE_CANCEL],
+                                        [Gtk::Stock::OPEN, Gtk::Dialog::RESPONSE_ACCEPT])
+    filedialog.set_filename(Dir.pwd + "/")
+    ret = filedialog.run
+    if ret == Gtk::Dialog::RESPONSE_ACCEPT
+      if File.directory?(filedialog.filename)
         dialog = Gtk::MessageDialog.new(@appwindow, Gtk::Dialog::MODAL, 
                                         Gtk::MessageDialog::ERROR, 
                                         Gtk::MessageDialog::BUTTONS_CLOSE, 
                                         _("Directory was selected. Select a text file."))
         dialog.run
         dialog.destroy
-        @fileselection.hide
+        filedialog.hide
         select_file
       else
-        filename = @fileselection.filename
-        @fileselection.hide
+        filename = filedialog.filename
+        filedialog.hide
       end
     else
-      @fileselection.hide
+      filedialog.hide
     end
     return filename
   end
@@ -220,6 +283,7 @@ class ControlerNovedit < UndoRedo
         @model.filename = selected_file if response == Gtk::Dialog::RESPONSE_YES
       else
         @model.filename = selected_file
+         remember_file(@model.filename)
       end
     end
     @model.save_file
@@ -233,26 +297,80 @@ class ControlerNovedit < UndoRedo
       @model.filename = select_file()
       if @model.filename
         @model.save_file
+        remember_file(@model.filename)
         set_saved
       end
 #      @view.update
   end
   
 
-  #Edit plugins Dialog
-  def on_edit_plugins()
-    detect_plugins
-    vbox = @edit_plugins_dialog.children[0].children[0].children[0].children[0]
-    @plugins.each do |plugin|
-      checkbutton = Gtk::CheckButton.new(plugin)
+  #Redraw plugins dialog window
+  def edit_plugins_redraw()
+    vbox = @gladeDialogs.get_widget("checkbuttons_vbox")
+    vbox.children.each {|checkbutton| checkbutton.destroy}
+    first_done = false
+    Plugin.registered_plugins.keys.each do |plugin_name|
+      plugin = Plugin.registered_plugins[plugin_name]
+      checkbutton = Gtk::CheckButton.new(plugin_name)
+      checkbutton.active = @settings['plugins'][plugin_name]['enabled']
+      checkbutton.signal_connect("clicked") {
+        edit_plugins_show_plugin(plugin)
+      }
       vbox << checkbutton
+      if !first_done
+        edit_plugins_show_plugin(plugin)
+        first_done = true
+      end
     end
     vbox.show_all
-    
+  end
+
+  def edit_plugins_show_plugin(plugin)
+    @gladeDialogs.get_widget("plugin_title_label").label = plugin.title
+    @gladeDialogs.get_widget("plugin_authors_text").label = plugin.author
+    @gladeDialogs.get_widget("plugin_site_text").label = plugin.site
+    @gladeDialogs.get_widget("plugin_description_text").label = plugin.description
+    @gladeDialogs.get_widget("plugin_version_text").label = plugin.version
+  end
+
+  #Edit plugins Dialog
+  def on_edit_plugins()
+    edit_plugins_redraw() 
     ret = @edit_plugins_dialog.run
     @edit_plugins_dialog.hide
   end
 
+  def on_edit_plugins_ok()
+    #Save plugins status settings and enable / disable them
+    vbox = @gladeDialogs.get_widget("checkbuttons_vbox")
+    vbox.children.each do |checkbutton|
+      plugin_name = checkbutton.label
+      if checkbutton.active?
+        if  not @settings['plugins'][plugin_name]['enabled']
+          Plugin.registered_plugins[plugin_name].enable(self)
+        end
+      else
+        if @settings['plugins'][plugin_name]['enabled']
+          Plugin.registered_plugins[plugin_name].disable(self)
+        end
+      end
+      @settings['plugins'][plugin_name]['enabled'] = checkbutton.active?
+    end
+    @settings.save
+  end
+  
+  #Help
+  def new_instance(file)
+    ruby_bin =  File.join(Config::CONFIG["bindir"], Config::CONFIG["ruby_install_name"])
+    Thread.new do
+      system(ruby_bin + " " + $0 + " " + file)
+    end
+  end
+  
+  def on_help()
+    new_instance($HELP_FILE)
+  end
+  
   #About Dialog
   def on_about()
     ret = @about_dialog.run
@@ -260,7 +378,7 @@ class ControlerNovedit < UndoRedo
   end
   
   ##############################
-  # Évènements sur l'arbre
+  # Tree events
   #############################
   def on_tree_key_pressed(keyval)
 #    puts "keypressed : "+keyval.to_s
@@ -447,7 +565,7 @@ class ControlerNovedit < UndoRedo
         set_not_saved
         @tabUndo << Command.new(todo, toundo)
       rescue TreeNodeException
-        @view.write_appbar _("Mouvement interdit!")
+        @view.write_appbar _("Forbidden Move!")
       end
 
      end
@@ -622,11 +740,6 @@ class ControlerNovedit < UndoRedo
     redo_command
   end
   
-  def on_show_tabinfos
-    @model.currentNode.text = @view.buffer.get_text
-    @view.wordcount_value.label = @tab_infos[0].to_s(@model.currentNode)
-  end
-  
   def on_find()
     @find_dialog.show
   end
@@ -676,7 +789,7 @@ class ControlerNovedit < UndoRedo
     if @model.is_saved
       Gtk.main_quit
     else
-      titre = (@model.filename.nil?)?_("Sans titre"):@model.filename
+      titre = (@model.filename.nil?)?_("No title"):@model.filename
       dialog = Gtk::MessageDialog.new(@appwindow, Gtk::Dialog::MODAL, 
                                         Gtk::MessageDialog::QUESTION, 
                                         Gtk::MessageDialog::BUTTONS_NONE, 
@@ -697,7 +810,24 @@ class ControlerNovedit < UndoRedo
     end
     return true
   end
-
+  
+  def on_notebook_switch_page(widget, page, page_num)
+    if not @notebook_actions[page_num].nil?
+      @notebook_actions[page_num].call
+    end
+  end
+  
+  def recent_item_activated(widget)
+    #Activated when an item from the recent projects menu is clicked
+    uri = widget.current_item.uri
+    # Strip 'file://' from the beginning of the uri
+    file_to_open = uri[7..-1]
+    #code here to open the selected file
+    if @model.is_saved
+      load_file(file_to_open)
+    end
+  end
+  
   private
  
   def style_text(style)

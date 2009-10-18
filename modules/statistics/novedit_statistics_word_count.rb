@@ -1,4 +1,4 @@
-class NoveditInfoWordCount
+class NoveditStatisticsWordCount
   def initialize()
     @name = "wordcount"
   end

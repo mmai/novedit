@@ -128,6 +128,10 @@ class NoveditModel
         open_file(nil)
       else
         @rootNode = lu
+        if not @rootNode
+          @rootNode = NoveditNode.new("root")
+          @rootNode = @rootNode.addNode(NoveditNode.new($DEFAULT_NODE_NAME))
+        end
         @is_saved = true
       end
     end

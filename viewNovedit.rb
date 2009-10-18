@@ -6,7 +6,8 @@ require 'libglade2'
 require 'lib/novedit_textbuffer.rb'
 
 class ViewNovedit
-  attr_accessor :treeview, :textview, :buffer, :wordcount_value, :appwindow, :user_action
+  attr_accessor :treeview, :textview, :buffer, :wordcount_value, :appwindow, :user_action, :tabs
+  attr_reader :glade
   
   #
   # Common
@@ -206,9 +207,7 @@ class ViewNovedit
   end
   
   def on_notebook_switch_page(widget, page, page_num)
-    if page_num == 1
-      @controler.on_show_tabinfos
-    end    
+    @controler.on_notebook_switch_page(widget, page, page_num)  
   end
   
   def on_clear()
@@ -321,7 +320,11 @@ class ViewNovedit
   def on_about(widget)
     @controler.on_about
   end
-
+  
+  def on_help(widget)
+    @controler.on_help
+  end
+  
   def on_edit_plugins(widget)
     @controler.on_edit_plugins
   end

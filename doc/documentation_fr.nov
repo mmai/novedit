@@ -1,0 +1,93 @@
+#    Novedit
+# 0.1.0
+#    YAML
+--- &id001 !ruby/object:NoveditNode 
+childs_computed: false
+is_open: true
+leftchild: !ruby/object:NoveditNode 
+  childs_computed: false
+  is_open: false
+  leftchild: 
+  name: Introduction
+  parent: *id001
+  redopool: []
+
+  rightbrother: !ruby/object:NoveditNode 
+    childs_computed: false
+    is_open: false
+    leftchild: 
+    name: Plugins
+    parent: *id001
+    redopool: []
+
+    rightbrother: !ruby/object:NoveditNode 
+      childs_computed: false
+      is_open: false
+      leftchild: 
+      name: Raccourcis clavier
+      parent: *id001
+      redopool: []
+
+      rightbrother: !ruby/object:NoveditNode 
+        childs_computed: false
+        is_open: false
+        leftchild: 
+        name: mime-type
+        parent: *id001
+        redopool: []
+
+        rightbrother: &id002 !ruby/object:NoveditNode 
+          childs_computed: false
+          is_open: true
+          leftchild: !ruby/object:NoveditNode 
+            childs_computed: false
+            is_open: false
+            leftchild: 
+            name: Windows
+            parent: *id002
+            redopool: []
+
+            rightbrother: 
+            text: "<note-content version='0.1'><t>Installation TortoiseSvn\n\
+              R\xC3\xA9cup fichiers dans dossier novedit\n\n\
+              Installation de http://rubyforge.org/frs/download.php/29263/ruby186-26.exe\n\
+              Installation de http://sourceforge.net/projects/ruby-gnome2/files/ruby-gnome2/ruby-gnome2-0.16.0/ruby-gnome2-0.16.0-1-i386-mswin32.exe/download \n\
+              gem install gettext</t></note-content>"
+            undopool: []
+
+          name: Installation
+          parent: *id001
+          redopool: []
+
+          rightbrother: 
+          text: <note-content version='0.1'></note-content>
+          undopool: []
+
+        text: "<note-content version='0.1'><t>Sous ubuntu : \n\
+          </t><list><list-item><t>editer /usr/share/mime/packages/freedesktop.org.xml</t></list-item><list-item><t>ajouter les lignes suivantes : </t></list-item></list><centered><justify-left><t> &lt;mime-type type=\"application/novedit\"&gt;\n    &lt;comment&gt;Novedit document&lt;/comment&gt;\n    &lt;comment xml:lang=\"en_GB\"&gt;Novedit document&lt;/comment&gt;\n    &lt;comment xml:lang=\"fr\"&gt;Document Novedit&lt;/comment&gt;\n    &lt;sub-class-of type=\"text/plain\"/&gt;\n    &lt;generic-icon name=\"x-office-document\"/&gt;\n    &lt;glob pattern=\"*.nov\"/&gt;\n    &lt;magic priority=\"50\"&gt;\n    &lt;match value=\"Novedit\" type=\"string\" offset=\"5\"/&gt;\n    &lt;/magic&gt;\n    &lt;alias type=\"application/novedit\"/&gt;\n  &lt;/mime-type&gt;\n\
+          </t></justify-left></centered><t>\n\
+          </t><list><list-item><t>ex\xC3\xA9cuter la commande 'sudo update-mime-database /usr/share/mime'</t></list-item><list-item><t>Faites un clic droit sur un fichier novedit , selectionnez 'Propri\xC3\xA9t\xC3\xA9s' =&gt; 'Ouvrir avec'</t></list-item><list-item><t>cliquer sur  'ajouter'</t></list-item><list-item><t>s\xC3\xA9lectionnez le fichier ex\xC3\xA9cutable novedit</t></list-item><list-item><t>c'est tout</t></list-item></list></note-content>"
+        undopool: []
+
+      text: "<note-content version='0.1'><bold><t>G\xC3\xA9n\xC3\xA9ral</t></bold><t>\n\
+        </t><list><list-item><bold><t>CTRL-s</t></bold><t> : Sauvegarde du document</t></list-item><list-item><bold><t>CTRL-z</t></bold><t> : Annulation de la derni\xC3\xA8re commande</t></list-item><list-item><bold><t>CTRL-Y</t></bold><t> : Annulation de la derni\xC3\xA8re annulation </t></list-item></list><t>\n\
+        </t><bold><t>Actions sur le texte</t></bold><t>\n\
+        </t><list><list-item><bold><t>TAB</t></bold><t> : Sur une ligne de liste : ajout d'un niveau de sous-liste</t></list-item></list><t>\n\n\
+        </t><bold><t>Actions sur l'arborescence </t></bold><t>\n\
+        </t><list><list-item><bold><t>CTRL-INS</t></bold><t> : insertion d'un noeud fils</t></list-item><list-item><bold><t>= </t></bold><t>: ajout d'un \xC3\xA9l\xC3\xA9ment de m\xC3\xAAme niveau</t></list-item><list-item><bold><t>SUPPR</t></bold><t> : suppression de l'\xC3\xA9l\xC3\xA9ment s\xC3\xA9lectionn\xC3\xA9</t></list-item></list></note-content>"
+      undopool: []
+
+    text: <note-content version='0.1'></note-content>
+    undopool: []
+
+  text: <note-content version='0.1'></note-content>
+  undopool: []
+
+name: root
+parent: 
+redopool: []
+
+rightbrother: 
+text: ""
+undopool: []
+

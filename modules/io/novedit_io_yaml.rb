@@ -27,6 +27,9 @@ class NoveditIOYaml < NoveditIOBase
       #en 6ème caractère pour faciliter la gestion du type MIME
       #exemple dans freedesktop.org.xml : <match value="Novedit" type="string" offset="5" />
       f.puts "#    Novedit"
+      # version & file format
+      f.puts "# " + $VERSION
+      f.puts "#    YAML"
       f.puts lightdoc.to_yaml
     end
   end
