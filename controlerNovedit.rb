@@ -1,7 +1,7 @@
 #
 # Novedit
 #
-
+require "rbconfig" #For launching another instance of Novedit (See on_help)
 require "find" #Pour la détection des plugins
 
 require "viewNovedit.rb"
@@ -51,7 +51,7 @@ class ControlerNovedit < UndoRedo
     super()
     #Model association (MVC)
     @model = model
-    @settings = Settings.instance
+    @settings = Settings.new($SETTINGS_FILE)
     #Mode d'enregistrement
     @model.set_io(NoveditIOYaml.new)
 #    @model.set_io(NoveditIOHtml.new)

@@ -35,8 +35,8 @@ class NoteTag < Gtk::TextTag
          end
     end
 
-#    @imageLocation = Gtk::TextMark.new
-    @imageLocation = Gtk::TextMark.new "nom", false
+    @imageLocation = Gtk::TextMark.new
+    #@imageLocation = Gtk::TextMark.new "nom", false 
     @tag_flags = {
       'CanSerialize' => 1,
       'CanUndo' => 2,
