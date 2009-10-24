@@ -340,9 +340,6 @@
                     <property name="visible">True</property>
                     <property name="xalign">0.05000000074505806</property>
                     <property name="yalign">0</property>
-                    <attributes>
-                      <attribute name="size" value="20000"/>
-                    </attributes>
                   </widget>
                   <packing>
                     <property name="position">0</property>

@@ -4,7 +4,6 @@
   <!-- interface-naming-policy toplevel-contextual --> 
   <widget class="GtkVBox" id="tabstats">
     <property name="visible">True</property>
-    <property name="orientation">vertical</property>
     <child>
       <widget class="GtkFrame" id="frame1">
         <property name="visible">True</property>
@@ -62,7 +61,7 @@
             </child>
           </widget>
         </child>
-        <child type="label">
+        <child>
           <widget class="GtkLabel" id="label3">
             <property name="visible">True</property>
             <property name="label" translatable="yes">&lt;b&gt;Current item&lt;/b&gt;</property>
@@ -88,7 +87,7 @@
             </child>
           </widget>
         </child>
-        <child type="label">
+        <child>
           <widget class="GtkLabel" id="label4">
             <property name="visible">True</property>
             <property name="label" translatable="yes">&lt;b&gt;Global&lt;/b&gt;</property>

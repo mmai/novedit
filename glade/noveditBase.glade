@@ -131,7 +131,6 @@
                         <property name="visible">True</property>
                         <property name="image">image1</property>
                         <property name="use_stock">False</property>
-                        <property name="accel_group">accelgroup1</property>
                         <signal name="activate" handler="on_edit_plugins"/>
                       </widget>
                     </child>
@@ -189,7 +188,6 @@
                         <property name="visible">True</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
-                        <property name="accel_group">accelgroup1</property>
                         <signal name="activate" handler="on_help"/>
                       </widget>
                     </child>
@@ -218,7 +216,6 @@
             <property name="visible">True</property>
             <property name="border_width">1</property>
             <property name="toolbar_style">icons</property>
-		<property name="icon_size">2</property>
             <child>
               <widget class="GtkToolButton" id="button_create">
                 <property name="visible">True</property>
@@ -406,7 +403,6 @@
                       <widget class="GtkToolbar" id="toolbartext">
                         <property name="visible">True</property>
                         <property name="border_width">1</property>
-                        <property name="icon_size">0</property>
                         <child>
                           <widget class="GtkToolButton" id="button_bold">
                             <property name="visible">True</property>
@@ -547,9 +543,6 @@
                 </child>
                 <child>
                   <placeholder/>
-                </child>
-                <child type="tab">
-			<placeholder/>
                 </child>
               </widget>
               <packing>
