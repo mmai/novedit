@@ -47,7 +47,27 @@ leftchild: !ruby/object:NoveditNode
             parent: *id002
             redopool: []
 
-            rightbrother: 
+            rightbrother: !ruby/object:NoveditNode 
+              childs_computed: false
+              is_open: false
+              leftchild: 
+              name: Debian / Ubuntu
+              parent: *id002
+              redopool: []
+
+              rightbrother: 
+              text: "<note-content version='0.1'><bold><t>Installation des paquets requis</t></bold><t>\n\
+                apt-get install ruby rubygems libglade2-ruby\n\n\
+                </t><bold><t>Installation des d\xC3\xA9pendances </t></bold><t>\n\
+                gem install gettext\n\n\
+                </t><bold><t>R\xC3\xA9cup\xC3\xA9ration des sources</t></bold><t>\n\
+                wget http://novedit.googlecode.com/files/Novedit-0.2-tar.bz2\n\
+                tar xjf Novedit-0.2-tar.bz2\n\n\
+                </t><bold><t>Ex\xC3\xA9cution du programme</t></bold><t>\n\
+                cd novedit\n\
+                ruby novedit.rb</t></note-content>"
+              undopool: []
+
             text: "<note-content version='0.1'><t>Installation TortoiseSvn\n\
               R\xC3\xA9cup fichiers dans dossier novedit\n\n\
               Installation de http://rubyforge.org/frs/download.php/29263/ruby186-26.exe\n\
@@ -77,10 +97,14 @@ leftchild: !ruby/object:NoveditNode
         </t><list><list-item><bold><t>CTRL-INS</t></bold><t> : insertion d'un noeud fils</t></list-item><list-item><bold><t>= </t></bold><t>: ajout d'un \xC3\xA9l\xC3\xA9ment de m\xC3\xAAme niveau</t></list-item><list-item><bold><t>SUPPR</t></bold><t> : suppression de l'\xC3\xA9l\xC3\xA9ment s\xC3\xA9lectionn\xC3\xA9</t></list-item></list></note-content>"
       undopool: []
 
-    text: <note-content version='0.1'></note-content>
+    text: |-
+      <note-content version='0.1'><t>PLUGINS
+      todo</t></note-content>
     undopool: []
 
-  text: <note-content version='0.1'></note-content>
+  text: |-
+    <note-content version='0.1'><t>INTRODUCTION
+    todo</t></note-content>
   undopool: []
 
 name: root
