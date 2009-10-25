@@ -10,7 +10,7 @@ rescue LoadError
 end
 
 #XXX To comment in production
-require "ruby-debug"
+#require "ruby-debug"
 
 require 'gettext'
 include GetText
@@ -29,7 +29,8 @@ $PROGNAME = File.basename($0) # Used by the recent files filter
 $DIR_PLUGINS =  File.dirname($0) + "/plugins/"
 $DIR_MODULES =  File.dirname($0) + "/modules/"
 $HELP_FILE =  File.dirname($0) + "/doc/documentation_fr.nov"
-$SETTINGS_FILE = File.expand_path('~/.novedit_settings.yaml')
+$HOME = ENV["HOME"] || ENV["HOMEPATH"] || File::expand_path("~")
+$SETTINGS_FILE = File.join($HOME, '.novedit_settings.yaml')
 
 $: << File.dirname($0)
 
