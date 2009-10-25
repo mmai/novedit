@@ -5,7 +5,7 @@
 !define PRODUCT_NAME "Novedit"
 !define PRODUCT_VERSION "0.2"
 !define PRODUCT_PUBLISHER "HWSB"
-!define PRODUCT_WEB_SITE "http://henri.websiteburo.com"
+!define PRODUCT_WEB_SITE "http://code.google.com/p/novedit/"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 
@@ -193,6 +193,7 @@ FunctionEnd
 Section -AdditionalIcons
   WriteIniStr "$INSTDIR\${PRODUCT_NAME}.url" "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
   CreateDirectory "$SMPROGRAMS\Novedit"
+  CreateShortCut "$SMPROGRAMS\Novedit\Novedit.lnk" "$INSTDIR\novedit.rb"
   CreateShortCut "$SMPROGRAMS\Novedit\Website.lnk" "$INSTDIR\${PRODUCT_NAME}.url"
   CreateShortCut "$SMPROGRAMS\Novedit\Uninstall.lnk" "$INSTDIR\uninst.exe"
 SectionEnd
