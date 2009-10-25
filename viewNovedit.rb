@@ -37,6 +37,8 @@ class ViewNovedit
     #Construction de l'interface à partir du modèle Glade
     @pathglade = File.dirname($0) + "/glade/noveditBase.glade"
     @glade = Gtk::Builder.new() << @pathglade
+#    @glade.translation_domain = File.join($INSTALL_PATH, "locale")
+    @glade.translation_domain = "noveditGlade"
     @glade.connect_signals{|handler| method(handler)}
     @fileselection = @glade.get_object("fileselection")
 

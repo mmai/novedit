@@ -1,0 +1,144 @@
+# French translations for PACKAGE package
+# Traductions françaises du paquet PACKAGE.
+# Copyright (C) 2009 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Henri Bourcereau <henri.bourcereau@websiteburo.com>, 2009.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-10-25 17:56+0100\n"
+"PO-Revision-Date: 2009-10-25 17:56+0100\n"
+"Last-Translator: Henri Bourcereau <henri.bourcereau@websiteburo.com>\n"
+"Language-Team: French\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: glade/noveditBase.glade:8
+msgid "Novedit"
+msgstr ""
+
+#: glade/noveditBase.glade:25
+msgid "_File"
+msgstr "_Fichier"
+
+#: glade/noveditBase.glade:102
+msgid "_Edit"
+msgstr "_Edition"
+
+#: glade/noveditBase.glade:141 glade/noveditDialogs.glade:301
+msgid "Plugins"
+msgstr ""
+
+#: glade/noveditBase.glade:165
+msgid "Search"
+msgstr "Rechercher"
+
+#: glade/noveditBase.glade:196
+msgid "_Help"
+msgstr "_Aide"
+
+#: glade/noveditBase.glade:240
+msgid "Create a new document"
+msgstr "Créer un nouveau document"
+
+#: glade/noveditBase.glade:252
+msgid "Open a document"
+msgstr "Ouvrir un document"
+
+#: glade/noveditBase.glade:264
+msgid "Save the document"
+msgstr "Sauver le document"
+
+#: glade/noveditBase.glade:290
+msgid "Search for a string"
+msgstr "Rechercher un terme"
+
+#: glade/noveditBase.glade:302
+msgid "Search and replace a string"
+msgstr "Rechercher et remplacer un terme"
+
+#: glade/noveditBase.glade:328
+msgid "Undo previous changes"
+msgstr "Annuler les changements précédents"
+
+#: glade/noveditBase.glade:340
+msgid "Redo previous changes"
+msgstr "Refaire les changements précédents"
+
+#: glade/noveditBase.glade:366
+msgid "Exit"
+msgstr "Fermer"
+
+#: glade/noveditBase.glade:429
+msgid "Bold"
+msgstr "Gras"
+
+#: glade/noveditBase.glade:441 glade/noveditBase.glade:453
+#: glade/noveditBase.glade:465 glade/noveditBase.glade:477
+#: glade/noveditBase.glade:489 glade/noveditBase.glade:501
+#: glade/noveditBase.glade:513
+msgid "Italic"
+msgstr "Italique"
+
+#: glade/noveditBase.glade:557
+msgid "Main"
+msgstr "Principal"
+
+#: glade/noveditDialogs.glade:6 glade/noveditDialogs.glade:127
+msgid "Find"
+msgstr "Trouver"
+
+#: glade/noveditDialogs.glade:24 glade/noveditDialogs.glade:144
+msgid "Search for:"
+msgstr "Rechercher:"
+
+#: glade/noveditDialogs.glade:53 glade/noveditDialogs.glade:204
+msgid "Find backwards"
+msgstr "Trouver vers le haut"
+
+#: glade/noveditDialogs.glade:175
+msgid "Replace with:"
+msgstr "Remplacer par:"
+
+#: glade/noveditDialogs.glade:280
+msgid ""
+"The primary goal of Novedit is to be a clone of notes taking editors like "
+"Keynote or WikidPad wich are only available on Windows. It is written in "
+"Ruby / Gtk and should run on Linux, Mac and Windows."
+msgstr "Le but initial de Novedit est d'être un clône de logiciels de prise de notes comme Keynote ou WikidPad qui ne sont disponibles que sous Windows. Ce logiciel est écrit en Ruby / Gtk et devrait fonctionner sous Linux, Mac et Windows."
+
+#: glade/noveditDialogs.glade:282
+msgid "GNU General Public License 2.0"
+msgstr ""
+
+#: glade/noveditDialogs.glade:284
+msgid "translator-credits"
+msgstr ""
+
+#: glade/noveditDialogs.glade:371
+msgid "<b>Description</b>"
+msgstr ""
+
+#: glade/noveditDialogs.glade:401
+msgid "<b>Authors</b>"
+msgstr "<b>Auteurs</b>"
+
+#: glade/noveditDialogs.glade:430
+msgid "<b>Version</b>"
+msgstr ""
+
+#: glade/noveditDialogs.glade:459
+msgid "<b>Site</b>"
+msgstr ""
+
+#: glade/noveditDialogs.glade:490
+msgid "gtk-preferences"
+msgstr ""
+
+#: glade/noveditDialogs.glade:529
+msgid "gtk-ok"
+msgstr ""
