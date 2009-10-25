@@ -40,7 +40,7 @@
 ; MUI end ------
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "NoveditInstall.exe"
+OutFile "${PRODUCT_NAME}-${PRODUCT_VERSION}-mswin32.exe"
 InstallDir "$PROGRAMFILES\Novedit"
 ShowInstDetails show
 ShowUnInstDetails show
