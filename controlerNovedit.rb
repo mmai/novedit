@@ -95,7 +95,7 @@ class ControlerNovedit < UndoRedo
     filter = Gtk::RecentFilter.new()
     filter.add_application($PROGNAME)
     recent_menu_chooser.add_filter(filter)
-    p recent_menu_chooser.uris.inspect
+    #p recent_menu_chooser.uris.inspect
     #add a signal to open the selected file
     recent_menu_chooser.signal_connect('item-activated'){ recent_item_activated(recent_menu_chooser)}
     #Attach the RecentChooserMenu to the main menu item
