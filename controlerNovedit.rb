@@ -768,7 +768,9 @@ class ControlerNovedit < UndoRedo
     color_bg=Gdk::Color.new(0,0,0)
     color_fg=Gdk::Color.new(0,65535,0)
     @view.textview.modify_base(Gtk::STATE_NORMAL,color_bg)
+    @view.treeview.modify_base(Gtk::STATE_NORMAL,color_bg)
     @view.textview.modify_text(Gtk::STATE_NORMAL,color_fg)
+    @view.treeview.modify_text(Gtk::STATE_NORMAL,color_fg)
   end
   
   def on_find()
