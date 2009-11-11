@@ -153,6 +153,10 @@ class ControlerNovedit < UndoRedo
     ag.connect(Gdk::Keyval::GDK_Y, Gdk::Window::CONTROL_MASK, Gtk::ACCEL_VISIBLE) {
      on_redo(nil) 
     }
+    #FullScreen : F11
+    ag.connect(Gdk::Keyval::GDK_F11, 0, Gtk::ACCEL_VISIBLE) {
+      on_toggle_fullscreen()
+    }
     @view.appwindow.add_accel_group(ag)
     #Fin raccourcis clavier
 
@@ -748,6 +752,23 @@ class ControlerNovedit < UndoRedo
   def on_redo(widget)
 #    redo_text
     redo_command
+  end
+
+  def on_toggle_fullscreen()
+    if @view.is_fullscreen
+      @view.appwindow.unfullscreen
+      @view.is_fullscreen = false
+    else
+      @view.appwindow.fullscreen
+      @view.is_fullscreen = true
+    end
+  end
+
+  def on_toggle_theme()
+    color_bg=Gdk::Color.new(0,0,0)
+    color_fg=Gdk::Color.new(0,65535,0)
+    @view.textview.modify_base(Gtk::STATE_NORMAL,color_bg)
+    @view.textview.modify_text(Gtk::STATE_NORMAL,color_fg)
   end
   
   def on_find()

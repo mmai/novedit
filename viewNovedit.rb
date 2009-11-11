@@ -6,7 +6,7 @@ require 'libglade2'
 require 'lib/novedit_textbuffer.rb'
 
 class ViewNovedit
-  attr_accessor :treeview, :tabs, :textview, :buffer, :wordcount_value, :appwindow, :user_action
+  attr_accessor :treeview, :tabs, :textview, :buffer, :wordcount_value, :appwindow, :user_action, :is_fullscreen
   attr_reader :glade
   
   #
@@ -29,6 +29,7 @@ class ViewNovedit
   end
 
   def initialize(controler, model)
+    @is_fullscreen = false
     #Liaison MVC
     @controler = controler
     @model = model
@@ -228,7 +229,13 @@ class ViewNovedit
   def on_copy(widget)
      @textview.signal_emit("copy_clipboard")
   end
-  #
+  def on_fullscreen_activate(widget)
+     @controler.on_toggle_fullscreen()
+  end
+  def on_theme_black_activate(widget)
+     @controler.on_toggle_theme()
+  end
+#
   # Unfo, Redo
   #
   def on_undo(widget)

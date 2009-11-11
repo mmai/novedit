@@ -12,7 +12,7 @@
       <object class="GtkVBox" id="dialog-vbox1">
         <property name="visible">True</property>
         <child>
-          <object class="GtkVBox" id="vbox1">
+          <object class="GtkVBox" id="vbox0">
             <property name="visible">True</property>
             <child>
               <object class="GtkHBox" id="hbox5">
@@ -129,10 +129,10 @@
     <property name="type_hint">dialog</property>
     <signal name="delete_event" handler="on_replace_quit"/>
     <child internal-child="vbox">
-      <object class="GtkVBox" id="vbox2">
+      <object class="GtkVBox" id="vbox02">
         <property name="visible">True</property>
         <child>
-          <object class="GtkVBox" id="vbox3">
+          <object class="GtkVBox" id="vbox03">
             <property name="visible">True</property>
             <child>
               <object class="GtkHBox" id="hbox7">
