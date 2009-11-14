@@ -338,6 +338,10 @@ class ViewNovedit
     @controler.on_help
   end
 
+  def on_preferences_activate(widget)
+    @controler.on_preferences
+  end
+
   def on_edit_plugins(widget)
     @controler.on_edit_plugins
   end

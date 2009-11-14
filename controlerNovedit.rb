@@ -142,6 +142,7 @@ class ControlerNovedit < UndoRedo
     @replace_dialog = @gladeDialogs.get_object("replace_dialog")
     @about_dialog = @gladeDialogs.get_object("aboutdialog1")
     @edit_plugins_dialog = @gladeDialogs.get_object("edit_plugins")
+    @preferences_dialog = @gladeDialogs.get_object("preferences_dialog")
     
     #Keyboard shortcuts : XXX ctrl-z and ctrl-y are not supported by glade menus (like ctrl-x for example) ?!?
     ag = Gtk::AccelGroup.new
@@ -372,6 +373,27 @@ class ControlerNovedit < UndoRedo
     end
     @settings.save
   end
+
+  #Preferences Dialog
+  def preferences_dialog_redraw
+    combo_themes = Gtk::ComboBox.new()
+    themes = (Dir.entries($DIR_THEMES).select {|elem| elem !~ /^\.+/}).map {|file| File.basename(file, '.yaml') }
+    themes.each {|theme| combo_themes.append_text(theme)}
+    @gladeDialogs.get_object("hboxprefs").add(combo_themes)
+    @gladeDialogs.get_object("hboxprefs").add(Gtk::Label.new("test"))
+  end
+
+  def on_preferences()
+    preferences_dialog_redraw
+    ret = @preferences_dialog.run
+    @preferences_dialog.hide
+  end
+
+  def on_preferences_ok()
+    #Save preferences settings 
+    puts "prefs ok"
+  end
+
 
   #Help
   def new_instance(file)
@@ -765,12 +787,27 @@ class ControlerNovedit < UndoRedo
   end
 
   def on_toggle_theme()
-    color_bg=Gdk::Color.new(0,0,0)
-    color_fg=Gdk::Color.new(0,65535,0)
-    @view.textview.modify_base(Gtk::STATE_NORMAL,color_bg)
-    @view.treeview.modify_base(Gtk::STATE_NORMAL,color_bg)
-    @view.textview.modify_text(Gtk::STATE_NORMAL,color_fg)
-    @view.treeview.modify_text(Gtk::STATE_NORMAL,color_fg)
+    load_theme('matrix')
+  end
+
+  def get_theme_color(color)
+    Gdk::Color.new(color['Red'], color['Green'], color['Blue'])
+  end
+
+  def load_theme(theme)
+    theme_file = $DIR_THEMES + theme + ".yaml"
+    if File.exist? theme_file 
+      theme_settings = YAML.load(File.open(theme_file))
+      color_fg = get_theme_color(theme_settings['color'])
+      color_bg = get_theme_color(theme_settings['background'])
+
+      @view.textview.modify_base(Gtk::STATE_NORMAL,color_bg)
+      @view.treeview.modify_base(Gtk::STATE_NORMAL,color_bg)
+      @view.textview.modify_text(Gtk::STATE_NORMAL,color_fg)
+      @view.treeview.modify_text(Gtk::STATE_NORMAL,color_fg)
+    else
+      puts "Theme file does not exists"
+    end
   end
   
   def on_find()

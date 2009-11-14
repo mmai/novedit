@@ -30,6 +30,7 @@ $INSTALL_PATH = File.dirname($0)
 $PROGNAME = File.basename($0) # Used by the recent files filter
 $DIR_PLUGINS =  $INSTALL_PATH + "/plugins/"
 $DIR_MODULES =  $INSTALL_PATH + "/modules/"
+$DIR_THEMES =  $INSTALL_PATH + "/themes/"
 $HELP_FILE =  $INSTALL_PATH + "/doc/documentation_fr.nov"
 $HOME = ENV["HOME"] || ENV["HOMEPATH"] || File::expand_path("~")
 $SETTINGS_FILE = File.join($HOME, '.novedit_settings.yaml')
