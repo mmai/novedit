@@ -376,22 +376,25 @@ class ControlerNovedit < UndoRedo
 
   #Preferences Dialog
   def preferences_dialog_redraw
-    combo_themes = Gtk::ComboBox.new()
+    @combo_themes = Gtk::ComboBox.new()
     themes = (Dir.entries($DIR_THEMES).select {|elem| elem !~ /^\.+/}).map {|file| File.basename(file, '.yaml') }
-    themes.each {|theme| combo_themes.append_text(theme)}
-    @gladeDialogs.get_object("hboxprefs").add(combo_themes)
-    @gladeDialogs.get_object("hboxprefs").add(Gtk::Label.new("test"))
+    themes.each {|theme| @combo_themes.append_text(theme)}
+
+    hboxprefs = @gladeDialogs.get_object("hboxprefs")
+    hboxprefs.add(@combo_themes)
+    hboxprefs.show_all()
   end
 
   def on_preferences()
-    preferences_dialog_redraw
+    preferences_dialog_redraw if @combo_themes.nil?
     ret = @preferences_dialog.run
     @preferences_dialog.hide
   end
 
   def on_preferences_ok()
     #Save preferences settings 
-    puts "prefs ok"
+    choosen_theme = @combo_themes.active_text 
+    load_theme(choosen_theme)
   end
 
 
