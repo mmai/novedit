@@ -3,7 +3,7 @@
 #
 
 require "rbconfig" #For launching another instance of Novedit (See on_help)
-require "find" #Pour la détection des plugins
+require "find" #For plugins detection
 require "lib/pluginsystem.rb"
 
 require "viewNovedit.rb"
@@ -86,11 +86,13 @@ class ControlerNovedit < UndoRedo
     @model = model
     @settings = Settings.new($SETTINGS_FILE)
 #    @mysettings['test'] =  'testvalue'
-    #Mode d'enregistrement
+    #Saving mode
     @model.set_io(NoveditIOYaml.new)
 #    @model.set_io(NoveditIOHtml.new)
-    #Association à l'interface visuelle (MVC)
+    #Visual interface linking (MVC)
     @view = ViewNovedit.new(self, model)
+
+    load_theme(@settings['theme']) unless @settings['theme'].nil?
 
     #Add a recent projects menu item
     manager = Gtk::RecentManager.default
@@ -119,19 +121,19 @@ class ControlerNovedit < UndoRedo
 
 #    @view.buffer.tag_table = NoteTagTable.new
 
-    #Initialisation de l'arbre 
+    #Tree initialisation
     @treestore = Gtk::TreeStore.new(String)
     @view.treeview.model = @treestore
     
     populateTree(@model, nil)
     
-    #On ouvre le fichier passé en paramètre
+    #Load the file given as a parameter
     @model.open_file($*[0])
 
     #Notebook
     @notebook_actions = Array.new
      
-    #Boites de dialogues
+    #Dialog windows
     pathgladeDialogs = File.dirname($0) + "/glade/noveditDialogs.glade"
     @gladeDialogs = Gtk::Builder.new()
     @gladeDialogs << pathgladeDialogs
@@ -159,7 +161,7 @@ class ControlerNovedit < UndoRedo
       on_toggle_fullscreen()
     }
     @view.appwindow.add_accel_group(ag)
-    #Fin raccourcis clavier
+    #End keyboard shortcuts
 
     init_plugins
   end
@@ -378,7 +380,12 @@ class ControlerNovedit < UndoRedo
   def preferences_dialog_redraw
     @combo_themes = Gtk::ComboBox.new()
     themes = (Dir.entries($DIR_THEMES).select {|elem| elem !~ /^\.+/}).map {|file| File.basename(file, '.yaml') }
-    themes.each {|theme| @combo_themes.append_text(theme)}
+    index = 0
+    themes.each do |theme|
+      @combo_themes.append_text(theme)
+      @combo_themes.active = index if theme == @settings['theme']
+      index = index + 1
+    end
 
     hboxprefs = @gladeDialogs.get_object("hboxprefs")
     hboxprefs.add(@combo_themes)
@@ -392,9 +399,12 @@ class ControlerNovedit < UndoRedo
   end
 
   def on_preferences_ok()
-    #Save preferences settings 
     choosen_theme = @combo_themes.active_text 
     load_theme(choosen_theme)
+
+    #Save preferences settings 
+    @settings['theme'] = choosen_theme
+    @settings.save
   end
 
 
@@ -433,7 +443,7 @@ class ControlerNovedit < UndoRedo
     end
   end
  
-  #Edition d'un noeud
+  #Node edition
   def rename_node
     selectedIter = @view.treeview.selection.selected
     if not selectedIter.nil?
@@ -798,12 +808,39 @@ class ControlerNovedit < UndoRedo
   end
 
   def load_theme(theme)
+#    states = [Gtk::STATE_NORMAL, Gtk::STATE_ACTIVE ,Gtk::STATE_PRELIGHT, Gtk::STATE_SELECTED, Gtk::STATE_INSENSITIVE]
+#    states.each do |state|
+#      puts state.to_s
+#      puts 'fg : '+@view.textview.style.fg(state).to_a.join('-')
+#      puts 'bg : '+@view.textview.style.bg(state).to_a.join('-')
+#      puts 'text : '+@view.textview.style.text(state).to_a.join('-')
+#      puts 'font_desc : ' + @view.textview.style.font_desc()
+#    end
+
     theme_file = $DIR_THEMES + theme + ".yaml"
     if File.exist? theme_file 
       theme_settings = YAML.load(File.open(theme_file))
+
+      color_fg = theme_settings['color']
+      color_bg = theme_settings['background']
+
+      #Methode par modification directe du style : NOK
+#      @view.textview.style.set_text(Gtk::STATE_NORMAL,color_fg['Red'], color_fg['Green'], color_fg['Blue'])
+#      @view.textview.style.set_fg(Gtk::STATE_NORMAL,color_fg['Red'], color_fg['Green'], color_fg['Blue'])
+#      @view.textview.style.set_base(Gtk::STATE_NORMAL,color_bg['Red'], color_bg['Green'], color_bg['Blue'])
+#      @view.textview.style.set_bg(Gtk::STATE_NORMAL,color_bg['Red'], color_bg['Green'], color_bg['Blue'])
+
+      #Methode par application d'un style modifié : NOK
+#      new_style = @view.textview.modifier_style
+#      new_style = Gtk::RcStyle.new
+#      new_style.set_base(Gtk::STATE_NORMAL,color_bg['Red'], color_fg['Green'], color_fg['Blue'])
+#      new_style.set_text(Gtk::STATE_NORMAL,color_fg['Red'], color_bg['Green'], color_bg['Blue'])
+#      @view.textview.modify_style(new_style)
+#      @view.treeview.modify_style(new_style)
+
+      #Methode par fonctions  : OK
       color_fg = get_theme_color(theme_settings['color'])
       color_bg = get_theme_color(theme_settings['background'])
-
       @view.textview.modify_base(Gtk::STATE_NORMAL,color_bg)
       @view.treeview.modify_base(Gtk::STATE_NORMAL,color_bg)
       @view.textview.modify_text(Gtk::STATE_NORMAL,color_fg)
