@@ -825,7 +825,6 @@ class ControlerNovedit < UndoRedo
 
     theme_file = $DIR_THEMES + theme + ".yaml"
     if File.exist? theme_file 
-      puts 'text : '+@view.textview.style.text(Gtk::STATE_NORMAL).to_a.join('-')
       theme_settings = YAML.load(File.open(theme_file))
 
 #      color_fg = theme_settings['color']
@@ -850,10 +849,22 @@ class ControlerNovedit < UndoRedo
       color_bg = get_theme_color(theme_settings['normal']['background'])
       @view.textview.modify_base(Gtk::STATE_NORMAL,color_bg)
       @view.treeview.modify_base(Gtk::STATE_NORMAL,color_bg)
-
       @view.textview.modify_text(Gtk::STATE_NORMAL,color_fg)
       @view.treeview.modify_text(Gtk::STATE_NORMAL,color_fg)
 
+      color_fg = get_theme_color(theme_settings['selected']['color'])
+      color_bg = get_theme_color(theme_settings['selected']['background'])
+      @view.textview.modify_base(Gtk::STATE_SELECTED,color_bg)
+      @view.treeview.modify_base(Gtk::STATE_SELECTED,color_bg)
+      @view.textview.modify_text(Gtk::STATE_SELECTED,color_fg)
+      @view.treeview.modify_text(Gtk::STATE_SELECTED,color_fg)
+
+      color_fg = get_theme_color(theme_settings['active']['color'])
+      color_bg = get_theme_color(theme_settings['active']['background'])
+      @view.textview.modify_base(Gtk::STATE_ACTIVE,color_bg)
+      @view.treeview.modify_base(Gtk::STATE_ACTIVE,color_bg)
+      @view.textview.modify_text(Gtk::STATE_ACTIVE,color_fg)
+      @view.treeview.modify_text(Gtk::STATE_ACTIVE,color_fg)
     else
       puts "Theme file does not exists"
     end

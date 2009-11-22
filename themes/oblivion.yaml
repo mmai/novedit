@@ -1,8 +1,9 @@
 --- 
-name: matrix
+name: oblivion
 normal:
-  background: 0-0-0
-  color: 0-65535-0
+  color: 54227-55255-53199
+  background: 11822-13364-13878
+  font: Sans 10
 selected:
   color: 61166-61166-60652
   background: 34952-35466-34181
