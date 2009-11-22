@@ -1,11 +1,6 @@
 --- 
 name: matrix
-background: 
-  Red: 0
-  Green: 0
-  Blue: 0
-color: 
-  Red: 0
-  Green: 65535
-  Blue: 0
+normal:
+  background: 0-0-0
+  color: 0-65535-0
 

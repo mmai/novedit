@@ -1,0 +1,33 @@
+--- 
+name: white
+normal:
+  font: Sans 10
+  background: 65535-65535-65535
+  color: 6682-6682-6682
+  fg: 4112-4112-4112
+  bg: 59110-56797-54741
+active:
+  font: Sans 10
+  background: 41707-36724-32295
+  color: 65535-65535-65535
+  fg: 4112-4112-4112
+  bg: 53542-49891-46646
+prelight:
+  fg: 4112-4112-4112
+  bg: 59997-57950-56130
+  color: 6682-6682-6682
+  background: 56840-53916-51317
+  font: Sans 10
+selected:
+  fg: 65535-65535-65535
+  bg: 36751-24415-19018
+  color: 65535-65535-65535
+  background: 39054-25453-19503
+  font: Sans 10
+insensitive:
+  fg: 41707-36724-32295
+  bg: 59110-56797-54741
+  color: 41707-36724-32295
+  background: 59110-56797-54741
+  font: Sans 10
+

@@ -92,7 +92,11 @@ class ControlerNovedit < UndoRedo
     #Visual interface linking (MVC)
     @view = ViewNovedit.new(self, model)
 
-    load_theme(@settings['theme']) unless @settings['theme'].nil?
+    if @settings['theme'].nil?
+      @settings['theme'] = 'white' #Default theme
+    else
+      load_theme(@settings['theme'])  
+    end
 
     #Add a recent projects menu item
     manager = Gtk::RecentManager.default
@@ -804,7 +808,8 @@ class ControlerNovedit < UndoRedo
   end
 
   def get_theme_color(color)
-    Gdk::Color.new(color['Red'], color['Green'], color['Blue'])
+#    Gdk::Color.new(color['Red'], color['Green'], color['Blue'])
+    Gdk::Color.new(*color.split('-').map{|c| c.to_i})
   end
 
   def load_theme(theme)
@@ -814,15 +819,17 @@ class ControlerNovedit < UndoRedo
 #      puts 'fg : '+@view.textview.style.fg(state).to_a.join('-')
 #      puts 'bg : '+@view.textview.style.bg(state).to_a.join('-')
 #      puts 'text : '+@view.textview.style.text(state).to_a.join('-')
+#      puts 'base : '+@view.textview.style.base(state).to_a.join('-')
 #      puts 'font_desc : ' + @view.textview.style.font_desc()
 #    end
 
     theme_file = $DIR_THEMES + theme + ".yaml"
     if File.exist? theme_file 
+      puts 'text : '+@view.textview.style.text(Gtk::STATE_NORMAL).to_a.join('-')
       theme_settings = YAML.load(File.open(theme_file))
 
-      color_fg = theme_settings['color']
-      color_bg = theme_settings['background']
+#      color_fg = theme_settings['color']
+#      color_bg = theme_settings['background']
 
       #Methode par modification directe du style : NOK
 #      @view.textview.style.set_text(Gtk::STATE_NORMAL,color_fg['Red'], color_fg['Green'], color_fg['Blue'])
@@ -839,12 +846,14 @@ class ControlerNovedit < UndoRedo
 #      @view.treeview.modify_style(new_style)
 
       #Methode par fonctions  : OK
-      color_fg = get_theme_color(theme_settings['color'])
-      color_bg = get_theme_color(theme_settings['background'])
+      color_fg = get_theme_color(theme_settings['normal']['color'])
+      color_bg = get_theme_color(theme_settings['normal']['background'])
       @view.textview.modify_base(Gtk::STATE_NORMAL,color_bg)
       @view.treeview.modify_base(Gtk::STATE_NORMAL,color_bg)
+
       @view.textview.modify_text(Gtk::STATE_NORMAL,color_fg)
       @view.treeview.modify_text(Gtk::STATE_NORMAL,color_fg)
+
     else
       puts "Theme file does not exists"
     end

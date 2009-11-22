@@ -1,11 +1,6 @@
 --- 
-name: matrix
-background: 
-  Red: 0
-  Green: 0
-  Blue: 0
-color: 
-  Red: 65535
-  Green: 0
-  Blue: 0
+name: evil
+normal:
+  background: 0-0-0
+  color: 65535-0-0
 
