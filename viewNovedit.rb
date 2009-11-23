@@ -232,9 +232,6 @@ class ViewNovedit
   def on_fullscreen_activate(widget)
      @controler.on_toggle_fullscreen()
   end
-  def on_theme_black_activate(widget)
-     @controler.on_toggle_theme()
-  end
 #
   # Unfo, Redo
   #

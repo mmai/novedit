@@ -390,6 +390,10 @@ class ControlerNovedit < UndoRedo
       @combo_themes.active = index if theme == @settings['theme']
       index = index + 1
     end
+    @combo_themes.signal_connect('changed') do
+      choosen_theme = @combo_themes.active_text 
+      load_theme(choosen_theme)
+    end
 
     hboxprefs = @gladeDialogs.get_object("hboxprefs")
     hboxprefs.add(@combo_themes)
@@ -404,7 +408,7 @@ class ControlerNovedit < UndoRedo
 
   def on_preferences_ok()
     choosen_theme = @combo_themes.active_text 
-    load_theme(choosen_theme)
+#    load_theme(choosen_theme)
 
     #Save preferences settings 
     @settings['theme'] = choosen_theme
@@ -801,10 +805,6 @@ class ControlerNovedit < UndoRedo
       @view.appwindow.fullscreen
       @view.is_fullscreen = true
     end
-  end
-
-  def on_toggle_theme()
-    load_theme('matrix')
   end
 
   def get_theme_color(color)
