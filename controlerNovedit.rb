@@ -674,14 +674,15 @@ class ControlerNovedit < UndoRedo
 
   def on_insert_text(iter, text)
     separators_list = [" ", "\n", "\t"]
+#    puts text
     
     #On met toutes les lettres d'un même mot dans le même undo/redo
     if (not @model.currentNode.undopool.empty?) and (not separators_list.include?(text)) and (@model.currentNode.undopool.last[0] == "insert_text") and (@model.currentNode.undopool.last[2] == iter.offset)
       last_text = @model.currentNode.undopool.pop
 #      @model.currentNode.undopool <<  ["insert_text", last_text[1], last_text[1] + last_text[2] + text.scan(/./).size, last_text[3] + text]
-      @model.currentNode.undopool <<  ["insert_text", last_text[1], last_text[2] + text.scan(/./).size, last_text[3] + text]
+      @model.currentNode.undopool <<  ["insert_text", last_text[1], last_text[2] + text.size, last_text[3] + text]
     else
-      @model.currentNode.undopool <<  ["insert_text", iter.offset, iter.offset + text.scan(/./).size, text]
+      @model.currentNode.undopool <<  ["insert_text", iter.offset, iter.offset + text.size, text]
     end
 
     #On appelle les traitements spécifiques novedit_textbuffer
@@ -731,6 +732,7 @@ class ControlerNovedit < UndoRedo
   def undo_text()
     return if @model.currentNode.undopool.size == 0
     action = @model.currentNode.undopool.pop 
+#    puts action.inspect
     case action[0]
     when "insert_text"
       start_iter = @view.buffer.get_iter_at_offset(action[1])
