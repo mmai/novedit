@@ -42,6 +42,14 @@ module NoveditTextbuffer
     return depth_tag
   end
 
+  def get_iter_at_tag_end(iter, tag)
+    while iter.has_tag?(tag)
+      iterend = iter.dup
+      break if not iter.forward_char
+    end
+    return iterend
+  end
+
   def add_newline(iter)
     return false if (!can_make_bulleted_list?)
 

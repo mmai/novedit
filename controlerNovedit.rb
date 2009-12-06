@@ -731,7 +731,17 @@ class ControlerNovedit < UndoRedo
     #We remove all tags in order to call the on_remove_tag function which store the tags in the undopool array
     in_action = @model.currentNode.undopool.last[0] == "action_begin"
     @model.currentNode.undopool <<  ["action_begin"] if not in_action
-    @view.buffer.remove_all_tags(start_iter, end_iter)
+#    @view.buffer.remove_all_tags(start_iter, end_iter)
+    # Remove all tags, one by one
+    current_iter = start_iter
+    while current_iter.offset <= end_iter.offset
+      current_iter.tags.each do |curtag|
+        endoffset = [@view.buffer.get_iter_at_tag_end(current_iter, curtag).offset, end_iter.offset].min
+        @view.buffer.remove_tag(curtag, current_iter, @view.buffer.get_iter_at_offset(endoffset))
+      end
+      break if not current_iter.forward_char
+    end
+
     text = @view.buffer.get_text(start_iter, end_iter)
     @model.currentNode.undopool <<  ["delete_range", start_iter.offset, end_iter.offset, text]
     @model.currentNode.undopool <<  ["action_end"] if not in_action
@@ -756,7 +766,7 @@ class ControlerNovedit < UndoRedo
   def undo_text()
     return if @model.currentNode.undopool.size == 0
     action = @model.currentNode.undopool.pop 
-#    puts @model.currentNode.undopool.inspect unless @in_action
+    #puts @model.currentNode.undopool.inspect unless @in_action
     case action[0]
     when "action_end"
       @in_action = true
