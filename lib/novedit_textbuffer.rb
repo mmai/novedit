@@ -411,10 +411,10 @@ module NoveditTextbuffer
 
     curr_depth = find_depth_tag(start)
 
-    #			Undoer.FreezeUndo();
     if (curr_depth.nil?) 
       # Insert a brand new bullet
       suivant = start
+      # Go at the beginning of the first sentence
       suivant.forward_sentence_end()
       suivant.backward_sentence_start()
 
@@ -435,8 +435,6 @@ module NoveditTextbuffer
       next_depth = curr_depth.depth + 1
       insert_bullet(get_iter_at_mark(start_mark), next_depth, curr_depth.direction)
     end	
-    #			Undoer.ThawUndo();			
-    #			change_text_depth(self, ChangeDepthEventArgs.new(start.line, true))
   end
 
   def decrease_depth(start)

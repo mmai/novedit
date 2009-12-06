@@ -637,7 +637,7 @@ class ControlerNovedit < UndoRedo
   end
   
   ########################
-  # Actions sur le texte
+  # Text related actions
   ########################
 
   def on_paste(widget)
@@ -662,11 +662,29 @@ class ControlerNovedit < UndoRedo
     @view.user_action = true
     case keyval
     when 65293 #Enter
+      @model.currentNode.undopool <<  ["action_begin"]
       key_inserted = @view.buffer.add_newline(iter)
+      if key_inserted
+        @model.currentNode.undopool <<  ["action_end"]
+      else
+        @model.currentNode.undopool.pop 
+      end
     when 65289 #Tab
+      @model.currentNode.undopool <<  ["action_begin"]
       key_inserted = @view.buffer.add_tab
+      if key_inserted
+        @model.currentNode.undopool <<  ["action_end"]
+      else
+        @model.currentNode.undopool.pop 
+      end
     when 65288 #Backspace
+      @model.currentNode.undopool <<  ["action_begin"]
       key_inserted = @view.buffer.remove_tab
+      if key_inserted
+        @model.currentNode.undopool <<  ["action_end"]
+      else
+        @model.currentNode.undopool.pop 
+      end
     end
     @view.user_action = false
     return key_inserted
@@ -680,9 +698,10 @@ class ControlerNovedit < UndoRedo
     if (not @model.currentNode.undopool.empty?) and (not separators_list.include?(text)) and (@model.currentNode.undopool.last[0] == "insert_text") and (@model.currentNode.undopool.last[2] == iter.offset)
       last_text = @model.currentNode.undopool.pop
 #      @model.currentNode.undopool <<  ["insert_text", last_text[1], last_text[1] + last_text[2] + text.scan(/./).size, last_text[3] + text]
-      @model.currentNode.undopool <<  ["insert_text", last_text[1], last_text[2] + text.size, last_text[3] + text]
+      # We use text.scan(/./) because of utf-8 characters
+      @model.currentNode.undopool <<  ["insert_text", last_text[1], last_text[2] + text.scan(/./).size, last_text[3] + text]
     else
-      @model.currentNode.undopool <<  ["insert_text", iter.offset, iter.offset + text.size, text]
+      @model.currentNode.undopool <<  ["insert_text", iter.offset, iter.offset + text.scan(/./).size, text]
     end
 
     #On appelle les traitements spécifiques novedit_textbuffer
@@ -709,8 +728,13 @@ class ControlerNovedit < UndoRedo
   end
 
   def on_delete_range(start_iter, end_iter)
+    #We remove all tags in order to call the on_remove_tag function which store the tags in the undopool array
+    in_action = @model.currentNode.undopool.last[0] == "action_begin"
+    @model.currentNode.undopool <<  ["action_begin"] if not in_action
+    @view.buffer.remove_all_tags(start_iter, end_iter)
     text = @view.buffer.get_text(start_iter, end_iter)
     @model.currentNode.undopool <<  ["delete_range", start_iter.offset, end_iter.offset, text]
+    @model.currentNode.undopool <<  ["action_end"] if not in_action
     store_text_redo()
     set_not_saved
   end
@@ -732,8 +756,14 @@ class ControlerNovedit < UndoRedo
   def undo_text()
     return if @model.currentNode.undopool.size == 0
     action = @model.currentNode.undopool.pop 
-#    puts action.inspect
+#    puts @model.currentNode.undopool.inspect unless @in_action
     case action[0]
+    when "action_end"
+      @in_action = true
+      @model.currentNode.redopool << action
+      undo_text while @in_action
+    when "action_begin"
+      @in_action = false
     when "insert_text"
       start_iter = @view.buffer.get_iter_at_offset(action[1])
       end_iter = @view.buffer.get_iter_at_offset(action[2])
@@ -757,13 +787,19 @@ class ControlerNovedit < UndoRedo
 #      @view.buffer.apply_tag(@view.buffer.tag_table[action[3]], start_iter, end_iter)
     end
     @view.iter_on_screen(start_iter, "insert") if !start_iter.nil?
-    @model.currentNode.redopool << action
+    @model.currentNode.redopool << action unless action[0] == "action_end"
   end
 
   def redo_text()
     return if @model.currentNode.redopool.size == 0
     action = @model.currentNode.redopool.pop 
     case action[0]
+    when "action_end"
+      @in_action = false
+    when "action_begin"
+      @in_action = true
+      @model.currentNode.undopool << action
+      redo_text while @in_action
     when "insert_text"
       start_iter = @view.buffer.get_iter_at_offset(action[1])
       end_iter = @view.buffer.get_iter_at_offset(action[2])
@@ -788,7 +824,7 @@ class ControlerNovedit < UndoRedo
 #      @view.buffer.remove_tag(@view.buffer.tag_table[action[3]], start_iter, end_iter)
     end
     @view.iter_on_screen(start_iter, "insert") if !start_iter.nil?
-    @model.currentNode.undopool << action
+    @model.currentNode.undopool << action unless action[0] == "action_begin"
   end
 
   def on_undo(widget)
