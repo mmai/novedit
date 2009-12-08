@@ -44,7 +44,11 @@ Gtk.init
 
 model = NoveditModel.new(nil)
 ControlerNovedit.new(model)
-Gtk.main
+
+#Guard for tests (cf. http://danlucraft.com/blog/2009/03/testing-ruby-gnome2-with-cucumber/ )
+unless $running_features
+  Gtk.main
+end
 
 
 

@@ -43,9 +43,10 @@ module NoveditTextbuffer
   end
 
   def get_iter_at_tag_end(iter, tag)
-    while iter.has_tag?(tag)
-      iterend = iter.dup
-      break if not iter.forward_char
+    cur_iter = iter.dup
+    while cur_iter.has_tag?(tag)
+      iterend = cur_iter.dup
+      break if not cur_iter.forward_char
     end
     return iterend
   end

@@ -728,24 +728,17 @@ class ControlerNovedit < UndoRedo
   end
 
   def on_delete_range(start_iter, end_iter)
-    #XXX : le problème est qu'il faudrait appeler cette méthode AVANT d'effectuer la suppression et non après.
-    
     #We remove all tags in order to call the on_remove_tag function which store the tags in the undopool array
     in_action = @model.currentNode.undopool.last[0] == "action_begin"
     @model.currentNode.undopool <<  ["action_begin"] if not in_action
 #    @view.buffer.remove_all_tags(start_iter, end_iter)
     # Remove all tags, one by one
-    current_iter = start_iter
+    current_iter = start_iter.dup
     while current_iter.offset <= end_iter.offset
       current_iter.tags.each do |curtag|
         tagend_iter = @view.buffer.get_iter_at_tag_end(current_iter, curtag)
-#        endoffset = [tagend_iter.offset, end_iter.offset].min
-#        @view.buffer.remove_tag(curtag, current_iter, @view.buffer.get_iter_at_offset(endoffset))
-        
-        @view.buffer.remove_tag(curtag, current_iter, tagend_iter)
-        if tagend_iter.offset > end_iter.offset
-          @view.buffer.apply_tag(curtag, @view.buffer.get_iter_at_offset(end_iter.offset + 1), tagend_iter)
-        end
+        endoffset = [tagend_iter.offset, end_iter.offset].min
+        @view.buffer.remove_tag(curtag, current_iter, @view.buffer.get_iter_at_offset(endoffset))
       end
       break if not current_iter.forward_char
     end
@@ -787,6 +780,7 @@ class ControlerNovedit < UndoRedo
       end_iter = @view.buffer.get_iter_at_offset(action[2])
       @view.buffer.delete(start_iter, end_iter)
     when "delete_range"
+#      puts @model.currentNode.undopool.inspect
       start_iter = @view.buffer.get_iter_at_offset(action[1])
       @view.buffer.insert(start_iter, action[3])
     when "remove_tag"
