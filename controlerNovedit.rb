@@ -83,6 +83,7 @@ class ControlerNovedit < UndoRedo
   def initialize(model)
     super()
     #Model association (MVC)
+    @actions_started = 0
     @model = model
     @settings = Settings.new($SETTINGS_FILE)
 #    @mysettings['test'] =  'testvalue'
@@ -727,19 +728,29 @@ class ControlerNovedit < UndoRedo
   end
 
   def on_drag_begin(drag_context)
-  #  @model.currentNode.undopool <<  ["action_begin"]
+    start_text_action
   end
 
   def on_drag_end(drag_context)
-  #  @model.currentNode.undopool <<  ["action_end"]
+    end_text_action
+  end
+
+  def start_text_action
+    @actions_started = @actions_started + 1
+    @model.currentNode.undopool <<  ["action_begin"] if @actions_started == 1
+  end
+
+  def end_text_action
+    @actions_started = @actions_started - 1
+    if @actions_started == 0
+      @model.currentNode.undopool <<  ["action_end"]
+      store_text_redo()
+    end
   end
 
   def on_delete_range(start_iter, end_iter)
-    puts "delete"
+    start_text_action()
     #We remove all tags in order to call the on_remove_tag function which store the tags in the undopool array
-    in_action = @model.currentNode.undopool.last[0] == "action_begin"
-    @model.currentNode.undopool <<  ["action_begin"] if not in_action
-#    @view.buffer.remove_all_tags(start_iter, end_iter)
     # Remove all tags, one by one
     current_iter = start_iter.dup
     while current_iter.offset <= end_iter.offset
@@ -753,8 +764,7 @@ class ControlerNovedit < UndoRedo
 
     text = @view.buffer.get_text(start_iter, end_iter)
     @model.currentNode.undopool <<  ["delete_range", start_iter.offset, end_iter.offset, text]
-    @model.currentNode.undopool <<  ["action_end"] if not in_action
-    store_text_redo()
+    end_text_action()
     set_not_saved
   end
   
