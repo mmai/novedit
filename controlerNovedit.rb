@@ -579,8 +579,8 @@ class ControlerNovedit < UndoRedo
   
   #Drag and drop
   def on_drag_data_get(treeview, context, selection, info, timestamp)
-      iter = treeview.selection.selected
-      selection.text = iter.to_s
+    iter = treeview.selection.selected
+    selection.text = iter.to_s
   end
   
   def on_drag_data_received(treeview, context, x, y, selection, info, timestamp)
@@ -589,13 +589,13 @@ class ControlerNovedit < UndoRedo
       path, position = drop_info
       pathDest = path.to_s
       pathOrig = selection.text
-      
+
       node = @model.getNode(pathOrig)
       node_pos = pathOrig.split(":").last.to_i
       node_parent = node.parent
       node_newparent = @model.getNode(pathDest)
       node_rightbrother = node.rightbrother
-      
+
       node_newpos = nil
       if position == Gtk::TreeView::DROP_BEFORE
         node_newpos = node_newparent.pos
@@ -604,7 +604,7 @@ class ControlerNovedit < UndoRedo
         node_newpos = node_newparent.pos + 1
         node_newparent = node_newparent.parent
       end
-      
+
       #On met à jour le modèle
       todo = lambda {
         node.move_to(node_newparent, node_newpos)
@@ -624,8 +624,7 @@ class ControlerNovedit < UndoRedo
       rescue TreeNodeException
         @view.write_appbar _("Forbidden move!")
       end
-
-     end
+    end
   end
   
   def on_expand_node(path)
@@ -727,7 +726,16 @@ class ControlerNovedit < UndoRedo
     store_text_redo()
   end
 
+  def on_drag_begin(drag_context)
+  #  @model.currentNode.undopool <<  ["action_begin"]
+  end
+
+  def on_drag_end(drag_context)
+  #  @model.currentNode.undopool <<  ["action_end"]
+  end
+
   def on_delete_range(start_iter, end_iter)
+    puts "delete"
     #We remove all tags in order to call the on_remove_tag function which store the tags in the undopool array
     in_action = @model.currentNode.undopool.last[0] == "action_begin"
     @model.currentNode.undopool <<  ["action_begin"] if not in_action

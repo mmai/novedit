@@ -59,14 +59,14 @@ class ViewNovedit
     col = Gtk::TreeViewColumn.new("élements", cellrenderer, :text=>0)
     @treeview.append_column(col)
     
-    #Drag and drop
+    #Treeview Drag and drop
     #Source
     @treeview.enable_model_drag_source(Gdk::Window::BUTTON1_MASK, [['text/plain', 0, 0]], Gdk::DragContext::ACTION_DEFAULT | Gdk::DragContext::ACTION_MOVE)
     @treeview.signal_connect("drag-data-get") do |treeview, context, selection, info, timestamp|
        @controler.on_drag_data_get(treeview, context, selection, info, timestamp)
     end
     #Destination
-    @treeview.enable_model_drag_dest([['text/plain', 0, 0]], Gdk::DragContext::ACTION_DEFAULT | Gdk::DragContext::ACTION_MOVE)
+    @treeview.enable_model_drag_dest([['text/plain', Gtk::Drag::TARGET_SAME_WIDGET, 0]], Gdk::DragContext::ACTION_DEFAULT | Gdk::DragContext::ACTION_MOVE)
     @treeview.signal_connect("drag-data-received") do |treeview, context, x, y, selection, info, timestamp| 
       @controler.on_drag_data_received(treeview, context, x, y, selection, info, timestamp)
     end
@@ -113,6 +113,14 @@ class ViewNovedit
     @textview.signal_connect("key-press-event") do |widget, event|
 #      @buffer.on_key_pressed(event.keyval)  #Pour les traitements de type gestion des puces
       @controler.on_key_pressed(event.keyval)  #Pour les traitements de type gestion des puces
+    end
+
+    @textview.signal_connect("drag-begin") do |widget, context|
+      @controler.on_drag_begin(context)
+    end
+
+    @textview.signal_connect("drag-end") do |widget, context|
+      @controler.on_drag_end(context)
     end
 
     @buffer.signal_connect("insert_text") do |w, iter, text, length|
