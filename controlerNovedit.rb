@@ -10,7 +10,7 @@ require "viewNovedit.rb"
 require "lib/settings.rb"
 
 require "modules/io/novedit_io_yaml.rb"
-#require "modules/io/novedit_io_html.rb"
+require "modules/io/novedit_io_html.rb"
 require "lib/undo_redo.rb"
 require "lib/novedit_xml.rb"
 
@@ -88,7 +88,7 @@ class ControlerNovedit < UndoRedo
     @settings = Settings.new($SETTINGS_FILE)
 #    @mysettings['test'] =  'testvalue'
     #Saving mode
-    @model.set_io(NoveditIOYaml.new)
+    @model.set_io(NoveditIOYaml.instance)
 #    @model.set_io(NoveditIOHtml.new)
     #Visual interface linking (MVC)
     @view = ViewNovedit.new(self, model)
@@ -232,6 +232,7 @@ class ControlerNovedit < UndoRedo
   end
 
   def load_file(filename)
+    @model.set_io(NoveditIOYaml.instance)
     if filename
       @model.open_file(filename)
       remember_file(filename)
@@ -311,19 +312,23 @@ class ControlerNovedit < UndoRedo
         remember_file(@model.filename)
       end
     end
+
+    case File.extname(@model.filename)
+    when ".html"
+      @model.set_io(NoveditIOHtml.instance)
+    when ".nov"
+      @model.set_io(NoveditIOYaml.instance)
+    else
+      @model.set_io(NoveditIOYaml.instance)
+    end
+    
     @model.save_file
     set_saved
   end
 
   def on_save_as
-      @model.currentNode.text = @view.buffer.text
-      @model.filename = select_file()
-      if @model.filename
-        @model.save_file
-        remember_file(@model.filename)
-        set_saved
-      end
-#      @view.update
+    @model.filename = false
+    on_save_file
   end
   
   #Redraw plugins dialog window

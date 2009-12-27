@@ -2,14 +2,14 @@ require 'lib/novedit_texttag.rb'
 require 'lib/novedit_xml.rb'
 require 'lib/unicode.rb'
 
-# Excepté la désérialisation, ce module est essentiellement une traduction en ruby 
-# des fonctions de traitement de texte utilisées dans
-# l'application Gtk Tomboy (http:#www.gnome.org/projects/tomboy/)
+# Deserialisation excepted, this module is essentially a ruby translation
+# of text manipulation functions used in Gtk Tomboy application
+# http:#www.gnome.org/projects/tomboy/
 module NoveditTextbuffer
 
   #############################################
   #
-  # GESTION DES PUCES
+  # BULLETS SUPPORT
   #
   #############################################
 
@@ -726,7 +726,7 @@ module NoveditTextbuffer
 
     xmldoc = REXML::Document.new(strXml)
     xmldoc.elements.each do |element|
-      lireXml(element, offset)
+      readXml(element, offset)
     end
   end
 
@@ -734,34 +734,34 @@ module NoveditTextbuffer
     self.insert(self.end_iter, "|"+message)
   end
 
-  def lireXml(element, offset)
+  def readXml(element, offset)
     buffer = self
     note_table = buffer.tag_table
     case element.name
-      #when "note-content" #Noeud racine
-    when "t" #Noeud texte
+      #when "note-content" #Root node
+    when "t" #Text node
       buffer.insert(buffer.end_iter, element.text)
     when "list"
       @curr_depth += 1
       element.elements.each do |elem|
-        lireXml(elem, offset)
+        readXml(elem, offset)
       end
       @curr_depth -= 1
     when "list-item"
       buffer.insert_bullet(buffer.end_iter, @curr_depth,direction = Pango::DIRECTION_LTR)
       element.elements.each do |elem|
-        lireXml(elem, offset)
+        readXml(elem, offset)
       end
       buffer.insert(buffer.end_iter, "\n")
     else
       if (!element.name.nil?)
-        #Debut tag
+        #Start tag
         mark_start = buffer.create_mark(nil, buffer.end_iter, true)
-        #Traitement des noeuds enfants
+        #Child nodes processing
         element.elements.each do |elem|
-          lireXml(elem, offset)
+          readXml(elem, offset)
         end
-        #Fin tag
+        #End tag
         tag = buffer.tag_table[element.name]
         buffer.apply_tag(tag, buffer.get_iter_at_mark(mark_start), buffer.end_iter) if !tag.nil?
       end

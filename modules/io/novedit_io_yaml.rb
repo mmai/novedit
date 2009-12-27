@@ -23,9 +23,9 @@ class NoveditIOYaml < NoveditIOBase
     end
     #Saving
     File.open(location, "w")do|f|
-      #Première ligne : un commentaire avec le nom du programme, ie 'Novedit'
-      #en 6ème caractère pour faciliter la gestion du type MIME
-      #exemple dans freedesktop.org.xml : <match value="Novedit" type="string" offset="5" />
+      #First line : a comment with the program name, ie 'Novedit
+      #at the 6th caracter in order to ease MIME type support
+      #exemple in freedesktop.org.xml : <match value="Novedit" type="string" offset="5" />
       f.puts "#    Novedit"
       # version & file format 
       f.puts "# " + $VERSION

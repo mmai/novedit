@@ -30,7 +30,7 @@ class NoveditModel
   attr_accessor :rootNode, :currentNode, :filename, :is_saved
     
   def initialize(filename)
-    @novedit_io = NoveditIOBase.new
+    @novedit_io = NoveditIOBase.instance
     @filename = filename
     @is_saved = true
     fill_tree
@@ -101,6 +101,7 @@ class NoveditModel
 ##      Marshal.dump(@rootNode, f) 
 #      f.puts @rootNode.to_yaml 
 #    end
+   
     @novedit_io.write(self, @filename)
     @is_saved = true
   end

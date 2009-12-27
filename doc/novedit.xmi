@@ -943,7 +943,7 @@
           <UML:Parameter visibility="private" isSpecification="false" xmi.id="WIxTvwRfFUM0" type="6yf1tEivt5EF" value="" name="strXml" />
          </UML:BehavioralFeature.parameter>
         </UML:Operation>
-        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="OY7GM9EK8md2" name="lireXml" >
+        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="OY7GM9EK8md2" name="readXml" >
          <UML:BehavioralFeature.parameter>
           <UML:Parameter visibility="private" isSpecification="false" xmi.id="KrZSdASHFq4j" type="frwj2M5PuDfF" value="" name="element" />
           <UML:Parameter visibility="private" isSpecification="false" xmi.id="4xVXYpiBhcuh" type="ICrYSN4rYL20" value="" name="offset" />
