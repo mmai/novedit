@@ -3,8 +3,26 @@ require 'lib/novedit_io_base.rb'
 class NoveditIOHtml < NoveditIOBase
   def read(location)
     if File.exists?(location)
+      @rootNode = NoveditNode.new("root")
+      @lastnode = @rootNode
       begin
-        raise "novedit:modules:io:HTML:Todo"
+        IO.readlines(location).each do |line|
+          matched = line.match(/<h([1-9])>([^<]*)<\/h[1-9]>/)
+          if matched
+            node_level = matched[1]
+            node_title = matched[2]
+
+            while node_level <=  @lastnode.path.split(':').length
+              @lastnode = @lastnode.parent
+            end
+            @lastnode.addNode(@curnode)
+
+            @lastnode = @curnode
+            @curnode = NoveditNode.new(node_title)
+          else
+            @curnode.text << line
+          end
+        end
       rescue
         raise "novedit:modules:io:Bad format"
       end
@@ -25,8 +43,10 @@ class NoveditIOHtml < NoveditIOBase
   end
 
   def nov_to_html(text)
-    text = del_tag("note-content version='[^']*'", text)
-    text = del_tag("t", text)
+#    text = del_tag("note-content version='[^']*'", text)
+    text = trans_tag("note-content version='[^']*'", "p", text)
+#    text = del_tag("t", text)
+    text = trans_tag("t", "span class='text'", text)
     text = trans_tag("italic", "i", text)
     text = trans_tag("bold", "b", text)
     text = trans_tag("list", "ul", text)
@@ -38,6 +58,22 @@ class NoveditIOHtml < NoveditIOBase
     text = trans_tag("centered", "div style='text-align:center;'", text)
     return text
   end
+
+  def html_to_nov(text)
+    text = trans_tag("p", "note-content", text)
+    text = trans_tag("span class='text'", "t", text)
+    text = trans_tag("i", "italic", text)
+    text = trans_tag("b", "bold", text)
+    text = trans_tag("ul", "list", text)
+    text = trans_tag("li", "list-item", text)
+    text = trans_tag("del", "strikethrough", text)
+    text = trans_tag("span style='background:yellow;'", "highlight", text)
+    text = trans_tag("div style='text-align:right;'", "justify-right", text)
+    text = trans_tag("div style='text-align:left;'", "justify-left", text)
+    text = trans_tag("div style='text-align:center;'", "centered", text)
+    return text
+  end
+
 
   def write(noveditModel, location)
     level = 1

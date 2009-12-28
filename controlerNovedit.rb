@@ -232,8 +232,9 @@ class ControlerNovedit < UndoRedo
   end
 
   def load_file(filename)
-    @model.set_io(NoveditIOYaml.instance)
+#    @model.set_io(NoveditIOYaml.instance)
     if filename
+      set_io_from_file(filename)
       @model.open_file(filename)
       remember_file(filename)
     end
@@ -313,7 +314,13 @@ class ControlerNovedit < UndoRedo
       end
     end
 
-    case File.extname(@model.filename)
+    set_io_from_file(@model.filename)
+    @model.save_file
+    set_saved
+  end
+
+  def set_io_from_file(filename)
+    case File.extname(filename)
     when ".html"
       @model.set_io(NoveditIOHtml.instance)
     when ".nov"
@@ -321,9 +328,6 @@ class ControlerNovedit < UndoRedo
     else
       @model.set_io(NoveditIOYaml.instance)
     end
-    
-    @model.save_file
-    set_saved
   end
 
   def on_save_as
