@@ -3,30 +3,33 @@ require 'lib/novedit_io_base.rb'
 class NoveditIOHtml < NoveditIOBase
   def read(location)
     if File.exists?(location)
-      @rootNode = NoveditNode.new("root")
-      @lastnode = @rootNode
+      rootNode = NoveditNode.new("root")
+      lastnode = rootNode
       begin
         IO.readlines(location).each do |line|
+          next if line =~ /<!--.*/
           matched = line.match(/<h([1-9])>([^<]*)<\/h[1-9]>/)
           if matched
             node_level = matched[1]
             node_title = matched[2]
 
-            while node_level <=  @lastnode.path.split(':').length
-              @lastnode = @lastnode.parent
+            while node_level <=  lastnode.path.split(':').length
+              lastnode = lastnode.parent
             end
-            @lastnode.addNode(@curnode)
+            lastnode.addNode(curnode)
 
-            @lastnode = @curnode
-            @curnode = NoveditNode.new(node_title)
+            lastnode = curnode
+            curnode = NoveditNode.new(node_title)
           else
-            @curnode.text << line
+            curnode.text << line
           end
         end
       rescue
+        puts $!.inspect
         raise "novedit:modules:io:Bad format"
       end
     end
+    puts rootNode
     return rootNode
   end
 
