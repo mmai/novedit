@@ -5,31 +5,41 @@ class NoveditIOHtml < NoveditIOBase
     if File.exists?(location)
       rootNode = NoveditNode.new("root")
       lastnode = rootNode
+      curnode = nil
+      node_level = 1
       begin
         IO.readlines(location).each do |line|
           next if line =~ /<!--.*/
           matched = line.match(/<h([1-9])>([^<]*)<\/h[1-9]>/)
           if matched
-            node_level = matched[1]
+            curnode_level = node_level
+            node_level = matched[1].to_i
             node_title = matched[2]
 
-            while node_level <=  lastnode.path.split(':').length
+            while curnode_level <=  lastnode.path.split(':').length
               lastnode = lastnode.parent
             end
-            lastnode.addNode(curnode)
-
-            lastnode = curnode
+            if not curnode.nil?
+              curnode.text = html_to_nov(curnode.text)
+              lastnode.addNode(curnode)
+              lastnode = curnode
+            end
             curnode = NoveditNode.new(node_title)
           else
             curnode.text << line
           end
         end
+        #Last node
+        while node_level <=  lastnode.path.split(':').length
+          lastnode = lastnode.parent
+        end
+        curnode.text = html_to_nov(curnode.text)
+        lastnode.addNode(curnode)
       rescue
         puts $!.inspect
         raise "novedit:modules:io:Bad format"
       end
     end
-    puts rootNode
     return rootNode
   end
 
