@@ -1,6 +1,11 @@
 require 'lib/novedit_io_base.rb'
 
 class NoveditIOHtml < NoveditIOBase
+  def initialize
+    @ext = "html"
+    @name = "HTML"
+  end
+
   def read(location)
     if File.exists?(location)
       rootNode = NoveditNode.new("root")

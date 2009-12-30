@@ -1,5 +1,17 @@
 class NoveditIOBase
   include Singleton
+
+  attr_reader :ext, :name
+
+  def get_filter
+    if @filter.nil?
+      @filter = Gtk::FileFilter.new
+      @filter.name = @name
+      @filter.add_pattern("*." + @ext)
+    end
+    return @filter
+  end
+
   def read(location)
   end
 

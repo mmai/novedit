@@ -260,6 +260,17 @@ class ControlerNovedit < UndoRedo
                                         [Gtk::Stock::CANCEL, Gtk::Dialog::RESPONSE_CANCEL],
                                         [Gtk::Stock::OPEN, Gtk::Dialog::RESPONSE_ACCEPT])
 
+    io_module_names = (Dir.entries($DIR_MODULES + "io/").select {|elem| elem !~ /^\.+/}).map {|file| File.basename(file, '.rb').gsub(/^[a-z]|_[a-z]/){ |a| a.upcase }.gsub(/_/,'').gsub(/NoveditIo/, "NoveditIO") }
+    dict_io_modules = {} 
+    io_module_names.each do |io_module_name|
+      io_module =  eval io_module_name + ".instance"
+      filedialog.add_filter(io_module.get_filter)
+      dict_io_modules[io_module.ext] = io_module.get_filter
+    end
+#    filedialog.add_filter(NoveditIOHtml.instance.get_filter)
+#    filedialog.add_filter(NoveditIOYaml.instance.get_filter)
+    filedialog.filter = @model.get_io.get_filter
+
     filedialog.set_filename(Dir.pwd + "/")
     ret = filedialog.run
     if ret == Gtk::Dialog::RESPONSE_ACCEPT 
@@ -278,6 +289,11 @@ class ControlerNovedit < UndoRedo
       end
     else
       filedialog.hide
+    end
+    #Add extension 
+    if (File.extname(filename) == "") and not File.exists?(filename)
+      extension = dict_io_modules.select {|k,v| v = filedialog.filter}.first.first
+      filename = filename + "." + extension
     end
     return filename
   end
@@ -299,7 +315,7 @@ class ControlerNovedit < UndoRedo
     @model.currentNode.text = @view.buffer.serialize()
     while not @model.filename
       selected_file = select_file()
-      return false if selected_file.nil? #Annulation
+      return false if selected_file.nil? #Cancelation
       if File.exists?(selected_file)
         dialog = Gtk::MessageDialog.new(@appwindow, Gtk::Dialog::MODAL, 
                                         Gtk::MessageDialog::QUESTION, 

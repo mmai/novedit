@@ -2,6 +2,11 @@ require 'yaml'
 require 'lib/novedit_io_base.rb'
 
 class NoveditIOYaml < NoveditIOBase
+  def initialize
+    @ext = "nov"
+    @name = "Novedit"
+  end
+
   def read(location)
     if File.exists?(location)
       begin

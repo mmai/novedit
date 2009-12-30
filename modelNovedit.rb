@@ -51,6 +51,10 @@ class NoveditModel
   def set_io(novedit_io)
     @novedit_io = novedit_io
   end
+
+  def get_io
+    return @novedit_io
+  end
   
 #  def addNode(nodeName = $DEFAULT_NODE_NAME)
 #    @rootNode.add
