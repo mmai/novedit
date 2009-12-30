@@ -739,15 +739,13 @@ class ControlerNovedit < UndoRedo
   end
 
   def on_apply_tag(tag, start_iter, end_iter)
-#    start_mark = @view.buffer.create_mark(nil, debut, true)
-#    end_mark = @view.buffer.create_mark(nil, fin, true)
+#    end_iter.forward_char
     @model.currentNode.undopool <<  ["apply_tag", start_iter.offset, end_iter.offset, tag]
     store_text_redo()
   end
 
   def on_remove_tag(tag, start_iter, end_iter)
-#    start_mark = @view.buffer.create_mark(nil, debut, true)
-#    end_mark = @view.buffer.create_mark(nil, fin, true)
+#    end_iter.forward_char
     @model.currentNode.undopool <<  ["remove_tag", start_iter.offset, end_iter.offset, tag]
     store_text_redo()
   end
@@ -827,9 +825,13 @@ class ControlerNovedit < UndoRedo
       start_iter = @view.buffer.get_iter_at_offset(action[1])
       @view.buffer.insert(start_iter, action[3])
     when "remove_tag"
-      @view.buffer.apply_tag(action[3], @view.buffer.get_iter_at_offset(action[1]), @view.buffer.get_iter_at_offset(action[2]))
+      end_iter = @view.buffer.get_iter_at_offset(action[2])
+#      end_iter.forward_char
+      @view.buffer.apply_tag(action[3], @view.buffer.get_iter_at_offset(action[1]), end_iter)
     when "apply_tag"
-      @view.buffer.remove_tag(action[3], @view.buffer.get_iter_at_offset(action[1]), @view.buffer.get_iter_at_offset(action[2]))
+      end_iter = @view.buffer.get_iter_at_offset(action[2])
+#      end_iter.forward_char
+      @view.buffer.remove_tag(action[3], @view.buffer.get_iter_at_offset(action[1]), end_iter)
     when "toogle_bulleted_list"
       toogle_bulleted_list
 #    when "apply_style_text"
@@ -864,9 +866,13 @@ class ControlerNovedit < UndoRedo
       end_iter = @view.buffer.get_iter_at_offset(action[2])
       @view.buffer.delete(start_iter, end_iter)
     when "remove_tag"
-      @view.buffer.remove_tag(action[3], @view.buffer.get_iter_at_offset(action[1]), @view.buffer.get_iter_at_offset(action[2]))
+      end_iter = @view.buffer.get_iter_at_offset(action[2])
+#      end_iter.forward_char
+      @view.buffer.remove_tag(action[3], @view.buffer.get_iter_at_offset(action[1]), end_iter)
     when "apply_tag"
-      @view.buffer.apply_tag(action[3], @view.buffer.get_iter_at_offset(action[1]), @view.buffer.get_iter_at_offset(action[2]))
+      end_iter = @view.buffer.get_iter_at_offset(action[2])
+#      end_iter.forward_char
+      @view.buffer.apply_tag(action[3], @view.buffer.get_iter_at_offset(action[1]), end_iter)
     when "toogle_bulleted_list"
       toogle_bulleted_list
 #    when "apply_style_text"
@@ -1060,7 +1066,7 @@ class ControlerNovedit < UndoRedo
     @view.buffer.begin_user_action
     (debut, fin, selected) = @view.buffer.selection_bounds
      if selected
-       #La selection a-t-elle déjà le style appliqué ?
+       #Is the style already applied on the selection ?
        style_tag = @view.buffer.tag_table[style]
        already_styled = true
        iter = debut.dup
@@ -1110,9 +1116,9 @@ class ControlerNovedit < UndoRedo
     if (itersFound.nil?)
       show_message(_("End of file"))
     else
-      #On sélectionne le texte trouvé
+      #Select found text
       @view.buffer.select_range(itersFound[0], itersFound[1])
-      #On scrolle vers le texte trouvé
+      #Scroll toward found text
       @view.textview.scroll_mark_onscreen(@view.buffer.get_mark('selection_bound'))
     end
 

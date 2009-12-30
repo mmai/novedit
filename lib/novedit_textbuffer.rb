@@ -48,6 +48,7 @@ module NoveditTextbuffer
       iterend = cur_iter.dup
       break if not cur_iter.forward_char
     end
+    iterend.forward_char
     return iterend
   end
 
