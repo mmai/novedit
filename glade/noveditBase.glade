@@ -49,7 +49,7 @@
                     <child>
                       <object class="GtkMenuItem" id="recents">
                         <property name="visible">True</property>
-                        <property name="label">R&#xE9;cemment ouverts</property>
+                        <property name="label" translatable="yes">Recently opened</property>
                       </object>
                     </child>
                     <child>

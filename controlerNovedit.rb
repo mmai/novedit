@@ -291,7 +291,7 @@ class ControlerNovedit < UndoRedo
       filedialog.hide
     end
     #Add extension 
-    if (File.extname(filename) == "") and not File.exists?(filename)
+    if (not filename.nil) and (File.extname(filename) == "") and not File.exists?(filename)
       extension = dict_io_modules.select {|k,v| v = filedialog.filter}.first.first
       filename = filename + "." + extension
     end

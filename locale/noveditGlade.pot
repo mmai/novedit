@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-25 17:56+0100\n"
+"POT-Creation-Date: 2009-12-30 17:37+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,6 +24,10 @@ msgstr ""
 msgid "_File"
 msgstr ""
 
+#: glade/noveditBase.glade:52
+msgid "Recently opened"
+msgstr ""
+
 #: glade/noveditBase.glade:102
 msgid "_Edit"
 msgstr ""
@@ -32,58 +36,62 @@ msgstr ""
 msgid "Plugins"
 msgstr ""
 
-#: glade/noveditBase.glade:165
+#: glade/noveditBase.glade:166
+msgid "_Apparence"
+msgstr ""
+
+#: glade/noveditBase.glade:187
 msgid "Search"
 msgstr ""
 
-#: glade/noveditBase.glade:196
+#: glade/noveditBase.glade:218
 msgid "_Help"
 msgstr ""
 
-#: glade/noveditBase.glade:240
+#: glade/noveditBase.glade:262
 msgid "Create a new document"
 msgstr ""
 
-#: glade/noveditBase.glade:252
+#: glade/noveditBase.glade:274
 msgid "Open a document"
 msgstr ""
 
-#: glade/noveditBase.glade:264
+#: glade/noveditBase.glade:286
 msgid "Save the document"
 msgstr ""
 
-#: glade/noveditBase.glade:290
+#: glade/noveditBase.glade:312
 msgid "Search for a string"
 msgstr ""
 
-#: glade/noveditBase.glade:302
+#: glade/noveditBase.glade:324
 msgid "Search and replace a string"
 msgstr ""
 
-#: glade/noveditBase.glade:328
+#: glade/noveditBase.glade:350
 msgid "Undo previous changes"
 msgstr ""
 
-#: glade/noveditBase.glade:340
+#: glade/noveditBase.glade:362
 msgid "Redo previous changes"
 msgstr ""
 
-#: glade/noveditBase.glade:366
+#: glade/noveditBase.glade:388
 msgid "Exit"
 msgstr ""
 
-#: glade/noveditBase.glade:429
+#: glade/noveditBase.glade:451
 msgid "Bold"
 msgstr ""
 
-#: glade/noveditBase.glade:441 glade/noveditBase.glade:453
-#: glade/noveditBase.glade:465 glade/noveditBase.glade:477
-#: glade/noveditBase.glade:489 glade/noveditBase.glade:501
-#: glade/noveditBase.glade:513
+#: glade/noveditBase.glade:463 glade/noveditBase.glade:475
+#: glade/noveditBase.glade:487 glade/noveditBase.glade:499
+#: glade/noveditBase.glade:511 glade/noveditBase.glade:523
+#: glade/noveditBase.glade:535
 msgid "Italic"
 msgstr ""
 
-#: glade/noveditBase.glade:557
+#: glade/noveditBase.glade:579
 msgid "Main"
 msgstr ""
 
@@ -134,10 +142,6 @@ msgstr ""
 msgid "<b>Site</b>"
 msgstr ""
 
-#: glade/noveditDialogs.glade:490
-msgid "gtk-preferences"
-msgstr ""
-
-#: glade/noveditDialogs.glade:529
-msgid "gtk-ok"
+#: glade/noveditDialogs.glade:574
+msgid "Theme"
 msgstr ""

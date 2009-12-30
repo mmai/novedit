@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2009-10-25 17:56+0100\n"
+"POT-Creation-Date: 2009-12-30 17:37+0100\n"
 "PO-Revision-Date: 2009-10-25 17:56+0100\n"
 "Last-Translator: Henri Bourcereau <henri.bourcereau@websiteburo.com>\n"
 "Language-Team: French\n"
@@ -16,34 +16,34 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: novedit.rb:26
+#: novedit.rb:27
 msgid "New node"
 msgstr "Nouveau noeud"
 
-#: controlerNovedit.rb:254
+#: controlerNovedit.rb:281
 msgid "Directory was selected. Select a text file."
 msgstr "Vous avez sélectionné un répertoire. Veuillez choisir un fichier texte"
 
-#: controlerNovedit.rb:291
+#: controlerNovedit.rb:323
 msgid "File allready exists. Replace file ?"
 msgstr "Ce fichier existe déjà. Voulez-vous l'écraser ?"
 
-#: controlerNovedit.rb:576
+#: controlerNovedit.rb:651
 msgid "Forbidden move!"
 msgstr "Mouvement interdit!"
 
-#: controlerNovedit.rb:800
+#: controlerNovedit.rb:1023
 msgid "No title"
 msgstr "Sans titre"
 
-#: controlerNovedit.rb:804
+#: controlerNovedit.rb:1027
 msgid "Save changes to "
 msgstr "Enregistrer les changement de "
 
-#: controlerNovedit.rb:894 controlerNovedit.rb:922
+#: controlerNovedit.rb:1117 controlerNovedit.rb:1145
 msgid "End of file"
 msgstr "Fin de fichier"
 
-#: modelNovedit.rb:116
+#: modelNovedit.rb:121
 msgid "Bad file format"
 msgstr "Mauvais format de fichier"
