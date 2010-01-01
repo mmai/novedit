@@ -22,7 +22,7 @@ $KCODE = "U"
 
 $TITLE = "Novedit"
 $NAME = "Novedit"
-$VERSION = "0.2.1"
+$VERSION = "0.2.2"
 
 $DEFAULT_NODE_NAME = _("New node")
 

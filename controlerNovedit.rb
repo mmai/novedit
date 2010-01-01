@@ -133,6 +133,7 @@ class ControlerNovedit < UndoRedo
     populateTree(@model, nil)
     
     #Load the file given as a parameter
+    set_io_from_file($*[0]) unless $*[0].nil? 
     @model.open_file($*[0])
 
     #Notebook
@@ -148,6 +149,8 @@ class ControlerNovedit < UndoRedo
     @find_dialog = @gladeDialogs.get_object("find_dialog")
     @replace_dialog = @gladeDialogs.get_object("replace_dialog")
     @about_dialog = @gladeDialogs.get_object("aboutdialog1")
+    @about_dialog.program_name = $NAME
+    @about_dialog.version = $VERSION
     @edit_plugins_dialog = @gladeDialogs.get_object("edit_plugins")
     @preferences_dialog = @gladeDialogs.get_object("preferences_dialog")
     
@@ -292,7 +295,7 @@ class ControlerNovedit < UndoRedo
     end
     #Add extension 
     if (not filename.nil?) and (File.extname(filename) == "") and not File.exists?(filename)
-      extension = dict_io_modules.select {|k,v| v = filedialog.filter}.first.first
+      extension = dict_io_modules.select {|k,v| v == filedialog.filter}.first.first
       filename = filename + "." + extension
     end
     return filename
@@ -1148,6 +1151,7 @@ class ControlerNovedit < UndoRedo
       @view.buffer.select_range(itersFound[0], itersFound[1])
       #On scrolle vers le texte trouvé
       @view.textview.scroll_mark_onscreen(@view.buffer.get_mark('selection_bound'))
+      #TODO put that in undo / redo
       #On supprime le texte trouvé
       @view.buffer.delete(itersFound[0], itersFound[1])
       #On ajoute le texte de remplacement

@@ -12,9 +12,22 @@ class NoveditIOHtml < NoveditIOBase
       lastnode = rootNode
       curnode = nil
       node_level = 1
+      reg_comment = /<!--.*/
+      reg_ignore =  /<\/?(html|body)/
       begin
+        in_header = false
         IO.readlines(location).each do |line|
-          next if line =~ /<!--.*/
+          #Ignore html header and comments
+          if line.strip == "<head>"
+            in_header = true
+            next
+          elsif line.strip == "</head>"
+            in_header = false
+            next
+          end
+          next if in_header or line =~ reg_comment or line =~ reg_ignore 
+
+          #Captures Headings as nodes
           matched = line.match(/<h([1-9])>([^<]*)<\/h[1-9]>/)
           if matched
             curnode_level = node_level
@@ -98,8 +111,9 @@ class NoveditIOHtml < NoveditIOBase
     html = ""
     noveditModel.rootNode.childs.each do |elementBase| 
       elementBase.nodes_do do |node|
+        nodetext = node.text.dup
         level = node.path.split(':').size.to_s
-        html = html + "<h"+level+">" + node.name + "</h"+level+">\n" + nov_to_html(node.text) + "\n"
+        html = html + "<h"+level+">" + node.name + "</h"+level+">\n" + nov_to_html(nodetext) + "\n"
       end
     end
 
@@ -113,7 +127,12 @@ class NoveditIOHtml < NoveditIOBase
       # version & file format 
       f.puts "<!-- " + $VERSION + " -->"
       f.puts "<!-- HTML -->"
+      f.puts "<html>"
+      f.puts "<head>"
+      f.puts "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />"
+      f.puts "</head>\n<body>\n"
       f.puts html
+      f.puts "</body>\n</html>"
     end
   end
 end

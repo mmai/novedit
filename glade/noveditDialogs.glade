@@ -277,6 +277,8 @@
   <object class="GtkAboutDialog" id="aboutdialog1">
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">normal</property>
+    <property name="program_name">Novedit</property>
+    <property name="version">0.2.2</property>
     <property name="comments" translatable="yes">The primary goal of Novedit is to be a clone of notes taking editors like Keynote or WikidPad wich are only available on Windows. It is written in Ruby / Gtk and should run on Linux, Mac and Windows.</property>
     <property name="website">http://code.google.com/p/novedit/</property>
     <property name="license" translatable="yes">GNU General Public License 2.0</property>
