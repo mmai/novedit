@@ -1151,11 +1151,16 @@ class ControlerNovedit < UndoRedo
       @view.buffer.select_range(itersFound[0], itersFound[1])
       #On scrolle vers le texte trouvé
       @view.textview.scroll_mark_onscreen(@view.buffer.get_mark('selection_bound'))
-      #TODO put that in undo / redo
+    
+      start_text_action()
       #On supprime le texte trouvé
+      on_delete_range(itersFound[0], itersFound[1])
       @view.buffer.delete(itersFound[0], itersFound[1])
       #On ajoute le texte de remplacement
+      on_insert_text(itersFound[0], string_replace)
       @view.buffer.insert(itersFound[0], string_replace)
+      end_text_action()
+
       set_not_saved
     end
   end
