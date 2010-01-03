@@ -416,7 +416,10 @@ class ControlerNovedit < UndoRedo
     index = 0
     themes.each do |theme|
       @combo_themes.append_text(theme)
-      @combo_themes.active = index if theme == @settings['theme']
+      if theme == @settings['theme']
+        @combo_themes.active = index 
+        @theme_index = index
+      end
       index = index + 1
     end
     @combo_themes.signal_connect('changed') do
@@ -437,6 +440,7 @@ class ControlerNovedit < UndoRedo
 
   def on_preferences_ok()
     choosen_theme = @combo_themes.active_text 
+    @theme_index = @combo_themes.active
 #    load_theme(choosen_theme)
 
     #Save preferences settings 
@@ -444,6 +448,10 @@ class ControlerNovedit < UndoRedo
     @settings.save
   end
 
+  def on_preferences_nok()
+    @combo_themes.active = @theme_index
+    load_theme(@settings['theme'])  
+  end
 
   #Help
   def new_instance(file)
