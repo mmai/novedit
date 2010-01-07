@@ -78,8 +78,8 @@ class ControlerNovedit < UndoRedo
   
   @model
   @view
-  
- 
+  @settings
+
   def initialize(model)
     super()
     #Model association (MVC)
@@ -910,13 +910,29 @@ class ControlerNovedit < UndoRedo
   end
 
   def on_toggle_fullscreen()
+    menubar = @view.glade.get_object("menubar")
+    toolbar = @view.glade.get_object("toolbar")
+    treeview = @view.glade.get_object("treeview")
+    wysiwygbar = @view.glade.get_object("toolbartext")
+    statusbar = @view.glade.get_object("statusbar")
+    textview = @view.glade.get_object("textview")
+    textwindow =  @view.glade.get_object("scrolledwindow")
+
     if @view.is_fullscreen
       @view.appwindow.unfullscreen
-      @view.is_fullscreen = false
+      @view.appwindow.border_width = 1
     else
       @view.appwindow.fullscreen
-      @view.is_fullscreen = true
+      @view.appwindow.border_width = 0
     end
+    @view.is_fullscreen = ! @view.is_fullscreen
+
+    @view.appwindow.decorated = ! @view.is_fullscreen
+    menubar.visible = ! @view.is_fullscreen
+    toolbar.visible = ! @view.is_fullscreen
+    treeview.visible = ! @view.is_fullscreen
+    wysiwygbar.visible = ! @view.is_fullscreen
+    statusbar.visible = ! @view.is_fullscreen
   end
 
   def get_theme_color(color)
