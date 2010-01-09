@@ -6,7 +6,7 @@ require 'libglade2'
 require 'lib/novedit_textbuffer.rb'
 
 class ViewNovedit
-  attr_accessor :treeview, :tabs, :textview, :buffer, :wordcount_value, :appwindow, :user_action, :is_fullscreen
+  attr_accessor :treeview, :tabs, :textview, :buffer, :wordcount_value, :appwindow, :user_action, :is_fullscreen, :is_writeroom
   attr_reader :glade
   
   #
@@ -30,6 +30,7 @@ class ViewNovedit
 
   def initialize(controler, model)
     @is_fullscreen = false
+    @is_writeroom = false
     #Liaison MVC
     @controler = controler
     @model = model
@@ -240,6 +241,9 @@ class ViewNovedit
   def on_fullscreen_activate(widget)
      @controler.on_toggle_fullscreen()
   end
+  def on_writeroom_activate(widget)
+     @controler.on_toggle_writeroom()
+  end
 #
   # Unfo, Redo
   #
@@ -316,6 +320,10 @@ class ViewNovedit
 
   def on_text_strikethrough(widget)
     @controler.on_text_strikethrough
+  end
+
+  def on_text_size_huge(widget)
+    @controler.on_text_size('huge')
   end
  
   def on_bulleted_list(widget)

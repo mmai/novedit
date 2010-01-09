@@ -165,8 +165,16 @@ class ControlerNovedit < UndoRedo
      on_redo(nil) 
     }
     #FullScreen : F11
-    ag.connect(Gdk::Keyval::GDK_F11, 0, Gtk::ACCEL_VISIBLE) {
-      on_toggle_fullscreen()
+#    ag.connect(Gdk::Keyval::GDK_F11, 0, Gtk::ACCEL_VISIBLE) {
+#      on_toggle_fullscreen()
+#    }
+    #WriteRoom : Ctrl-F11
+    ag.connect(Gdk::Keyval::GDK_F11, Gdk::Window::CONTROL_MASK, Gtk::ACCEL_VISIBLE) {
+      on_toggle_writeroom()
+    }
+    #WriteRoom exit : ESC
+    ag.connect(Gdk::Keyval::GDK_Escape, 0, Gtk::ACCEL_VISIBLE) {
+      on_toggle_writeroom() if @view.is_writeroom
     }
     @view.appwindow.add_accel_group(ag)
     #End keyboard shortcuts
@@ -905,11 +913,20 @@ class ControlerNovedit < UndoRedo
   end
 
   def on_redo(widget)
-#    redo_text
+    #    redo_text
     redo_command
   end
 
   def on_toggle_fullscreen()
+    if @view.is_fullscreen
+      @view.appwindow.unfullscreen
+    else
+      @view.appwindow.fullscreen
+    end
+    @view.is_fullscreen = ! @view.is_fullscreen
+  end
+
+  def on_toggle_writeroom()
     menubar = @view.glade.get_object("menubar")
     toolbar = @view.glade.get_object("toolbar")
     treeview = @view.glade.get_object("treeview")
@@ -918,21 +935,30 @@ class ControlerNovedit < UndoRedo
     textview = @view.glade.get_object("textview")
     textwindow =  @view.glade.get_object("scrolledwindow")
 
-    if @view.is_fullscreen
-      @view.appwindow.unfullscreen
-      @view.appwindow.border_width = 1
-    else
+    @view.is_writeroom = ! @view.is_writeroom
+
+    @view.appwindow.decorated = ! @view.is_writeroom
+    menubar.visible = ! @view.is_writeroom
+    toolbar.visible = ! @view.is_writeroom
+    treeview.visible = ! @view.is_writeroom
+    wysiwygbar.visible = ! @view.is_writeroom
+    statusbar.visible = ! @view.is_writeroom
+
+    font_desc = textview.pango_context.font_description
+    if @view.is_writeroom
       @view.appwindow.fullscreen
       @view.appwindow.border_width = 0
-    end
-    @view.is_fullscreen = ! @view.is_fullscreen
-
-    @view.appwindow.decorated = ! @view.is_fullscreen
-    menubar.visible = ! @view.is_fullscreen
-    toolbar.visible = ! @view.is_fullscreen
-    treeview.visible = ! @view.is_fullscreen
-    wysiwygbar.visible = ! @view.is_fullscreen
-    statusbar.visible = ! @view.is_fullscreen
+      textview.left_margin = textview.right_margin = 30
+      font_desc.size = font_desc.size + 2*Pango::SCALE
+      textview.modify_font(font_desc)
+      #textview.modify_font(Pango::FontDescription.new("Monospace 12"))
+    else
+      @view.appwindow.unfullscreen
+      @view.appwindow.border_width = 1
+      textview.left_margin = textview.right_margin = 0
+      font_desc.size = font_desc.size - 2*Pango::SCALE
+      textview.modify_font(font_desc)
+    end 
   end
 
   def get_theme_color(color)
@@ -1032,6 +1058,10 @@ class ControlerNovedit < UndoRedo
 
   def on_text_strikethrough
     style_text('strikethrough')
+  end
+
+  def on_text_size(size)
+    style_text('size:' + size)
   end
 
   def on_bulleted_list

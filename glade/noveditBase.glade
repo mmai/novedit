@@ -16,6 +16,7 @@
     <child>
       <object class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
+        <property name="orientation">vertical</property>
         <child>
           <object class="GtkMenuBar" id="menubar">
             <property name="visible">True</property>
@@ -174,7 +175,19 @@
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="accel_group">accelgroup1</property>
+                        <accelerator key="F11" signal="activate"/>
                         <signal name="activate" handler="on_fullscreen_activate"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="writeroom">
+                        <property name="label">WriteRoom</property>
+                        <property name="visible">True</property>
+                        <property name="image">image2</property>
+                        <property name="use_stock">False</property>
+                        <property name="accel_group">accelgroup1</property>
+                        <accelerator key="F11" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                        <signal name="activate" handler="on_writeroom_activate"/>
                       </object>
                     </child>
                   </object>
@@ -439,6 +452,7 @@
                 <child>
                   <object class="GtkVBox" id="vboxtext">
                     <property name="visible">True</property>
+                    <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkToolbar" id="toolbartext">
                         <property name="visible">True</property>
@@ -535,6 +549,17 @@
                             <property name="tooltip_text" translatable="yes">Italic</property>
                             <property name="icon_widget">list_bullets_image</property>
                             <signal name="clicked" handler="on_bulleted-list"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkToolButton" id="button_heading_1">
+                            <property name="visible">True</property>
+                            <property name="icon_widget">heading_1</property>
+                            <signal name="clicked" handler="on_text_size_huge"/>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -648,5 +673,17 @@
   <object class="GtkImage" id="image1">
     <property name="visible">True</property>
     <property name="pixbuf">plugin.png</property>
+  </object>
+  <object class="GtkImage" id="image2">
+    <property name="visible">True</property>
+    <property name="stock">gtk-zoom-100</property>
+  </object>
+  <object class="GtkImage" id="list_bullets_image1">
+    <property name="visible">True</property>
+    <property name="pixbuf">text_list_bullets.png</property>
+  </object>
+  <object class="GtkImage" id="heading_1">
+    <property name="visible">True</property>
+    <property name="pixbuf">text_heading_1.png</property>
   </object>
 </interface>
