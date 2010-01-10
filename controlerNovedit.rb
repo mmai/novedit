@@ -930,7 +930,7 @@ class ControlerNovedit < UndoRedo
     menubar = @view.glade.get_object("menubar")
     toolbar = @view.glade.get_object("toolbar")
     treeview = @view.glade.get_object("treeview")
-    wysiwygbar = @view.glade.get_object("toolbartext")
+    toolbartext = @view.glade.get_object("toolbartext")
     statusbar = @view.glade.get_object("statusbar")
     textview = @view.glade.get_object("textview")
     textwindow =  @view.glade.get_object("scrolledwindow")
@@ -941,18 +941,78 @@ class ControlerNovedit < UndoRedo
     menubar.visible = ! @view.is_writeroom
     toolbar.visible = ! @view.is_writeroom
     treeview.visible = ! @view.is_writeroom
-    wysiwygbar.visible = ! @view.is_writeroom
+    toolbartext.visible = ! @view.is_writeroom
     statusbar.visible = ! @view.is_writeroom
 
     font_desc = textview.pango_context.font_description
     if @view.is_writeroom
       @view.appwindow.fullscreen
       @view.appwindow.border_width = 0
-      textview.left_margin = textview.right_margin = 30
+#      textview.left_margin = textview.right_margin = 30
+
+      # Sizing
+      screen = Gdk::Screen.default
+      window, mouse_x, mouse_y, mouse_mods = screen.root_window.pointer
+      monitor_geometry = screen.monitor_geometry(screen.get_monitor(mouse_x, mouse_y))
+
+      vbox_container = textwindow.parent
+      fixed_container = Gtk::Fixed.new
+            textwindow.reparent(fixed_container)
+      fixed_container.move(textwindow, 0.1 * monitor_geometry.width, 0.1 * monitor_geometry.height)
+      textwindow.set_size_request( 0.8 * monitor_geometry.width, 0.8 * monitor_geometry.height)
+      vbox_container.add(fixed_container)
+
+      color_bg = textview.style.base(Gtk::STATE_NORMAL)
+      fcstate = fixed_container.state
+#      vbstate = vbox_container.state
+#      fcstyle = fixed_container.style
+#      vbstyle = vbox_container.style
+#      puts fcstyle.base(fcstate)
+#      puts fcstyle.bg(fcstate)
+#      puts fcstyle.fg(fcstate)
+      fixed_container.modify_fg(Gtk::STATE_NORMAL,Gdk::Color.parse("black"))
+#      fixed_container.modify_fg(Gtk::STATE_NORMAL,color_bg)
+      fixed_container.modify_fg(Gtk::STATE_ACTIVE,color_bg)
+      fixed_container.modify_fg(Gtk::STATE_SELECTED,color_bg)
+      fixed_container.modify_bg(Gtk::STATE_INSENSITIVE,color_bg)
+      fixed_container.modify_bg(Gtk::STATE_ACTIVE,color_bg)
+      fixed_container.modify_bg(Gtk::STATE_SELECTED,color_bg)
+      fixed_container.modify_bg(Gtk::STATE_INSENSITIVE,color_bg)
+      fixed_container.modify_base(Gtk::STATE_NORMAL,color_bg)
+      fixed_container.modify_base(Gtk::STATE_ACTIVE,color_bg)
+      fixed_container.modify_base(Gtk::STATE_SELECTED,color_bg)
+      fixed_container.modify_base(Gtk::STATE_INSENSITIVE,color_bg)
+#      fixed_container.modify_bg(fcstate,color_bg)
+#      fixed_container.modify_fg(fcstate,color_bg)
+#      vbox_container.modify_base(vbstate,color_bg)
+#      vbox_container.modify_bg(vbstate,color_bg)
+#      vbox_container.modify_fg(vbstate,color_bg)
+#      vbox_container.modify_text(vbstate,color_bg)
+#      vbstyle.set_base(vbstate, color_bg.red, color_bg.green, color_bg.blue)
+#      vbstyle.set_bg(vbstate, color_bg.red, color_bg.green, color_bg.blue)
+#      vbstyle.set_fg(vbstate, color_bg.red, color_bg.green, color_bg.blue)
+#      vbstyle.set_text(vbstate, color_bg.red, color_bg.green, color_bg.blue)
+#      fcstyle.set_base(fcstate, color_bg.red, color_bg.green, color_bg.blue)
+#      fcstyle.set_bg(fcstate, color_bg.red, color_bg.green, color_bg.blue)
+#      fcstyle.set_fg(fcstate, color_bg.red, color_bg.green, color_bg.blue)
+#      fcstyle.set_text(fcstate, color_bg.red, color_bg.green, color_bg.blue)
+#      puts fixed_container.style.base(fcstate)
+#      puts fixed_container.style.bg(fcstate)
+#      puts fcstyle.fg(fcstate)
+
+      fixed_container.show_all
+
       font_desc.size = font_desc.size + 2*Pango::SCALE
       textview.modify_font(font_desc)
       #textview.modify_font(Pango::FontDescription.new("Monospace 12"))
     else
+      fixed_container = textwindow.parent
+      vbox_container = fixed_container.parent
+      vbox_container.remove(fixed_container)
+      textwindow.reparent(vbox_container)
+      fixed_container.destroy
+      textwindow.set_size_request(-1, 1)
+
       @view.appwindow.unfullscreen
       @view.appwindow.border_width = 1
       textview.left_margin = textview.right_margin = 0
