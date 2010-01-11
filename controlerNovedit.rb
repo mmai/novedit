@@ -949,73 +949,30 @@ class ControlerNovedit < UndoRedo
       @view.appwindow.fullscreen
       @view.appwindow.border_width = 0
 #      textview.left_margin = textview.right_margin = 30
+      textview.border_width =  30
 
       # Sizing
-      screen = Gdk::Screen.default
-      window, mouse_x, mouse_y, mouse_mods = screen.root_window.pointer
-      monitor_geometry = screen.monitor_geometry(screen.get_monitor(mouse_x, mouse_y))
+#      screen = Gdk::Screen.default
+#      window, mouse_x, mouse_y, mouse_mods = screen.root_window.pointer
+#      monitor_geometry = screen.monitor_geometry(screen.get_monitor(mouse_x, mouse_y))
+#      fixed_container.move(textwindow, 0.1 * monitor_geometry.width, 0.1 * monitor_geometry.height)
+#      textwindow.set_size_request( 0.8 * monitor_geometry.width, 0.8 * monitor_geometry.height)
 
-      vbox_container = textwindow.parent
-      fixed_container = Gtk::Fixed.new
-            textwindow.reparent(fixed_container)
-      fixed_container.move(textwindow, 0.1 * monitor_geometry.width, 0.1 * monitor_geometry.height)
-      textwindow.set_size_request( 0.8 * monitor_geometry.width, 0.8 * monitor_geometry.height)
-      vbox_container.add(fixed_container)
+#      Doesn't work :
+#      color_bg = textview.style.base(Gtk::STATE_NORMAL)
+#      statusbar.modify_bg(Gtk::STATE_NORMAL,color_bg)
+#      statusbar.modify_fg(Gtk::STATE_NORMAL,color_bg)
+#      statusbar.modify_base(Gtk::STATE_NORMAL,color_bg)
+#      statusbar.modify_text(Gtk::STATE_NORMAL,color_bg)
 
-      color_bg = textview.style.base(Gtk::STATE_NORMAL)
-      fcstate = fixed_container.state
-#      vbstate = vbox_container.state
-#      fcstyle = fixed_container.style
-#      vbstyle = vbox_container.style
-#      puts fcstyle.base(fcstate)
-#      puts fcstyle.bg(fcstate)
-#      puts fcstyle.fg(fcstate)
-      fixed_container.modify_fg(Gtk::STATE_NORMAL,Gdk::Color.parse("black"))
-#      fixed_container.modify_fg(Gtk::STATE_NORMAL,color_bg)
-      fixed_container.modify_fg(Gtk::STATE_ACTIVE,color_bg)
-      fixed_container.modify_fg(Gtk::STATE_SELECTED,color_bg)
-      fixed_container.modify_bg(Gtk::STATE_INSENSITIVE,color_bg)
-      fixed_container.modify_bg(Gtk::STATE_ACTIVE,color_bg)
-      fixed_container.modify_bg(Gtk::STATE_SELECTED,color_bg)
-      fixed_container.modify_bg(Gtk::STATE_INSENSITIVE,color_bg)
-      fixed_container.modify_base(Gtk::STATE_NORMAL,color_bg)
-      fixed_container.modify_base(Gtk::STATE_ACTIVE,color_bg)
-      fixed_container.modify_base(Gtk::STATE_SELECTED,color_bg)
-      fixed_container.modify_base(Gtk::STATE_INSENSITIVE,color_bg)
-#      fixed_container.modify_bg(fcstate,color_bg)
-#      fixed_container.modify_fg(fcstate,color_bg)
-#      vbox_container.modify_base(vbstate,color_bg)
-#      vbox_container.modify_bg(vbstate,color_bg)
-#      vbox_container.modify_fg(vbstate,color_bg)
-#      vbox_container.modify_text(vbstate,color_bg)
-#      vbstyle.set_base(vbstate, color_bg.red, color_bg.green, color_bg.blue)
-#      vbstyle.set_bg(vbstate, color_bg.red, color_bg.green, color_bg.blue)
-#      vbstyle.set_fg(vbstate, color_bg.red, color_bg.green, color_bg.blue)
-#      vbstyle.set_text(vbstate, color_bg.red, color_bg.green, color_bg.blue)
-#      fcstyle.set_base(fcstate, color_bg.red, color_bg.green, color_bg.blue)
-#      fcstyle.set_bg(fcstate, color_bg.red, color_bg.green, color_bg.blue)
-#      fcstyle.set_fg(fcstate, color_bg.red, color_bg.green, color_bg.blue)
-#      fcstyle.set_text(fcstate, color_bg.red, color_bg.green, color_bg.blue)
-#      puts fixed_container.style.base(fcstate)
-#      puts fixed_container.style.bg(fcstate)
-#      puts fcstyle.fg(fcstate)
-
-      fixed_container.show_all
 
       font_desc.size = font_desc.size + 2*Pango::SCALE
       textview.modify_font(font_desc)
       #textview.modify_font(Pango::FontDescription.new("Monospace 12"))
     else
-      fixed_container = textwindow.parent
-      vbox_container = fixed_container.parent
-      vbox_container.remove(fixed_container)
-      textwindow.reparent(vbox_container)
-      fixed_container.destroy
-      textwindow.set_size_request(-1, 1)
-
       @view.appwindow.unfullscreen
       @view.appwindow.border_width = 1
-      textview.left_margin = textview.right_margin = 0
+      textview.border_width = 0
       font_desc.size = font_desc.size - 2*Pango::SCALE
       textview.modify_font(font_desc)
     end 
@@ -1057,6 +1014,7 @@ class ControlerNovedit < UndoRedo
 #      new_style.set_text(Gtk::STATE_NORMAL,color_fg['Red'], color_bg['Green'], color_bg['Blue'])
 #      @view.textview.modify_style(new_style)
 #      @view.treeview.modify_style(new_style)
+      
 
       #Methode par fonctions  : OK
       color_fg = get_theme_color(theme_settings['normal']['color'])
@@ -1065,6 +1023,13 @@ class ControlerNovedit < UndoRedo
       @view.treeview.modify_base(Gtk::STATE_NORMAL,color_bg)
       @view.textview.modify_text(Gtk::STATE_NORMAL,color_fg)
       @view.treeview.modify_text(Gtk::STATE_NORMAL,color_fg)
+
+      @view.textview.modify_bg(Gtk::STATE_NORMAL,color_bg)
+
+      #test couleurs sur widgets
+#      testwidget = @view.glade.get_object("textview3")
+#      testwidget.modify_bg(Gtk::STATE_NORMAL,color_bg)
+#      testwidget.modify_base(Gtk::STATE_NORMAL,color_bg)
 
       color_fg = get_theme_color(theme_settings['selected']['color'])
       color_bg = get_theme_color(theme_settings['selected']['background'])
@@ -1079,6 +1044,8 @@ class ControlerNovedit < UndoRedo
       @view.treeview.modify_base(Gtk::STATE_ACTIVE,color_bg)
       @view.textview.modify_text(Gtk::STATE_ACTIVE,color_fg)
       @view.treeview.modify_text(Gtk::STATE_ACTIVE,color_fg)
+
+
     else
       puts "Theme file does not exists"
     end
