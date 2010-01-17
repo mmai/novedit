@@ -9,6 +9,7 @@
     <property name="window_position">mouse</property>
     <property name="default_width">800</property>
     <property name="default_height">600</property>
+    <property name="icon">pencil.png</property>
     <accel-groups>
       <group name="accelgroup1"/>
     </accel-groups>

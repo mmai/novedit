@@ -176,7 +176,7 @@ class ViewNovedit
     if @model.filename.nil?
       title = $TITLE
     else
-      title = @model.filename
+      title = File.basename(@model.filename) + " (" + File.dirname(@model.filename) + ")"
     end
     title = title + " * " if not @model.is_saved
     @appwindow.set_title(title) 

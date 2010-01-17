@@ -951,6 +951,20 @@ class ControlerNovedit < UndoRedo
     @view.is_fullscreen = ! @view.is_fullscreen
   end
 
+  def on_toggle_menus
+    menubar.visible = ! @view.is_writeroom
+    toolbar.visible = ! @view.is_writeroom
+    toolbartext.visible = ! @view.is_writeroom
+  end
+
+  def on_toggle_tree
+    treeview.visible = ! @view.is_writeroom
+  end
+  
+  def on_toggle_statusbar
+    statusbar.visible = ! @view.is_writeroom
+  end
+
   def on_toggle_writeroom()
     menubar = @view.glade.get_object("menubar")
     toolbar = @view.glade.get_object("toolbar")
@@ -960,6 +974,7 @@ class ControlerNovedit < UndoRedo
     textview = @view.glade.get_object("textview")
     textwindow =  @view.glade.get_object("scrolledwindow")
 
+    textview.grab_focus
     @view.is_writeroom = ! @view.is_writeroom
 
     @view.appwindow.decorated = ! @view.is_writeroom
