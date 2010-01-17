@@ -738,7 +738,7 @@ class ControlerNovedit < UndoRedo
     separators_list = [" ", "\n", "\t"]
 #    puts text
     
-    #On met toutes les lettres d'un même mot dans le même undo/redo
+    #Put all the characters of a word in the same undo/redo
     if (not @model.currentNode.undopool.empty?) and (not separators_list.include?(text)) and (@model.currentNode.undopool.last[0] == "insert_text") and (@model.currentNode.undopool.last[2] == iter.offset)
       last_text = @model.currentNode.undopool.pop
 #      @model.currentNode.undopool <<  ["insert_text", last_text[1], last_text[1] + last_text[2] + text.scan(/./).size, last_text[3] + text]
@@ -754,6 +754,50 @@ class ControlerNovedit < UndoRedo
     store_text_redo()
    
     @model.currentNode.redopool.clear
+    set_not_saved
+  end
+
+  def on_delete_range(start_iter, end_iter)
+    separators_list = [" ", "\n", "\t"]
+    text = @view.buffer.get_text(start_iter, end_iter)
+
+    #Delete all characters of a word at the same time
+    stick_to_word = false
+    if  (end_iter.offset - start_iter.offset == 1) and (not separators_list.include?(text)) and (not @model.currentNode.undopool.empty?) 
+      if (@model.currentNode.undopool.last[0] == "action_end")
+        #Find non tag action
+        pool_index = -2
+        action = ["apply_tag"]
+        while (action[0] == "apply_tag") and (action[0] != "action_begin")
+          action = @model.currentNode.undopool[pool_index]
+          pool_index -= 1
+        end
+        #Add this action to precedent action text if precedent action text is a delete_range
+        stick_to_word = (action[0] == "delete_range") and ((action[1] == end_iter.offset) or (action[1] == start_iter.offset))
+      end
+    end
+
+    if stick_to_word
+      @model.currentNode.undopool.pop
+      @actions_started = 1
+    else
+      start_text_action()
+    end
+
+    #We remove all tags in order to call the on_remove_tag function which store the tags in the undopool array
+    # Remove all tags, one by one
+    current_iter = start_iter.dup
+    while current_iter.offset <= end_iter.offset
+      current_iter.tags.each do |curtag|
+        tagend_iter = @view.buffer.get_iter_at_tag_end(current_iter, curtag)
+        endoffset = [tagend_iter.offset, end_iter.offset].min
+        @view.buffer.remove_tag(curtag, current_iter, @view.buffer.get_iter_at_offset(endoffset))
+      end
+      break if not current_iter.forward_char
+    end
+
+    @model.currentNode.undopool <<  ["delete_range", start_iter.offset, end_iter.offset, text]
+    end_text_action()
     set_not_saved
   end
 
@@ -790,25 +834,6 @@ class ControlerNovedit < UndoRedo
     end
   end
 
-  def on_delete_range(start_iter, end_iter)
-    start_text_action()
-    #We remove all tags in order to call the on_remove_tag function which store the tags in the undopool array
-    # Remove all tags, one by one
-    current_iter = start_iter.dup
-    while current_iter.offset <= end_iter.offset
-      current_iter.tags.each do |curtag|
-        tagend_iter = @view.buffer.get_iter_at_tag_end(current_iter, curtag)
-        endoffset = [tagend_iter.offset, end_iter.offset].min
-        @view.buffer.remove_tag(curtag, current_iter, @view.buffer.get_iter_at_offset(endoffset))
-      end
-      break if not current_iter.forward_char
-    end
-
-    text = @view.buffer.get_text(start_iter, end_iter)
-    @model.currentNode.undopool <<  ["delete_range", start_iter.offset, end_iter.offset, text]
-    end_text_action()
-    set_not_saved
-  end
   
   def store_text_redo()
    textnode = @model.currentNode
