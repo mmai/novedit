@@ -12,22 +12,23 @@ end
 #XXX To comment in production
 #require "ruby-debug"
 
+$INSTALL_PATH = File.join(File.dirname(__FILE__), '..')
+$: << $INSTALL_PATH
+
 require 'gettext'
 include GetText
-bindtextdomain("novedit", File.join(File.dirname($0), "locale"))
-bindtextdomain("noveditGlade", File.join(File.dirname($0), "locale"))
+bindtextdomain("novedit", File.join($INSTALL_PATH, "locale"))
+bindtextdomain("noveditGlade", File.join($INSTALL_PATH, "locale"))
 
 # UTF-8
 $KCODE = "U"
 
-$TITLE = "Novedit"
-$NAME = "Novedit"
-$VERSION = "0.2.2"
+require "app_config"
 
+$TITLE = $NAME
 $DEFAULT_NODE_NAME = _("New node")
 
-$INSTALL_PATH = File.dirname($0) 
-$PROGNAME = File.basename($0) # Used by the recent files filter
+$PROGNAME = File.basename(__FILE__) # Used by the recent files filter
 $DIR_PLUGINS =  $INSTALL_PATH + "/plugins/"
 $DIR_MODULES =  $INSTALL_PATH + "/modules/"
 $DIR_THEMES =  $INSTALL_PATH + "/themes/"
@@ -35,12 +36,13 @@ $HELP_FILE =  $INSTALL_PATH + "/doc/documentation_fr.nov"
 $HOME = ENV["HOME"] || ENV["HOMEPATH"] || File::expand_path("~")
 $SETTINGS_FILE = File.join($HOME, '.novedit_settings.yaml')
 
-$: << File.dirname($0)
-
 require  "controlerNovedit"
 require  "modelNovedit"
-
-Gtk.init
+begin
+  Gtk.init
+rescue
+  $stderr.puts "GTK is required"
+end
 
 model = NoveditModel.new(nil)
 ControlerNovedit.new(model)
@@ -49,8 +51,4 @@ ControlerNovedit.new(model)
 unless $running_features
   Gtk.main
 end
-
-
-
-
 

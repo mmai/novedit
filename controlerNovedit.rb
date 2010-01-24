@@ -140,7 +140,7 @@ class ControlerNovedit < UndoRedo
     @notebook_actions = Array.new
      
     #Dialog windows
-    pathgladeDialogs = File.dirname($0) + "/glade/noveditDialogs.glade"
+    pathgladeDialogs = $INSTALL_PATH + "/glade/noveditDialogs.glade"
     @gladeDialogs = Gtk::Builder.new()
     @gladeDialogs << pathgladeDialogs
     #@gladeDialogs.translation_domain = File.join($INSTALL_PATH, "locale")
