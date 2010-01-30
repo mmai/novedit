@@ -318,12 +318,17 @@ class NoteTagTable < Gtk::TextTagTable
 
   @tag_types
   @added_tags
+  @@tag_prefixes = []
 
   def initialize() 
     super()
     @tag_types = Hash.new 
     @added_tags = Array.new
     init_common_tags()
+  end
+
+  def NoteTagTable.tag_prefixes
+    return @@tag_prefixes
   end
 
   def init_common_tags
@@ -384,6 +389,7 @@ class NoteTagTable < Gtk::TextTagTable
     add(tag)
 
     # Font sizes
+    @@tag_prefixes << 'size'
 
     tag = NoteTag.new("size:huge")
     tag.scale = Pango::SCALE_XX_LARGE
@@ -414,6 +420,7 @@ class NoteTagTable < Gtk::TextTagTable
     add(tag)
 
     # Links
+    @@tag_prefixes << 'link'
 
     tag = NoteTag.new("link:broken")
     tag.underline = Pango::UNDERLINE_SINGLE

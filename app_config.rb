@@ -1,5 +1,6 @@
 $NAME = "Novedit"
 $VERSION = "0.2.3"
+$NOTE_CONTENT_VERSION = "0.2"
 $AUTHORS = "Henri Bourcereau"
 $EMAIL = "henri@websiteburo.com"
 $HOMEPAGE = "http://code.google.com/p/novedit/"

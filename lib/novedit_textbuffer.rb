@@ -498,7 +498,7 @@ module NoveditTextbuffer
         xml.WriteEndElement()
       end
     end
-    #    puts tag.name
+#    puts tag.name
   end
 
 
@@ -527,7 +527,10 @@ module NoveditTextbuffer
     prev_depth = -1
 
     xml.WriteStartElement(nil, "note-content", nil)
-    xml.WriteAttributeString("version", "0.1")
+    xml.WriteAttributeString("version", $NOTE_CONTENT_VERSION)
+
+    # XML namespaces used by text tags
+    NoteTagTable.tag_prefixes.each {|tag_prefix| xml.WriteAttributeString("xmlns:" + tag_prefix, $HOMEPAGE + "xml/" + tag_prefix )}
 
     # Insert any active tags at startIter into tag_stack...
     startIter.tags.each do |start_tag|
@@ -763,7 +766,7 @@ module NoveditTextbuffer
           readXml(elem, offset)
         end
         #End tag
-        tag = buffer.tag_table[element.name]
+        tag = buffer.tag_table[element.fully_expanded_name]
         buffer.apply_tag(tag, buffer.get_iter_at_mark(mark_start), buffer.end_iter) if !tag.nil?
       end
     end
