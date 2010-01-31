@@ -1,4 +1,4 @@
-require 'lib/command'
+require 'novedit/lib/command'
 
 class UndoRedo
   attr_accessor :tabUndo, :tabRedo

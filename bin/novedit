@@ -12,8 +12,7 @@ end
 #XXX To comment in production
 #require "ruby-debug"
 
-$INSTALL_PATH = File.join(File.dirname(__FILE__), '..')
-$: << $INSTALL_PATH
+require "novedit"
 
 require 'gettext'
 include GetText
@@ -23,7 +22,6 @@ bindtextdomain("noveditGlade", File.join($INSTALL_PATH, "locale"))
 # UTF-8
 $KCODE = "U"
 
-require "app_config"
 
 $TITLE = $NAME
 $DEFAULT_NODE_NAME = _("New node")
@@ -36,8 +34,8 @@ $HELP_FILE =  $INSTALL_PATH + "/doc/documentation_fr.nov"
 $HOME = ENV["HOME"] || ENV["HOMEPATH"] || File::expand_path("~")
 $SETTINGS_FILE = File.join($HOME, '.novedit_settings.yaml')
 
-require  "controlerNovedit"
-require  "modelNovedit"
+require  "novedit/controlerNovedit"
+require  "novedit/modelNovedit"
 begin
   Gtk.init
 rescue

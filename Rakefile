@@ -2,7 +2,7 @@
 # buildgem : build the rubygem
 # pkg/novedit.deb : build the Debian package
 
-require 'app_config'
+require 'lib/novedit'
 require 'date'
 
 require 'rake/gempackagetask'
@@ -18,8 +18,8 @@ spec = Gem::Specification.new do |s|
   s.description = $DESCRIPTION
   s.executables = ['novedit']
   s.files = FileList['*/**/*'].exclude("bacasable").exclude("features").exclude("pkg")
-  s.files += FileList['*'].exclude('Rakefile')
-  s.files.uniq!
+#  s.files += FileList['*'].exclude('Rakefile')
+#  s.files.uniq!
   s.required_ruby_version = '>=1.8.6'
   s.add_dependency('gettext')
   s.requirements = ["GTK+ 2.16", "libglade2 for ruby ('sudo apt-get install libglade2-ruby' on Debian based systems)"]
@@ -35,54 +35,53 @@ gem_task = "pkg/" + $NAME + "-" + $VERSION + ".gem"
 
 task :buildgem => gem_task 
 
+# This task follows the tutorial found at http://blog.loftninjas.org/2008/10/01/debianizing-ruby-gems/
 file "pkg/novedit.deb" => :buildgem do |debfile|
   system "gem unpack " + gem_task
   workdir = gem_task[4..-5]
-  cp "/usr/lib/ruby/1.8/setup.rb ", workdir
-  """
-  dch –create -v1.1.1-1
-fix your email, pick a package name (libpackage-ruby is my choice), put in ‘unstable’
-cd debian
-put this in ‘rules’:
-#!/usr/bin/make -f
-# copyright 2006 by Esteban Manchado Vel�zquez
+#  cp "/usr/lib/ruby/1.8/setup.rb ", workdir
+  system "cp /usr/lib/ruby/1.8/setup.rb " + workdir
+  mkdir workdir + "/debian"
+  File.open(workdir + "/debian/changelog", "w") do |file|
+    file << "#{$NAME.downcase} (#$VERSION) unstable; urgency=low
+
+  * Initial release.
+
+ -- #$AUTHORS <#$EMAIL>  " + Time.now.strftime("%a, %d %b %Y %H:%M:%S %z")
+  end
+
+  File.open(workdir + "/debian/rules", "w") do |file|
+    file << "#!/usr/bin/make -f
+# copyright 2006 by Esteban Manchado Velazquez
 
 include /usr/share/cdbs/1/rules/simple-patchsys.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
 # Ruby package with setup.rb
-include /usr/share/ruby-pkg-tools/1/class/ruby-setup-rb.mk
-Make a ‘control’ file like this:
-Source: libtextpow-ruby
-Section: libs
+include /usr/share/ruby-pkg-tools/1/class/ruby-setup-rb.mk" 
+  end
+
+  File.open(workdir + "/debian/control", "w") do |file|
+    file << "Source: #{$NAME.downcase}
+Section: editors
 Priority: optional
-Maintainer: Bryan McLellan
+Maintainer: #$AUTHORS
 Build-Depends: cdbs, debhelper (>> 5.0.0), ruby-pkg-tools, ruby1.8
 Standards-Version: 3.8.0
 
-Package: libtextpow-ruby
+Package: #{$NAME.downcase}
+Section: editors
 Architecture: all
-Depends: libtextpow-ruby1.8
-Description: a library to parse and process Textmate bundles.
- .
- This is a dummy package to install the GD library bindings for
- the default version of Ruby.
+Depends: ruby1.8, libglade2-ruby
+Description: #$SUMMARY
+" 
+#Depends: ruby1.8, libglade2-ruby, libgettext-ruby
+#Depends: ruby1.8, libglade2-ruby, rubygems1.8
+  end
 
-Package: libtextpow-ruby1.8
-Architecture: all
-Depends: ruby1.8, libplist-ruby, liboniguruma-ruby
-Description: a library to parse and process Textmate bundles.
-
-Package: libtextpow-ruby-doc
-Section: doc
-Architecture: all
-Description: a library to parse and process Textmate bundles.
- a library to parse and process Textmate bundles
- .
- This is the documentation package, with upstream documentation as well as
- generated rdoc.
-On the package libpackage-ruby1.8 line, change architecture to ‘any’ if the package compiles any extensions so your package output will correctly be architecture specific. If the ruby package has no docs, pull that section out.
-
-cd ..
-dpkg-buildpackage -rfakeroot
-  """
+  cd workdir
+  system "dpkg-buildpackage -rfakeroot"
+  cd ".."
+  #Cleaning
+  system "mv -f #{$NAME.downcase}* pkg/debian"
+  system "rm -rf #$NAME-#$VERSION"
 end

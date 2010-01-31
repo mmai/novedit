@@ -3,9 +3,9 @@
 #
 
 require 'observer'
-require 'lib/tree'
+require 'novedit/lib/tree'
 
-require 'lib/novedit_io_base'
+require 'novedit/lib/novedit_io_base'
 
 class NoveditNode < TreeNode
   attr_accessor :name, :undopool, :redopool, :text, :is_open
@@ -122,23 +122,23 @@ class NoveditModel
         end
       end
 
-      if lu.nil?
+      # Next condition commented out in order to allow the opening of new files at startup (resolve http://code.google.com/p/novedit/issues/detail?id=43)
+#      if lu.nil?
 #        dialog = Gtk::MessageDialog.new(@appwindow, Gtk::Dialog::MODAL, 
 #                                        Gtk::MessageDialog::ERROR, 
 #                                        Gtk::MessageDialog::BUTTONS_CLOSE, 
-#                                        "Cannot open " + @filename + ((err_message.nil?)?errmes:err_message))
+#                                              "Cannot open " + @filename + ((err_message.nil?)?errmes:err_message))
 #        dialog.run
 #        dialog.destroy
-        raise("Cannot open " + @filename + ((err_message.nil?)?(errmes.to_s):err_message))
-        open_file(nil)
-      else
-        @rootNode = lu
-        if not @rootNode
-          @rootNode = NoveditNode.new("root")
-          @rootNode = @rootNode.addNode(NoveditNode.new($DEFAULT_NODE_NAME))
-        end
-        @is_saved = true
+#
+#        raise("Cannot open " + @filename + ((err_message.nil?)?(errmes.to_s):err_message))
+#      end
+      @rootNode = lu
+      if not @rootNode
+        @rootNode = NoveditNode.new("root")
+        @rootNode = @rootNode.addNode(NoveditNode.new($DEFAULT_NODE_NAME))
       end
+      @is_saved = true
     end
   end
   

@@ -3,7 +3,7 @@
 #
 
 require 'libglade2'
-require 'lib/novedit_textbuffer.rb'
+require 'novedit/lib/novedit_textbuffer.rb'
 
 class ViewNovedit
   attr_accessor :treeview, :tabs, :textview, :buffer, :wordcount_value, :appwindow, :user_action, :is_fullscreen, :is_writeroom

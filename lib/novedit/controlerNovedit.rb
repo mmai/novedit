@@ -4,15 +4,15 @@
 
 require "rbconfig" #For launching another instance of Novedit (See on_help)
 require "find" #For plugins detection
-require "lib/pluginsystem.rb"
+require "novedit/lib/pluginsystem.rb"
 
-require "viewNovedit.rb"
-require "lib/settings.rb"
+require "novedit/viewNovedit.rb"
+require "novedit/lib/settings.rb"
 
-require "modules/io/novedit_io_yaml.rb"
-require "modules/io/novedit_io_html.rb"
-require "lib/undo_redo.rb"
-require "lib/novedit_xml.rb"
+require "novedit/modules/io/novedit_io_yaml.rb"
+require "novedit/modules/io/novedit_io_html.rb"
+require "novedit/lib/undo_redo.rb"
+require "novedit/lib/novedit_xml.rb"
 
 bindtextdomain("controlerNovedit", "./locale")
 
@@ -650,7 +650,7 @@ class ControlerNovedit < UndoRedo
         node_newparent = node_newparent.parent
       end
 
-      #On met à jour le modèle
+      #Model update
       todo = lambda {
         node.move_to(node_newparent, node_newpos)
         node_newparent.is_open = true

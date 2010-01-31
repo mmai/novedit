@@ -1,5 +1,5 @@
 require 'yaml'
-require 'lib/novedit_io_base.rb'
+require 'novedit/lib/novedit_io_base.rb'
 
 class NoveditIOYaml < NoveditIOBase
   def initialize

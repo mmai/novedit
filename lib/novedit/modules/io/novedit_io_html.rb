@@ -1,4 +1,4 @@
-require 'lib/novedit_io_base.rb'
+require 'novedit/lib/novedit_io_base.rb'
 
 class NoveditIOHtml < NoveditIOBase
   def initialize

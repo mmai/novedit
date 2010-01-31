@@ -1,6 +1,6 @@
-require 'lib/novedit_texttag.rb'
-require 'lib/novedit_xml.rb'
-require 'lib/unicode.rb'
+require 'novedit/lib/novedit_texttag.rb'
+require 'novedit/lib/novedit_xml.rb'
+require 'novedit/lib/unicode.rb'
 
 # Deserialisation excepted, this module is essentially a ruby translation
 # of text manipulation functions used in Gtk Tomboy application

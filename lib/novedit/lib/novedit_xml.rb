@@ -1,4 +1,4 @@
-require 'lib/tree.rb'
+require 'novedit/lib/tree.rb'
 
 class TreeXml < TreeNode
   attr_accessor :name, :attrs, :text
