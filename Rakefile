@@ -19,7 +19,7 @@ spec = Gem::Specification.new do |s|
   s.homepage = $HOMEPAGE
   s.description = $DESCRIPTION
   s.executables = ['novedit']
-  s.files = FileList['*/**/*'].exclude("bacasable").exclude("features").exclude("pkg")
+  s.files = FileList['*/**/*'].exclude("bacasable").exclude("features").exclude("pkg").exclude("test").exclude("tools")
   s.required_ruby_version = '>=1.8.6'
   s.add_dependency('gettext')
   s.requirements = ["GTK+ 2.16", "libglade2 for ruby ('sudo apt-get install libglade2-ruby' on Debian based systems)"]
@@ -71,11 +71,10 @@ Standards-Version: 3.8.0
 Package: #{pkg_name}
 Section: editors
 Architecture: all
-Depends: ruby1.8, libglade2-ruby
+Depends: ruby1.8, libglade2-ruby (>> 0.17.0), libgettext-ruby1.8
 Homepage: #$HOMEPAGE
 Description: #$SUMMARY
 " 
-#Depends: ruby1.8, libglade2-ruby, libgettext-ruby
 #Depends: ruby1.8, libglade2-ruby, rubygems1.8
   end
 

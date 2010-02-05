@@ -1,0 +1,3 @@
+?package(novedit):needs="X11" section="Apps/Text"\
+  icon="/usr/share/pixmaps/novedit.png"\
+  title="novedit" command="/usr/bin/novedit"

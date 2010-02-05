@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name=Novedit
+Type=Application
+Comment=Outliner, editor
+Terminal=false
+Exec=novedit
+Icon=novedit
+Categories=Office;
