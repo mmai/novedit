@@ -6,6 +6,7 @@ require 'lib/novedit'
 require 'date'
 
 require 'rake/gempackagetask'
+require 'rake/clean'
 
 pkg_name = $NAME.downcase
 
@@ -36,7 +37,7 @@ gem_task = "pkg/" + pkg_name + "-" + $VERSION + ".gem"
 task :buildgem => gem_task 
 
 # This task follows the tutorial found at http://blog.loftninjas.org/2008/10/01/debianizing-ruby-gems/
-task :builddeb => :buildgem do |debfile|
+task :builddebgem => :buildgem do 
   system "gem unpack " + gem_task
   workdir = gem_task[4..-5]
 #  cp "/usr/lib/ruby/1.8/setup.rb ", workdir
@@ -75,7 +76,6 @@ Depends: ruby1.8, libglade2-ruby (>> 0.17.0), libgettext-ruby1.8
 Homepage: #$HOMEPAGE
 Description: #$SUMMARY
 " 
-#Depends: ruby1.8, libglade2-ruby, rubygems1.8
   end
 
   cd workdir
@@ -84,4 +84,48 @@ Description: #$SUMMARY
   #Cleaning
   system "mv -f #{pkg_name}* pkg/debian"
   system "rm -rf #{pkg_name}-#$VERSION"
+end
+
+#------------------------------------------------------------
+## Deb(ian) Package Tasks ##  
+#
+#file 'pkg/debian/changelog' do |fich|
+#  File.open(fich.name, "w") do |file|
+#    file << "#{pkg_name} (#$VERSION) unstable; urgency=low
+#
+#  * Initial release.
+#
+# -- #$AUTHORS <#$EMAIL>  " + Time.now.strftime("%a, %d %b %Y %H:%M:%S %z")
+#  end
+#end
+
+## clean Task ##
+CLEAN.include(File.join('pkg','debian'))
+
+task :debian_init => [:clean] do
+  system "cp -R tools/debian_files pkg/debian"
+  system "cp -R lib pkg/debian/usr/lib/ruby/1.8"
+  system "cp bin/novedit pkg/debian/usr/bin/"
+  system "rm -rf `find pkg/debian/ -name .svn`"
+end
+
+file 'pkg/debian/DEBIAN/control' => [:debian_init] do |fich|
+  File.open(fich.name, "w") do |file|
+    file << "Package: #{pkg_name}
+Version: #$VERSION
+Priority: optional
+Maintainer: #$AUTHORS
+Section: editors
+Architecture: all
+Depends: ruby1.8, libglade2-ruby (>> 0.17.0), libgettext-ruby1.8
+Homepage: #$HOMEPAGE
+Description: #$SUMMARY
+" 
+  end
+end
+
+task :builddeb => [:debian_init, 'pkg/debian/DEBIAN/control'] do
+  cd "pkg";
+  system "dpkg-deb --build debian #{pkg_name}-#$VERSION.deb"
+  cd "..";
 end

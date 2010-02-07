@@ -1,7 +1,7 @@
 $INSTALL_PATH = File.join(File.dirname(__FILE__), 'novedit')
 
 $NAME = "Novedit"
-$VERSION = "0.2.3"
+$VERSION = "0.2.4"
 $NOTE_CONTENT_VERSION = "0.2"
 $AUTHORS = "Henri Bourcereau"
 $EMAIL = "henri@websiteburo.com"
