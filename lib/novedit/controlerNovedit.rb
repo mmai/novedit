@@ -327,7 +327,10 @@ class ControlerNovedit < UndoRedo
     while not @model.filename
       selected_file = select_file()
       return false if selected_file.nil? #Cancelation
-      if not File.writable?(selected_file)
+
+      #Do we have write permissions ?
+      testfile = File.exists?(selected_file) ? selected_file : File.dirname(selected_file)
+      if not File.writable?(testfile)
         dialog = Gtk::MessageDialog.new(@appwindow, Gtk::Dialog::MODAL, 
                                         Gtk::MessageDialog::ERROR, 
                                         Gtk::MessageDialog::BUTTONS_OK, 
@@ -336,6 +339,7 @@ class ControlerNovedit < UndoRedo
         dialog.destroy
         return false
       end
+
       if File.exists?(selected_file)
         dialog = Gtk::MessageDialog.new(@appwindow, Gtk::Dialog::MODAL, 
                                         Gtk::MessageDialog::QUESTION, 
