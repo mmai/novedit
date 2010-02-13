@@ -1,8 +1,7 @@
 Installation on Debian based systems (ie Ubuntu) :
 
 apt-get install ruby1.8 libgettext-ruby1.8 libglade2-ruby
-tar xjf Novedit-xx-tar.bz2
+tar xjf novedit-xx-tar.bz2
 
-cd novedit/lib
-../bin/novedit
-
+#Start program :
+./novedit/novedit.sh
