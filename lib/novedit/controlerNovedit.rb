@@ -2,7 +2,6 @@
 # Novedit
 #
 
-require "rbconfig" #For launching another instance of Novedit (See on_help)
 require "find" #For plugins detection
 require "novedit/lib/pluginsystem.rb"
 
@@ -80,7 +79,7 @@ class ControlerNovedit < UndoRedo
   @view
   @settings
 
-  def initialize(model)
+  def initialize(model, file=nil)
     super()
     #Model association (MVC)
     @actions_started = 0
@@ -133,8 +132,8 @@ class ControlerNovedit < UndoRedo
     populateTree(@model, nil)
     
     #Load the file given as a parameter
-    set_io_from_file($*[0]) unless $*[0].nil? 
-    @model.open_file($*[0])
+    set_io_from_file(file) unless file.nil? 
+    @model.open_file(file)
 
     #Notebook
     @notebook_actions = Array.new
@@ -476,10 +475,9 @@ class ControlerNovedit < UndoRedo
 
   #Help
   def new_instance(file)
-    ruby_bin =  File.join(Config::CONFIG["bindir"], Config::CONFIG["ruby_install_name"])
-    Thread.new do
-      system(ruby_bin + " " + $0 + " " + file)
-    end
+    instance_model = NoveditModel.new(nil)
+    ControlerNovedit.new(instance_model, file)
+    Gtk.main
   end
 
   def on_help()
@@ -1152,10 +1150,19 @@ class ControlerNovedit < UndoRedo
   def toogle_bulleted_list
     @view.buffer.toggle_selection_bullets()
   end
+
+  def quit_instance
+#    puts "quitting level " + Gtk.main_level.to_s
+    # XXX How to do that in a clean way ?
+    @view.appwindow.destroy
+    @view = nil
+    @model = nil
+    Gtk.main_quit
+  end
   
   def on_quit
     if @model.is_saved
-      Gtk.main_quit
+      quit_instance
     else
       titre = (@model.filename.nil?)?_("No title"):@model.filename
       dialog = Gtk::MessageDialog.new(@appwindow, Gtk::Dialog::MODAL, 

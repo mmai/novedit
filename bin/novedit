@@ -43,7 +43,7 @@ rescue
 end
 
 model = NoveditModel.new(nil)
-ControlerNovedit.new(model)
+ControlerNovedit.new(model, $*[0])
 
 #Guard for tests (cf. http://danlucraft.com/blog/2009/03/testing-ruby-gnome2-with-cucumber/ )
 unless $running_features

@@ -55,17 +55,61 @@ leftchild: !ruby/object:NoveditNode
               parent: *id002
               redopool: []
 
-              rightbrother: 
-              text: "<note-content xmlns:size='http://code.google.com/p/novedit/xml/size' xmlns:link='http://code.google.com/p/novedit/xml/link' version='0.2'><bold><t>Installation des paquets requis</t></bold><t>\n\
-                apt-get install ruby1.8 libgettext-ruby1.8 libglade2-ruby\n\n\
-                </t><bold><t>Installation des d\xC3\xA9pendances </t></bold><t>\n\
-                gem install gettext\n\n\
-                </t><bold><t>R\xC3\xA9cup\xC3\xA9ration des sources</t></bold><t>\n\
-                wget http://novedit.googlecode.com/files/novedit-0.2.4-tar.bz2\n\
-                tar xjf novedit-0.2.4-tar.bz2\n\n\
-                </t><bold><t>Ex\xC3\xA9cution du programme</t></bold><t>\n\
-                cd novedit\n\
-                ./novedit.sh</t></note-content>"
+              rightbrother: !ruby/object:NoveditNode 
+                childs_computed: false
+                is_open: false
+                leftchild: 
+                name: RubyGems
+                parent: *id002
+                redopool: []
+
+                rightbrother: !ruby/object:NoveditNode 
+                  childs_computed: false
+                  is_open: false
+                  leftchild: 
+                  name: Sources
+                  parent: *id002
+                  redopool: []
+
+                  rightbrother: 
+                  text: |-
+                    <note-content xmlns:size='http://code.google.com/p/novedit/xml/size' xmlns:link='http://code.google.com/p/novedit/xml/link' version='0.2'><bold><t>Dependencies</t></bold><t>
+                    
+                    Novedit depends on Ruby, GTK (ruby-gnome), glade and gettext bindings for ruby. Please refer to your system documentation for information on how to install these modules if they're not currently available.
+                    
+                    </t><bold><t>Unpacking</t></bold><t>
+                    
+                    wget http://novedit.googlecode.com/files/novedit-0.2.4.tar.bz2
+                    tar xjf novedit-0.2.4.tar.bz2
+                    
+                    </t><bold><t>Program execution</t></bold><t>
+                    
+                    cd novedit
+                    ./novedit.sh</t></note-content>
+                  undopool: []
+
+                text: |-
+                  <note-content xmlns:size='http://code.google.com/p/novedit/xml/size' xmlns:link='http://code.google.com/p/novedit/xml/link' version='0.2'><bold><t>Dependencies</t></bold><t>
+                  
+                  This gem require GTK (ruby-gnome) and glade bindings for ruby. Please refer to your system documentation for information on how to install these modules if they're not currently available.
+                  
+                  </t><bold><t>Gem installation</t></bold><t>
+                  
+                  $ wget http://novedit.googlecode.com/files/novedit-0.2.4.gem
+                  $ gem install novedit-0.2.4.gem 
+                  
+                  </t><bold><t>Program execution</t></bold><t>
+                  
+                  $ novedit</t></note-content>
+                undopool: []
+
+              text: |-
+                <note-content xmlns:size='http://code.google.com/p/novedit/xml/size' xmlns:link='http://code.google.com/p/novedit/xml/link' version='0.2'><bold><t>Install with deb package :</t></bold><t>
+                $ wget http://novedit.googlecode.com/files/novedit-0.2.4.deb
+                $ sudo gdebi novedit-0.2.1.deb 
+                
+                </t><bold><t>Run with :</t></bold><t>
+                $ novedit</t></note-content>
               undopool: []
 
             text: "<note-content xmlns:size='http://code.google.com/p/novedit/xml/size' xmlns:link='http://code.google.com/p/novedit/xml/link' version='0.2'><t>Installation TortoiseSvn\n\
@@ -104,7 +148,14 @@ leftchild: !ruby/object:NoveditNode
 
   text: |-
     <note-content xmlns:size='http://code.google.com/p/novedit/xml/size' xmlns:link='http://code.google.com/p/novedit/xml/link' version='0.2'><t>INTRODUCTION
-    todo</t></note-content>
+    
+    The primary goal of Novedit is to be a clone of notes taking editors like Keynote or WikidPad? wich are only available on Windows. It also has a WriteRoom? mode
+    
+    It is written in Ruby / Gtk and should run on Linux, MacOS and Windows.
+    
+    </t><bold><t>Features</t></bold><t>
+    
+    </t><list><list-item><t>Outliner</t></list-item><list-item><t>Drag & drop support on outliner nodes</t></list-item><list-item><t>useful keyboard shortcuts</t></list-item><list-item><t>Search & replace</t></list-item><list-item><t>Undo / Redo</t></list-item><list-item><t>Themes support (colors and fonts)</t></list-item><list-item><t>Basic WYSIWYG editing</t></list-item><list-item><t>WriteRoom? mode (see http://www.hogbaysoftware.com/products/writeroom)</t></list-item><list-item><t>HTML export</t></list-item><list-item><t>Modular architecture</t></list-item></list></note-content>
   undopool: []
 
 name: root
