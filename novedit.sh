@@ -1,5 +1,6 @@
 #!/bin/sh
 
+
 self="${0#./}"
 base="${self%/*}"
 current=$(pwd)
@@ -12,5 +13,5 @@ else
 fi 
 
 cd $path/lib
-ruby ../bin/novedit
+ruby ../bin/novedit $current/$1
 cd -
