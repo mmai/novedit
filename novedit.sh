@@ -5,6 +5,8 @@ self="${0#./}"
 base="${self%/*}"
 current=$(pwd)
 
+param=$(readlink -f $1)
+
 if [ "$base" = "$self" ]
 then
   path=$current
@@ -13,5 +15,5 @@ else
 fi 
 
 cd $path/lib
-ruby ../bin/novedit $current/$1
+ruby ../bin/novedit $param
 cd -
