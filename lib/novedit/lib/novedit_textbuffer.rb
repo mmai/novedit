@@ -545,11 +545,11 @@ module NoveditTextbuffer
       new_list = false
       depth_tag = find_depth_tag(iter)
 
-      #Est-on sur le dernier charactère d'une ligne de liste ?
+      #Are we on the last character of a list entry ?
       end_of_depth_line = line_has_depth && iter.ends_line? 
-      #La ligne est-elle vide ?
+      #Is the line empty ?
       at_empty_line = iter.ends_line? && iter.starts_line?
-      #Est-ce que la prochaine ligne est une ligne de liste ?
+      #Is the next line a list entry ?
       next_line_has_depth = false
       if (iter.line < buffer.line_count - 1) 
         iter_next_line = buffer.get_iter_at_line(iter.line+1)
@@ -632,9 +632,11 @@ module NoveditTextbuffer
           end
         end			
 
-        #Write charcter if it isn't a list character
+        #Write character if it isn't a list character
         if (depth_tag.nil? )
           case iter.char
+          when "&":
+            xml.WriteString("&amp;")
           when "<":
             xml.WriteString("&lt;")
           when ">":
