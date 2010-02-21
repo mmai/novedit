@@ -717,6 +717,7 @@ class ControlerNovedit < UndoRedo
     @view.user_action = true
     case keyval
     when 65293 #Enter
+      #Catched for bulleted lists operations
       @model.currentNode.undopool <<  ["action_begin"]
       key_inserted = @view.buffer.add_newline(iter)
       if key_inserted
@@ -725,6 +726,7 @@ class ControlerNovedit < UndoRedo
         @model.currentNode.undopool.pop 
       end
     when 65289 #Tab
+      #Catched for bulleted lists operations
       @model.currentNode.undopool <<  ["action_begin"]
       key_inserted = @view.buffer.add_tab
       if key_inserted
@@ -733,6 +735,7 @@ class ControlerNovedit < UndoRedo
         @model.currentNode.undopool.pop 
       end
     when 65288 #Backspace
+      #Catched for bulleted lists operations
       @model.currentNode.undopool <<  ["action_begin"]
       key_inserted = @view.buffer.remove_tab
       if key_inserted
@@ -740,6 +743,12 @@ class ControlerNovedit < UndoRedo
       else
         @model.currentNode.undopool.pop 
       end
+    when 65361 #Left arrow
+      #Catched for tag bounds operations
+#      puts "<-"
+    when 65363 #Right arrow
+      #Catched for tag bounds operations
+#      puts "->"
     end
     @view.user_action = false
     return key_inserted
@@ -753,10 +762,9 @@ class ControlerNovedit < UndoRedo
     if (not @model.currentNode.undopool.empty?) and (not separators_list.include?(text)) and (@model.currentNode.undopool.last[0] == "insert_text") and (@model.currentNode.undopool.last[2] == iter.offset)
       last_text = @model.currentNode.undopool.pop
 #      @model.currentNode.undopool <<  ["insert_text", last_text[1], last_text[1] + last_text[2] + text.scan(/./).size, last_text[3] + text]
-      # We use text.scan(/./) because of utf-8 characters
-      @model.currentNode.undopool <<  ["insert_text", last_text[1], last_text[2] + text.scan(/./).size, last_text[3] + text]
+      @model.currentNode.undopool <<  ["insert_text", last_text[1], last_text[2] + Unicode.string_length(text), last_text[3] + text]
     else
-      @model.currentNode.undopool <<  ["insert_text", iter.offset, iter.offset + text.scan(/./).size, text]
+      @model.currentNode.undopool <<  ["insert_text", iter.offset, iter.offset + Unicode.string_length(text), text]
     end
 
     #On appelle les traitements spécifiques novedit_textbuffer

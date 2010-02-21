@@ -18,4 +18,9 @@ module Unicode
       raise NameError, "Uninitialized constant: Unicode::#{name}"
     end
   end
+
+  #Calculate the size of a string
+  def self.string_length(str)
+    return str.scan(/./).size + str.scan(/\n/).size
+  end
 end
