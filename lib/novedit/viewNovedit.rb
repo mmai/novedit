@@ -57,6 +57,7 @@ class ViewNovedit
     cellrenderer = Gtk::CellRendererText.new
     cellrenderer.editable=true
     cellrenderer.signal_connect("edited"){ |cell, path, newtext| @controler.on_cell_edited(path, newtext) }
+#    cellrenderer.signal_connect("editing-canceled") { |widget| @controler.on_cell_editing_canceled(widget)}  
     col = Gtk::TreeViewColumn.new("élements", cellrenderer, :text=>0)
     @treeview.append_column(col)
     
@@ -100,6 +101,7 @@ class ViewNovedit
     
     #Key pressed
     @treeview.signal_connect("key-press-event") { |widget, event| @controler.on_tree_key_pressed(event.keyval)}  
+
     
     #Tabs document
     @tabs = @glade.get_object('notebook1')

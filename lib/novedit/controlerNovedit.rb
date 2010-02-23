@@ -632,6 +632,10 @@ class ControlerNovedit < UndoRedo
       @view.treeview.set_cursor(iterpath, @view.treeview.get_column(0), false)
     end
   end
+
+#  def on_cell_editing_canceled(cell)
+#    puts "canceled : " + cell.text
+#  end
   
   #Drag and drop
   def on_drag_data_get(treeview, context, selection, info, timestamp)
