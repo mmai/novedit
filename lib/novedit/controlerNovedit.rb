@@ -506,6 +506,11 @@ class ControlerNovedit < UndoRedo
       on_delete_node
     end
   end
+
+  #Go to text window
+  def on_goto_text
+    puts "Go to text"
+  end
  
   #Node edition
   def rename_node

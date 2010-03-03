@@ -187,11 +187,17 @@ class ViewNovedit
   def update
     maj_title 
     @treeview.model.clear
+#    require 'ruby-debug';debugger
+#    puts "\n\n\n=============\n" + @model.currentNode.text 
+    puts "#######\n\n"
+    puts @model.currentNode.object_id
+    puts @model.currentNode.text
     @model.childs.each do |modelNode|
       insert_model_node(nil, modelNode)
       check_opened_nodes(modelNode)
     end
 #    @buffer.set_text(@model.currentNode.text)
+#    puts @model.currentNode.text
     @buffer.deserialize(@model.currentNode.text)
     
 #    @tabs.set_tab_label(@tabs.children[@tabs.page], Gtk::Label.new(File.basename(@currentDocument.model.filename)))
