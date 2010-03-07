@@ -44,13 +44,9 @@ class NoveditModel
       @rootNode.addNode(NoveditNode.new($DEFAULT_NODE_NAME))
     end
     @currentNode = @rootNode.getNode("0")
-#    require 'ruby-debug';debugger
-#    puts "\n\n\n**************\n" + @currentNode.text + "\n*****************\n"
-    puts @currentNode.object_id
-    puts @currentNode.text
     changed
     
-    notify_observers
+    notify_observers()
   end
   
   def set_io(novedit_io)
@@ -139,6 +135,8 @@ class NoveditModel
 #        raise("Cannot open " + @filename + ((err_message.nil?)?(errmes.to_s):err_message))
 #      end
       @rootNode = lu
+      puts "\n-----------" + @filename + "-------------\n"
+      puts "model:143 => " + (@rootNode.leftchild.text =~ /aaa/).to_s
       if not @rootNode
         @rootNode = NoveditNode.new("root")
         @rootNode = @rootNode.addNode(NoveditNode.new($DEFAULT_NODE_NAME))
