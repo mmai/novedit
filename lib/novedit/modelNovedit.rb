@@ -135,8 +135,6 @@ class NoveditModel
 #        raise("Cannot open " + @filename + ((err_message.nil?)?(errmes.to_s):err_message))
 #      end
       @rootNode = lu
-      puts "\n-----------" + @filename + "-------------\n"
-      puts "model:143 => " + (@rootNode.leftchild.text =~ /aaa/).to_s
       if not @rootNode
         @rootNode = NoveditNode.new("root")
         @rootNode = @rootNode.addNode(NoveditNode.new($DEFAULT_NODE_NAME))

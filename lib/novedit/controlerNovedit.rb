@@ -609,6 +609,7 @@ class ControlerNovedit < UndoRedo
   
   #Sélection d'un noeud de l'arbre
   def on_select_node(selectionWidget)
+    puts "controler:612 => here's the problem..."
     @model.currentNode.text = @view.buffer.serialize()
     iter = selectionWidget.selected
     @model.currentNode = @model.getNode(iter.path.to_s) unless iter.nil?
