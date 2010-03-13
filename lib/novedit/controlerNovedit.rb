@@ -255,7 +255,7 @@ class ControlerNovedit < UndoRedo
   end
 
   def open_file()
-    if @model.is_saved
+    ensure_saved do
       filename = select_file
       load_file(filename)
     end
@@ -522,7 +522,7 @@ class ControlerNovedit < UndoRedo
     end
   end
 
-  #Insertion d'un nouveau sous-élément
+  #New sub-element insertion
   def on_insert_child()
     selectedIter = @view.treeview.selection.selected
     if not selectedIter.nil?
@@ -546,7 +546,7 @@ class ControlerNovedit < UndoRedo
     end
   end
   
-  #Insertion d'un nouveau frère
+  #New brother insertion
   def on_insert_sibling()
     selectedIter = @view.treeview.selection.selected
     if not selectedIter.nil?
@@ -575,7 +575,7 @@ class ControlerNovedit < UndoRedo
     end
   end
   
-  #Suppression d'un noeud
+  #Node deletion
   def on_delete_node
     selectedIter = @view.treeview.selection.selected
     if not selectedIter.nil?
@@ -607,16 +607,18 @@ class ControlerNovedit < UndoRedo
     end
   end
   
-  #Sélection d'un noeud de l'arbre
+  #Tree node selection
   def on_select_node(selectionWidget)
-    puts "controler:612 => here's the problem..."
-    @model.currentNode.text = @view.buffer.serialize()
     iter = selectionWidget.selected
-    @model.currentNode = @model.getNode(iter.path.to_s) unless iter.nil?
-    @view.buffer.deserialize(@model.currentNode.text)
+    #Is there really a node selected ?
+    if not iter.nil?
+      @model.currentNode.text = @view.buffer.serialize()
+      @model.currentNode = @model.getNode(iter.path.to_s)
+      @view.buffer.deserialize(@model.currentNode.text)
+    end
   end
   
-  #Édition d'un élément de l'arbre
+  #Tree element edition
   def on_cell_edited(path, newtext)
     node = @model.getNode(path)
     iter = @treestore.get_iter(path)
@@ -1169,18 +1171,9 @@ class ControlerNovedit < UndoRedo
     @view.buffer.toggle_selection_bullets()
   end
 
-  def quit_instance
-#    puts "quitting level " + Gtk.main_level.to_s
-    # XXX How to do that in a clean way ?
-    @view.appwindow.destroy
-    @view = nil
-    @model = nil
-    Gtk.main_quit
-  end
-  
-  def on_quit
+  def ensure_saved
     if @model.is_saved
-      quit_instance
+      yield
     else
       titre = (@model.filename.nil?)?_("No title"):@model.filename
       dialog = Gtk::MessageDialog.new(@appwindow, Gtk::Dialog::MODAL, 
@@ -1194,14 +1187,27 @@ class ControlerNovedit < UndoRedo
       dialog.destroy
       case response
       when Gtk::Dialog::RESPONSE_NO
-        Gtk.main_quit 
+        yield
       when Gtk::Dialog::RESPONSE_YES
         on_save_file
-        Gtk.main_quit 
+        yield
       when Gtk::Dialog::RESPONSE_CANCEL
       end
     end
     return true
+  end
+
+  def quit_instance
+#    puts "quitting level " + Gtk.main_level.to_s
+    # XXX How to do that in a clean way ?
+    @view.appwindow.destroy
+    @view = nil
+    @model = nil
+    Gtk.main_quit
+  end
+ 
+  def on_quit
+    ensure_saved { quit_instance }
   end
 
 
@@ -1217,9 +1223,7 @@ class ControlerNovedit < UndoRedo
     # Strip 'file://' from the beginning of the uri
     file_to_open = uri[7..-1]
     #code here to open the selected file
-    if @model.is_saved
-      load_file(file_to_open)
-    end
+    ensure_saved { load_file(file_to_open) }
   end
 
   private

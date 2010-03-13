@@ -186,12 +186,7 @@ class ViewNovedit
 
   def update()
     maj_title 
-    puts "A " + @model.currentNode.text
-#    @model.currentNode.freeze if @model.currentNode.text =~ /aaa/
-    
     @treeview.model.clear
-    puts "B " + @model.currentNode.text
-    puts "view:195 =>" + (@model.currentNode.text =~ /aaa/).to_s
 
     @model.childs.each do |modelNode|
       insert_model_node(nil, modelNode)
