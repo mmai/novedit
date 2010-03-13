@@ -114,14 +114,13 @@ class NoteTag < Gtk::TextTag
     end
   end
 
-  #		def void GetExtents (Gtk.TextIter iter, out Gtk.TextIter start, out Gtk.TextIter end) 
-  def GetExtents(iter, start, fin) 
+  def GetExtents(iter, start, ending) 
     start = iter
     if (!start.BeginsTag(self))
       start.BackwardToTagToggle(self)
     end
-    fin = iter
-    fin.ForwardToTagToggle(self)
+    ending = iter
+    ending.ForwardToTagToggle(self)
   end
 
   def Write(xml, start)

@@ -455,121 +455,122 @@
                     <property name="visible">True</property>
                     <property name="orientation">vertical</property>
                     <child>
-                      <object class="GtkToolbar" id="toolbartext">
+                      <object class="GtkHBox" id="hbox1">
                         <property name="visible">True</property>
-                        <property name="border_width">1</property>
-                        <property name="toolbar_style">icons</property>
-                        <property name="icon_size">1</property>
                         <child>
-                          <object class="GtkToolButton" id="button_bold">
+                          <object class="GtkToolbar" id="toolbartext">
                             <property name="visible">True</property>
-                            <property name="tooltip_text" translatable="yes">Bold</property>
-                            <property name="icon_widget">bold_image</property>
-                            <signal name="clicked" handler="on_text_bold"/>
+                            <property name="border_width">1</property>
+                            <property name="toolbar_style">icons</property>
+                            <property name="icon_size">1</property>
+                            <child>
+                              <object class="GtkToolButton" id="button_bold">
+                                <property name="visible">True</property>
+                                <property name="icon_widget">bold_image</property>
+                                <signal name="clicked" handler="on_text_bold"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="homogeneous">True</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkToolButton" id="button_italic">
+                                <property name="visible">True</property>
+                                <property name="icon_widget">italic_image</property>
+                                <signal name="clicked" handler="on_text_italic"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="homogeneous">True</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkToolButton" id="button_justify-left">
+                                <property name="visible">True</property>
+                                <property name="icon_widget">align_left_image</property>
+                                <signal name="clicked" handler="on_justify-left"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="homogeneous">True</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkToolButton" id="button_justify-right">
+                                <property name="visible">True</property>
+                                <property name="icon_widget">align_right_image</property>
+                                <signal name="clicked" handler="on_justify-right"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="homogeneous">True</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkToolButton" id="button_centered">
+                                <property name="visible">True</property>
+                                <property name="icon_widget">align_center_image</property>
+                                <signal name="clicked" handler="on_text_centered"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="homogeneous">True</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkToolButton" id="button_strikethrough">
+                                <property name="visible">True</property>
+                                <property name="icon_widget">strikethrough_image</property>
+                                <signal name="clicked" handler="on_text_strikethrough"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="homogeneous">True</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkToolButton" id="button_highlight">
+                                <property name="visible">True</property>
+                                <property name="icon_widget">yellow_image</property>
+                                <signal name="clicked" handler="on_text_highlight"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="homogeneous">True</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkToolButton" id="button_bulleted-list">
+                                <property name="visible">True</property>
+                                <property name="icon_widget">list_bullets_image</property>
+                                <signal name="clicked" handler="on_bulleted-list"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="homogeneous">True</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkToolButton" id="button_heading_1">
+                                <property name="visible">True</property>
+                                <property name="icon_widget">heading_1</property>
+                                <signal name="clicked" handler="on_text_size_huge"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="homogeneous">True</property>
+                              </packing>
+                            </child>
                           </object>
                           <packing>
-                            <property name="expand">False</property>
-                            <property name="homogeneous">True</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkToolButton" id="button_italic">
-                            <property name="visible">True</property>
-                            <property name="tooltip_text" translatable="yes">Italic</property>
-                            <property name="icon_widget">italic_image</property>
-                            <signal name="clicked" handler="on_text_italic"/>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="homogeneous">True</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkToolButton" id="button_justify-left">
-                            <property name="visible">True</property>
-                            <property name="tooltip_text" translatable="yes">Italic</property>
-                            <property name="icon_widget">align_left_image</property>
-                            <signal name="clicked" handler="on_justify-left"/>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="homogeneous">True</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkToolButton" id="button_justify-right">
-                            <property name="visible">True</property>
-                            <property name="tooltip_text" translatable="yes">Italic</property>
-                            <property name="icon_widget">align_right_image</property>
-                            <signal name="clicked" handler="on_justify-right"/>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="homogeneous">True</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkToolButton" id="button_centered">
-                            <property name="visible">True</property>
-                            <property name="tooltip_text" translatable="yes">Italic</property>
-                            <property name="icon_widget">align_center_image</property>
-                            <signal name="clicked" handler="on_text_centered"/>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="homogeneous">True</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkToolButton" id="button_strikethrough">
-                            <property name="visible">True</property>
-                            <property name="tooltip_text" translatable="yes">Italic</property>
-                            <property name="icon_widget">strikethrough_image</property>
-                            <signal name="clicked" handler="on_text_strikethrough"/>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="homogeneous">True</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkToolButton" id="button_highlight">
-                            <property name="visible">True</property>
-                            <property name="tooltip_text" translatable="yes">Italic</property>
-                            <property name="icon_widget">yellow_image</property>
-                            <signal name="clicked" handler="on_text_highlight"/>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="homogeneous">True</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkToolButton" id="button_bulleted-list">
-                            <property name="visible">True</property>
-                            <property name="tooltip_text" translatable="yes">Italic</property>
-                            <property name="icon_widget">list_bullets_image</property>
-                            <signal name="clicked" handler="on_bulleted-list"/>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="homogeneous">True</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkToolButton" id="button_heading_1">
-                            <property name="visible">True</property>
-                            <property name="icon_widget">heading_1</property>
-                            <signal name="clicked" handler="on_text_size_huge"/>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="homogeneous">True</property>
+                            <property name="position">0</property>
                           </packing>
                         </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
+                        <property name="fill">False</property>
                         <property name="position">0</property>
                       </packing>
                     </child>
@@ -577,14 +578,12 @@
                       <object class="GtkScrolledWindow" id="scrolledwindow">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="has_focus">True</property>
                         <property name="hscrollbar_policy">automatic</property>
                         <property name="vscrollbar_policy">automatic</property>
                         <child>
                           <object class="GtkTextView" id="textview">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="has_focus">True</property>
                             <property name="can_default">True</property>
                             <property name="has_default">True</property>
                             <property name="wrap_mode">word</property>
@@ -639,38 +638,6 @@
   </object>
   <object class="GtkAccelGroup" id="accelgroup1"/>
   <object class="GtkAction" id="action1"/>
-  <object class="GtkImage" id="bold_image">
-    <property name="visible">True</property>
-    <property name="pixbuf">text_bold.png</property>
-  </object>
-  <object class="GtkImage" id="italic_image">
-    <property name="visible">True</property>
-    <property name="pixbuf">text_italic.png</property>
-  </object>
-  <object class="GtkImage" id="list_bullets_image">
-    <property name="visible">True</property>
-    <property name="pixbuf">text_list_bullets.png</property>
-  </object>
-  <object class="GtkImage" id="strikethrough_image">
-    <property name="visible">True</property>
-    <property name="pixbuf">text_strikethrough.png</property>
-  </object>
-  <object class="GtkImage" id="align_right_image">
-    <property name="visible">True</property>
-    <property name="pixbuf">text_align_right.png</property>
-  </object>
-  <object class="GtkImage" id="align_left_image">
-    <property name="visible">True</property>
-    <property name="pixbuf">text_align_left.png</property>
-  </object>
-  <object class="GtkImage" id="align_center_image">
-    <property name="visible">True</property>
-    <property name="pixbuf">text_align_center.png</property>
-  </object>
-  <object class="GtkImage" id="yellow_image">
-    <property name="visible">True</property>
-    <property name="pixbuf">tag_yellow.png</property>
-  </object>
   <object class="GtkImage" id="image1">
     <property name="visible">True</property>
     <property name="pixbuf">plugin.png</property>
@@ -680,6 +647,38 @@
     <property name="stock">gtk-zoom-100</property>
   </object>
   <object class="GtkImage" id="list_bullets_image1">
+    <property name="visible">True</property>
+    <property name="pixbuf">text_list_bullets.png</property>
+  </object>
+  <object class="GtkImage" id="bold_image">
+    <property name="visible">True</property>
+    <property name="pixbuf">text_bold.png</property>
+  </object>
+  <object class="GtkImage" id="italic_image">
+    <property name="visible">True</property>
+    <property name="pixbuf">text_italic.png</property>
+  </object>
+  <object class="GtkImage" id="align_left_image">
+    <property name="visible">True</property>
+    <property name="pixbuf">text_align_left.png</property>
+  </object>
+  <object class="GtkImage" id="align_right_image">
+    <property name="visible">True</property>
+    <property name="pixbuf">text_align_right.png</property>
+  </object>
+  <object class="GtkImage" id="align_center_image">
+    <property name="visible">True</property>
+    <property name="pixbuf">text_align_center.png</property>
+  </object>
+  <object class="GtkImage" id="strikethrough_image">
+    <property name="visible">True</property>
+    <property name="pixbuf">text_strikethrough.png</property>
+  </object>
+  <object class="GtkImage" id="yellow_image">
+    <property name="visible">True</property>
+    <property name="pixbuf">tag_yellow.png</property>
+  </object>
+  <object class="GtkImage" id="list_bullets_image">
     <property name="visible">True</property>
     <property name="pixbuf">text_list_bullets.png</property>
   </object>

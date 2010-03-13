@@ -137,7 +137,7 @@ class ControlerNovedit < UndoRedo
 
     #Notebook
     @notebook_actions = Array.new
-     
+
     #Dialog windows
     pathgladeDialogs = $INSTALL_PATH + "/glade/noveditDialogs.glade"
     @gladeDialogs = Gtk::Builder.new()
@@ -154,6 +154,7 @@ class ControlerNovedit < UndoRedo
     @preferences_dialog = @gladeDialogs.get_object("preferences_dialog")
     
     #Keyboard shortcuts : XXX ctrl-z and ctrl-y are not supported by glade menus (like ctrl-x for example) ?!?
+    #We recreate menu shorcuts (for writeroom mode which has no menu...)
     ag = Gtk::AccelGroup.new
     #Undo : Ctrl-Z
     ag.connect(Gdk::Keyval::GDK_Z, Gdk::Window::CONTROL_MASK, Gtk::ACCEL_VISIBLE) {
@@ -162,6 +163,26 @@ class ControlerNovedit < UndoRedo
     #Redo : Ctrl-Y 
     ag.connect(Gdk::Keyval::GDK_Y, Gdk::Window::CONTROL_MASK, Gtk::ACCEL_VISIBLE) {
      on_redo(nil) 
+    }
+    #Save : Ctrl-S 
+    ag.connect(Gdk::Keyval::GDK_S, Gdk::Window::CONTROL_MASK, Gtk::ACCEL_VISIBLE) {
+     on_save_file
+    }
+    #Open file : Ctrl-O 
+    ag.connect(Gdk::Keyval::GDK_O, Gdk::Window::CONTROL_MASK, Gtk::ACCEL_VISIBLE) {
+     open_file
+    }
+    #New file : Ctrl-N 
+    ag.connect(Gdk::Keyval::GDK_N, Gdk::Window::CONTROL_MASK, Gtk::ACCEL_VISIBLE) {
+     new_file
+    }
+    #Find : Ctrl-F 
+    ag.connect(Gdk::Keyval::GDK_F, Gdk::Window::CONTROL_MASK, Gtk::ACCEL_VISIBLE) {
+     on_find
+    }
+    #Replace : Ctrl-R 
+    ag.connect(Gdk::Keyval::GDK_R, Gdk::Window::CONTROL_MASK, Gtk::ACCEL_VISIBLE) {
+     on_replace
     }
     #FullScreen : F11
 #    ag.connect(Gdk::Keyval::GDK_F11, 0, Gtk::ACCEL_VISIBLE) {
@@ -1010,10 +1031,16 @@ class ControlerNovedit < UndoRedo
 
     @view.appwindow.decorated = ! @view.is_writeroom
     menubar.visible = ! @view.is_writeroom
+#    if @view.is_writeroom
+#      nodimension = Gtk::Allocation.new(0,0,0,0)
+#      menubar.size_allocate(nodimension)
+#    else
+#    end
     toolbar.visible = ! @view.is_writeroom
     treeview.visible = ! @view.is_writeroom
     toolbartext.visible = ! @view.is_writeroom
     statusbar.visible = ! @view.is_writeroom
+    @view.tabs.show_tabs = (@view.tabs.n_pages > 1 and ! @view.is_writeroom)
 
     font_desc = textview.pango_context.font_description
     if @view.is_writeroom

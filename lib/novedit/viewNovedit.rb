@@ -44,6 +44,20 @@ class ViewNovedit
     @glade.connect_signals{|handler| method(handler)}
     @fileselection = @glade.get_object("fileselection")
 
+    #Text size combobox
+#    @combo_textsize = Gtk::ComboBox.new()
+#    @combo_textsize.append_text('huge')
+#    @combo_textsize.append_text('large')
+#    @combo_textsize.append_text('normal')
+#    @combo_textsize.append_text('small')
+#
+#    @combo_textsize.signal_connect('changed') do
+#      @controler.on_text_size(@combo_textsize.active_text)
+#    end
+#    hboxsize = @glade.get_object("hbox1")
+#    hboxsize.add(@combo_textsize)
+#    hboxsize.show_all()
+
 #    @glade = GladeXML.new(@pathglade) {|handler| method(handler)}
     @appwindow = @glade.get_object("appwindow")
     @appbar = @glade.get_object("statusbar")

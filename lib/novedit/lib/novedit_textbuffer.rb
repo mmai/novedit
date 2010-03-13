@@ -503,8 +503,8 @@ module NoveditTextbuffer
 
 
   def tag_ends_here(tag, iter, next_iter)
-    endshere = (iter.has_tag?(tag) and (!next_iter.has_tag?(tag))) or next_iter.end?
-    return endshere
+    return ((iter.has_tag?(tag) and (!next_iter.has_tag?(tag))) or next_iter.end?)
+#    return next_iter.ends_tag?(tag)
   end
 
   def serialize() 
@@ -626,7 +626,8 @@ module NoveditTextbuffer
         compt = 0
         while (continue_stack.length > 0 && ((depth_tag.nil? && iter.starts_line?()) || iter.line_offset == 1))
           continue_tag = continue_stack.pop()
-          if (!tag_ends_here(continue_tag, iter, next_iter) && iter.has_tag?(continue_tag))
+#          if (!tag_ends_here(continue_tag, iter, next_iter) && iter.has_tag?(continue_tag))
+          if (!next_iter.ends_tag?(continue_tag) && iter.has_tag?(continue_tag))
             write_tag(continue_tag, xml, true)
             tag_stack << continue_tag
           end
@@ -655,17 +656,17 @@ module NoveditTextbuffer
 
           # Any tags which continue across the indented line are added to
           # the continue_stack to be reopened at the start of the next <list-item>
-          if (!tag_ends_here(existing_tag, iter, next_iter)) 
+          if (!next_iter.ends_tag?(existing_tag)) 
             continue_stack << existing_tag
           end
           write_tag(existing_tag, xml, false)
         end					
       else 
         iter.tags.each do |tag|
-          if (tag_ends_here(tag, iter, next_iter) && NoteTagTable.TagIsSerializable(tag) && !(tag.instance_of?(DepthNoteTag))) 
+          if (next_iter.ends_tag?(tag) && NoteTagTable.TagIsSerializable(tag) && !(tag.instance_of?(DepthNoteTag))) 
             while (tag_stack.length > 0) 
               existing_tag = tag_stack.pop()
-              if (!tag_ends_here(existing_tag, iter, next_iter)) 
+              if (!next_iter.ends_tag?(existing_tag)) 
                 replay_stack << existing_tag
               end
               write_tag(existing_tag, xml, false)
