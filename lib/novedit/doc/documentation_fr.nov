@@ -155,7 +155,7 @@ leftchild: !ruby/object:NoveditNode
     
     </t><bold><t>Features</t></bold><t>
     
-    </t><list><list-item><t>Outliner</t></list-item><list-item><t>Drag & drop support on outliner nodes</t></list-item><list-item><t>useful keyboard shortcuts</t></list-item><list-item><t>Search & replace</t></list-item><list-item><t>Undo / Redo</t></list-item><list-item><t>Themes support (colors and fonts)</t></list-item><list-item><t>Basic WYSIWYG editing</t></list-item><list-item><t>WriteRoom? mode (see http://www.hogbaysoftware.com/products/writeroom)</t></list-item><list-item><t>HTML export</t></list-item><list-item><t>Modular architecture</t></list-item></list></note-content>
+    </t><list><list-item><t>Outliner</t></list-item><list-item><t>Drag &amp; drop support on outliner nodes</t></list-item><list-item><t>useful keyboard shortcuts</t></list-item><list-item><t>Search &amp; replace</t></list-item><list-item><t>Undo / Redo</t></list-item><list-item><t>Themes support (colors and fonts)</t></list-item><list-item><t>Basic WYSIWYG editing</t></list-item><list-item><t>WriteRoom? mode (see http://www.hogbaysoftware.com/products/writeroom)</t></list-item><list-item><t>HTML export</t></list-item><list-item><t>Modular architecture</t></list-item></list></note-content>
   undopool: []
 
 name: root
