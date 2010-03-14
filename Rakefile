@@ -22,8 +22,7 @@ spec = Gem::Specification.new do |s|
   s.homepage = $HOMEPAGE
   s.description = $DESCRIPTION
   s.executables = ['novedit']
-  s.files = FileList['*/**/*'].exclude("bacasable").exclude("features").exclude("pkg").exclude("test").exclude("tools")
-  s.files = s.files.exclude("novedit.sh")
+  s.files = FileList['*/**/*'].exclude("bacasable").exclude("features").exclude("pkg").exclude("test").exclude("tools").exclude("novedit.sh")
   s.required_ruby_version = '>=1.8.6'
   s.add_dependency('gettext')
   s.requirements = ["GTK+ 2.16", "libglade2 for ruby ('sudo apt-get install libglade2-ruby' on Debian based systems)"]
