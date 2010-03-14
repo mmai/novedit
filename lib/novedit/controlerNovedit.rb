@@ -184,6 +184,10 @@ class ControlerNovedit < UndoRedo
     ag.connect(Gdk::Keyval::GDK_R, Gdk::Window::CONTROL_MASK, Gtk::ACCEL_VISIBLE) {
      on_replace
     }
+    #Toogle Treeview : Ctrl-T
+    ag.connect(Gdk::Keyval::GDK_T, Gdk::Window::CONTROL_MASK, Gtk::ACCEL_VISIBLE) {
+      on_toggle_tree()
+    }
     #FullScreen : F11
 #    ag.connect(Gdk::Keyval::GDK_F11, 0, Gtk::ACCEL_VISIBLE) {
 #      on_toggle_fullscreen()
@@ -195,6 +199,10 @@ class ControlerNovedit < UndoRedo
     #WriteRoom exit : ESC
     ag.connect(Gdk::Keyval::GDK_Escape, 0, Gtk::ACCEL_VISIBLE) {
       on_toggle_writeroom() if @view.is_writeroom
+    }
+    #Next node : Ctrl-Space
+    ag.connect(Gdk::Keyval::GDK_space, 0, Gtk::ACCEL_VISIBLE) {
+      show_next_node()
     }
     @view.appwindow.add_accel_group(ag)
     #End keyboard shortcuts
@@ -1004,17 +1012,22 @@ class ControlerNovedit < UndoRedo
   end
 
   def on_toggle_menus
-    menubar.visible = ! @view.is_writeroom
-    toolbar.visible = ! @view.is_writeroom
-    toolbartext.visible = ! @view.is_writeroom
+    menubar = @view.glade.get_object("menubar")
+    toolbar = @view.glade.get_object("toolbar")
+    toolbartext = @view.glade.get_object("toolbartext")
+    menubar.visible = ! menubar.visible? 
+    toolbar.visible = ! toolbar.visible?
+    toolbartext.visible = !toolbartext.visible?
   end
 
   def on_toggle_tree
-    treeview.visible = ! @view.is_writeroom
+    treeview = @view.glade.get_object("treeview")
+    treeview.visible = ! treeview.visible?
   end
   
   def on_toggle_statusbar
-    statusbar.visible = ! @view.is_writeroom
+    statusbar = @view.glade.get_object("statusbar")
+    statusbar.visible = !statusbar.visible?
   end
 
   def on_toggle_writeroom()
@@ -1192,6 +1205,18 @@ class ControlerNovedit < UndoRedo
   def on_bulleted_list
     toogle_bulleted_list
     @model.currentNode.undopool <<  ["toogle_bulleted_list"]
+  end
+
+  def show_next_node
+    next_path = "0"
+    selection_manager = @view.treeview.selection
+    iter = selection_manager.selected
+    if not iter.nil?
+      selection_manager.unselect_path(iter.path)
+      next_node = @model.currentNode.next
+      next_path = next_node.path if next_node
+    end
+    selection_manager.select_path(Gtk::TreePath.new(next_path))
   end
 
   def toogle_bulleted_list

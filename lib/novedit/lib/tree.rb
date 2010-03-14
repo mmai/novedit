@@ -13,6 +13,13 @@ class TreeNode
       node.nodes_do(&func)
     end
   end
+
+  def next(with_childs = true)
+    return @leftchild if @leftchild and with_childs
+    return @rightbrother if @rightbrother
+    return @parent.next(false) if @parent
+    return false
+  end
   
   def get_rightchild
     child = nil
