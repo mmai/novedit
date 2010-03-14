@@ -200,8 +200,8 @@ class ControlerNovedit < UndoRedo
     ag.connect(Gdk::Keyval::GDK_Escape, 0, Gtk::ACCEL_VISIBLE) {
       on_toggle_writeroom() if @view.is_writeroom
     }
-    #Next node : Ctrl-Space
-    ag.connect(Gdk::Keyval::GDK_space, 0, Gtk::ACCEL_VISIBLE) {
+    #Next node : Ctrl-Period
+    ag.connect(Gdk::Keyval::GDK_period, Gdk::Window::CONTROL_MASK, Gtk::ACCEL_VISIBLE) {
       show_next_node()
     }
     @view.appwindow.add_accel_group(ag)
@@ -1052,7 +1052,7 @@ class ControlerNovedit < UndoRedo
     toolbar.visible = ! @view.is_writeroom
     treeview.visible = ! @view.is_writeroom
     toolbartext.visible = ! @view.is_writeroom
-    statusbar.visible = ! @view.is_writeroom
+#    statusbar.visible = ! @view.is_writeroom
     @view.tabs.show_tabs = (@view.tabs.n_pages > 1 and ! @view.is_writeroom)
 
     font_desc = textview.pango_context.font_description

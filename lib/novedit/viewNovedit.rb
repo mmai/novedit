@@ -18,9 +18,19 @@ class ViewNovedit
   end
 
   def update_appbar
-    @appbar.pop(@appbar_context_id)
+    #Cursor position
     iter = @buffer.get_iter_at_mark(@buffer.get_mark("insert"))
-    @appbar.push(@appbar_context_id, "Line: #{iter.line + 1}, Column: #{iter.line_offset + 1}")
+    position = "Line: #{iter.line + 1}, Column: #{iter.line_offset + 1}"
+
+    #Breadcrumb
+    breadcrumbs = @model.currentNode.ancestors.map {|ancestor| ancestor.name}
+    breadcrumbs.pop
+    breadcrumbs.reverse!
+    breadcrumbs << @model.currentNode.name
+    breadcrumb = breadcrumbs.join(' > ')
+
+    @appbar.pop(@appbar_context_id)
+    @appbar.push(@appbar_context_id, position + "  [" + breadcrumb + "]")
   end
   
   def write_appbar(text)
