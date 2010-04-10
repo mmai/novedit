@@ -10,7 +10,7 @@
 	<style type="text/css">
 		body {
   		margin-top: 1.0em;
-  		background-color: #8ef9e5;
+  		background-color: white;
 		  font-family: "Helvetica,Arial,FreeSans";
   		color: #000000;
     }
@@ -18,12 +18,12 @@
       margin: 0 auto;
       width: 700px;
     }
-		h1 { font-size: 3.8em; color: #71061a; margin-bottom: 3px; }
+		h1 { font-size: 3.8em; margin-bottom: 3px; }
 		h1 .small { font-size: 0.4em; }
 		h1 a { text-decoration: none }
-		h2 { font-size: 1.5em; color: #71061a; }
-    h3 { text-align: center; color: #71061a; }
-    a { color: #71061a; }
+		h2 { font-size: 1.5em;  }
+    h3 { text-align: center; }
+    a { }
     .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
     .download { float: right; }
 		pre { background: #000; color: #fff; padding: 15px;}
@@ -52,12 +52,12 @@
       Flexible editor/outliner written in ruby gnome
     </div>
 
-    <p>The primary goal of Novedit is to be a clone of notes taking editors like Keynote or WikidPad? wich are only available on Windows. It also has a WriteRoom? mode
+    <p>The primary goal of Novedit is to be a clone of notes taking editors like Keynote or WikidPad wich are only available on Windows. It also has a WriteRoom mode
+    <br>
+It is written in Ruby / Gtk and run on Linux and MacOSX (with macports)
 
-It is written in Ruby / Gtk and should run on Linux, MacOS and Windows.
-
-Features
-
+<h2>Features</h2>
+<p>
 <ul>
     <li> Outliner
     <li> Drag & drop support on outliner nodes
@@ -66,14 +66,18 @@ Features
     <li> Undo / Redo
     <li> Themes support (colors and fonts)
     <li> Basic WYSIWYG editing
-    <li> WriteRoom? mode (see <a href="http://www.hogbaysoftware.com/products/writeroom">http://www.hogbaysoftware.com/products/writeroom</a>)
+    <li> WriteRoom mode (see <a href="http://www.hogbaysoftware.com/products/writeroom">http://www.hogbaysoftware.com/products/writeroom</a>)
     <li> HTML export
-    <li> Modular architecture </p><h2>Dependencies</h2>
-</ul>
+    <li> Modular architecture
+  </ul>
+   </p>
+<h2>Dependencies</h2>
 <p>Novedit depends on Ruby, GTK (ruby-gnome), glade and gettext bindings for ruby.</p>
 <h2>Install</h2>
-<p>cd novedit
-./novedit.sh</p>
+<pre>
+cd novedit
+./novedit.sh
+</pre>
 <h2>License</h2>
 <p>http://www.gnu.org/licenses/gpl.html</p>
 <h2>Authors</h2>
