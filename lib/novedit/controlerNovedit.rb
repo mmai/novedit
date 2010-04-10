@@ -639,13 +639,9 @@ class ControlerNovedit < UndoRedo
   #Tree node selection
   def on_select_node(selectionWidget)
     iter = selectionWidget.selected
-    #Is there really a node selected ?
-    if not iter.nil?
-      @model.currentNode.text = @view.buffer.serialize()
-      @model.currentNode = @model.getNode(iter.path.to_s)
-      @view.buffer.deserialize(@model.currentNode.text)
-    end
+    select_node(iter) if not iter.nil?
   end
+
   
   #Tree element edition
   def on_cell_edited(path, newtext)
@@ -751,14 +747,14 @@ class ControlerNovedit < UndoRedo
   end
 
   def on_key_pressed(keyval)
-    key_inserted = false
     insert_mark = @view.buffer.get_mark('insert')
     iter = @view.buffer.get_iter_at_mark(insert_mark)
 #    puts "keypressed : "+keyval.to_s
     @view.user_action = true
     case keyval
     when 65293 #Enter
-      #Catched for bulleted lists operations
+      puts on_key_pressedenter
+      #Caught for bulleted lists operations
       @model.currentNode.undopool <<  ["action_begin"]
       key_inserted = @view.buffer.add_newline(iter)
       if key_inserted
@@ -767,7 +763,7 @@ class ControlerNovedit < UndoRedo
         @model.currentNode.undopool.pop 
       end
     when 65289 #Tab
-      #Catched for bulleted lists operations
+      #Caught for bulleted lists operations
       @model.currentNode.undopool <<  ["action_begin"]
       key_inserted = @view.buffer.add_tab
       if key_inserted
@@ -776,7 +772,7 @@ class ControlerNovedit < UndoRedo
         @model.currentNode.undopool.pop 
       end
     when 65288 #Backspace
-      #Catched for bulleted lists operations
+      #Caught for bulleted lists operations
       @model.currentNode.undopool <<  ["action_begin"]
       key_inserted = @view.buffer.remove_tab
       if key_inserted
@@ -785,10 +781,10 @@ class ControlerNovedit < UndoRedo
         @model.currentNode.undopool.pop 
       end
     when 65361 #Left arrow
-      #Catched for tag bounds operations
+      #Caught for tag bounds operations
 #      puts "<-"
     when 65363 #Right arrow
-      #Catched for tag bounds operations
+      #Caught for tag bounds operations
 #      puts "->"
     end
     @view.user_action = false
@@ -1170,6 +1166,10 @@ class ControlerNovedit < UndoRedo
     @replace_dialog.show
   end
 
+  def on_textview_focus_out
+    @model.currentNode.text = @view.buffer.serialize() unless @model.currentNode.nil?
+  end
+
   def on_text_bold
     style_text('bold')
   end
@@ -1280,6 +1280,11 @@ class ControlerNovedit < UndoRedo
 
   private
  
+  def select_node(iter)
+    @model.currentNode = @model.getNode(iter.path.to_s)
+    @view.buffer.deserialize(@model.currentNode.text)
+  end
+
   def style_text(style)
     @view.buffer.begin_user_action
     (debut, fin, selected) = @view.buffer.selection_bounds

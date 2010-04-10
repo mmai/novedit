@@ -318,6 +318,11 @@ class ViewNovedit
     end
   end
 
+  def on_textview_focus_out
+    @controler.on_textview_focus_out
+    return false
+  end
+
   # Text formating toolbar
   def on_text_bold(widget)
     @controler.on_text_bold
