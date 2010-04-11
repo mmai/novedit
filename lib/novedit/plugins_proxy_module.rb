@@ -4,6 +4,11 @@
 module NoveditPluginsProxy
   attr_accessor :model, :view
 
+  def schedule(function)
+    interval = 20 
+    GLib::Timeout.add_seconds(interval){ function.call }
+  end
+
   def addTab(widget, title, on_click_handler)
     label = Gtk::Label.new(title)
     @view.tabs.append_page(widget, label)

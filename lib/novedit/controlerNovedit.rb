@@ -697,7 +697,6 @@ class ControlerNovedit < UndoRedo
     @view.user_action = true
     case keyval
     when 65293 #Enter
-      puts on_key_pressedenter
       #Caught for bulleted lists operations
       @model.currentNode.undopool <<  ["action_begin"]
       key_inserted = @view.buffer.add_newline(iter)
