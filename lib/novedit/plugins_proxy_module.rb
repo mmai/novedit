@@ -4,8 +4,7 @@
 module NoveditPluginsProxy
   attr_accessor :model, :view
 
-  def schedule(function)
-    interval = 20 
+  def schedule(function, interval=20)
     GLib::Timeout.add_seconds(interval){ function.call }
   end
 
