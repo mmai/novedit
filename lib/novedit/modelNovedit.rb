@@ -67,20 +67,16 @@ class NoveditModel
   def childs
     @rootNode.childs
   end
-  
+
+  def insert_brother_node(path, node)
+    @rootNode.getNode(path).add_rightbrother_node(node)
+  end
+   
   def insert_node(parent_path, node)
     @rootNode.getNode(parent_path).addNode(node)
-#    parent = self
-#    path = parent_path.split(':')
-#    path_inserted = path.pop.to_i
-#    path.each{|nodePos| parent = parent.nodes[nodePos.to_i]}
-#    parent.nodes = parent.nodes.slice(0..(path_inserted-1)) + [node] + parent.nodes.slice(path_inserted..-1)
   end
   
   def getNode(pathNode)
-#    node = self
-#    path = pathNode.split(':')
-#    path.each {|nodePos| node = node.nodes[nodePos.to_i]}
     node = self
     node = @rootNode.getNode(pathNode) if not pathNode.nil?
     return node

@@ -523,16 +523,17 @@ class ControlerNovedit < UndoRedo
   def on_insert_sibling()
     selectedIter = @view.treeview.selection.selected
     if not selectedIter.nil?
-      selectedIter = selectedIter.parent
-      if selectedIter.nil?
-        pathparent = ""
-      else 
-        pathparent = selectedIter.path.to_s
-      end
+#      selectedIter = selectedIter.parent
+#      if selectedIter.nil?
+#        pathparent = ""
+#      else 
+#        pathparent = selectedIter.path.to_s
+#      end
         
       newnode = NoveditNode.new($DEFAULT_NODE_NAME)
       todo = lambda {
-        @model.insert_node(pathparent, newnode)
+#        @model.insert_node(pathparent, newnode)
+        @model.insert_brother_node(selectedIter.path.to_s, newnode)
         @view.update
         @view.treeview.set_cursor(Gtk::TreePath.new(newnode.path), @view.treeview.get_column(0), true)
       }

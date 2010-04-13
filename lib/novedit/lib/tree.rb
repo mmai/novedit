@@ -52,6 +52,13 @@ class TreeNode
     return tabAncestors
   end
   
+  #Add a rightbrother node
+  def add_rightbrother_node(node)
+    node.rightbrother = @rightbrother
+    node.parent = @parent
+    @rightbrother = node
+  end
+  
   def addNode(node, pos=nil) 
     #On interdit le déplacement d'un noeud dans sa sous-arborescence (boucle infinie)
     if ancestors.include?(node)
@@ -76,9 +83,10 @@ class TreeNode
         curnode = curnode.rightbrother
         curpos = curpos + 1
       end
-      node.rightbrother = curnode.rightbrother
-      node.parent = self
-      curnode.rightbrother = node
+#      node.rightbrother = curnode.rightbrother
+#      node.parent = self
+#      curnode.rightbrother = node
+      curnode.add_rightbrother_node(node)
     end
   end
   
@@ -87,7 +95,7 @@ class TreeNode
     parentNode = getNode(path)
     parentNode.addNode(node)
   end
-  
+
   def move_to(new_parent, pos=nil)
     #On interdit le déplacement d'un noeud dans sa sous-arborescence (boucle infinie)
     if new_parent.ancestors.include?(self)
