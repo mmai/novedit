@@ -127,6 +127,8 @@ CLEAN.include(File.join('pkg','debian'))
 
 task :debian_init => [:clean] do
   system "cp -R tools/debian_files pkg/debian"
+  system "mkdir -p pkg/debian/usr/lib/ruby"
+  system "mkdir -p pkg/debian/usr/bin"
   system "cp -R lib pkg/debian/usr/lib/ruby/1.8"
   system "cp bin/novedit pkg/debian/usr/bin/"
   system "rm -rf `find pkg/debian/ -name .svn`"
@@ -151,4 +153,15 @@ task :builddeb => [:debian_init, 'pkg/debian/DEBIAN/control'] do
   cd "pkg";
   system "dpkg-deb --build debian #{pkg_name}-#$VERSION.deb"
   cd "..";
+end
+
+task :publish do
+  system "cp pkg/#{pkg_name}-#$VERSION.deb html/downloads"
+  cd "html"
+  system "git add downloads/#{pkg_name}-#$VERSION.deb"
+  system "sed -i 's/novedit-[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+\\.deb/#{pkg_name}-#$VERSION.deb/g' index.html"
+  system "sed -i 's/last version : [0-9]\\+\\.[0-9]\\+\\.[0-9]\\+/last version : #$VERSION/g' index.html"
+  system "git commit -a -m'new release'"
+  system "git push"
+  cd ".."
 end
