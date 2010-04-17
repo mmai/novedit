@@ -6,7 +6,6 @@ $NOTE_CONTENT_VERSION = "0.2"
 $AUTHORS = "Henri Bourcereau"
 $AUTHORS_PAGE = "http://henri.websiteburo.com"
 $EMAIL = "henri@websiteburo.com"
-#$HOMEPAGE = "http://code.google.com/p/novedit/"
 $HOMEPAGE = "http://mmai.github.com/novedit/"
 $SUMMARY = "Customizable WYSIWYG editor / outliner with a WriteRoom mode"
 $DESCRIPTION = "The primary goal of Novedit is to be a clone of notes taking editors like Keynote or WikidPad wich are only available on Windows. It also has a WriteRoom mode
