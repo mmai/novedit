@@ -156,12 +156,20 @@ task :builddeb => [:debian_init, 'pkg/debian/DEBIAN/control'] do
 end
 
 task :publish do
-  system "cp pkg/#{pkg_name}-#$VERSION.deb html/downloads"
-  cd "html"
-  system "git add downloads/#{pkg_name}-#$VERSION.deb"
-  system "sed -i 's/novedit-[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+\\.deb/#{pkg_name}-#$VERSION.deb/g' index.html"
-  system "sed -i 's/last version : [0-9]\\+\\.[0-9]\\+\\.[0-9]\\+/last version : #$VERSION/g' index.html"
-  system "git commit -a -m'new release'"
-  system "git push"
+  # Update page with last last version
+  system "sed -i 's/novedit-[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+\\.deb/#{pkg_name}-#$VERSION.deb/g' html/index.html"
+  system "sed -i 's/last version : [0-9]\\+\\.[0-9]\\+\\.[0-9]\\+/last version : #$VERSION/g' html/index.html"
+
+  # Upload package
+  cd "pkg"
+  system "ruby ../tools/github_upload.rb #{pkg_name}-#$VERSION.deb 'mmai/novedit' 'Novedit #$VERSION debian package'"
   cd ".."
+
+  # Old upload method
+#  system "cp pkg/#{pkg_name}-#$VERSION.deb html/downloads"
+#  cd "html"
+#  system "git add downloads/#{pkg_name}-#$VERSION.deb"
+#  system "git commit -a -m'new release'"
+#  system "git push"
+#  cd ".."
 end

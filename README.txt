@@ -1,6 +1,6 @@
 Novedit is a hierachical notes taking editor like Keynote or WikidPad which are only available on Windows. It also has a WriteRoom mode
 
-It is written in Ruby / Gtk and run on Linux and MacOS (whith macports).
+It is written in Ruby / Gtk and run on Linux and MacOS (with macports).
 
 Features:
 
