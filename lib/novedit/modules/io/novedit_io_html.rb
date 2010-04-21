@@ -1,9 +1,23 @@
 require 'novedit/lib/novedit_io_base.rb'
 
 class NoveditIOHtml < NoveditIOBase
+  attr_reader :known_tags
+
   def initialize
     @ext = "html"
     @name = "HTML"
+    @known_tags = {
+      't' =>"span class='text",
+      'italic' =>"i",
+      'bold' =>"b",
+      'list' =>"ul",
+      'list-item' =>"li",
+      'strikethrough' =>"del",
+      'highlight' =>"span style='background:yellow;'",
+      'justify-right' =>"div style='text-align:right;'",
+      'justify-left' =>"div style='text-align:left;'",
+      'centered' =>"div style='text-align:center;'"
+    }
   end
 
   def read(location)
@@ -76,32 +90,16 @@ class NoveditIOHtml < NoveditIOBase
   def nov_to_html(text)
 #    text = del_tag("note-content version='[^']*'", text)
     text = trans_tag("note-content version='[^']*'", "p", text)
-#    text = del_tag("t", text)
-    text = trans_tag("t", "span class='text'", text)
-    text = trans_tag("italic", "i", text)
-    text = trans_tag("bold", "b", text)
-    text = trans_tag("list", "ul", text)
-    text = trans_tag("list-item", "li", text)
-    text = trans_tag("strikethrough", "del", text)
-    text = trans_tag("highlight", "span style='background:yellow;'", text)
-    text = trans_tag("justify-right", "div style='text-align:right;'", text)
-    text = trans_tag("justify-left", "div style='text-align:left;'", text)
-    text = trans_tag("centered", "div style='text-align:center;'", text)
+    @known_tags.each_index {|tag| text = trans_tag(tag, @know_tags[tag], text) }
     return text
   end
 
   def html_to_nov(text)
     text = trans_tag("p", "note-content", text)
-    text = trans_tag("span class='text'", "t", text)
-    text = trans_tag("i", "italic", text)
-    text = trans_tag("b", "bold", text)
-    text = trans_tag("ul", "list", text)
-    text = trans_tag("li", "list-item", text)
-    text = trans_tag("del", "strikethrough", text)
-    text = trans_tag("span style='background:yellow;'", "highlight", text)
-    text = trans_tag("div style='text-align:right;'", "justify-right", text)
-    text = trans_tag("div style='text-align:left;'", "justify-left", text)
-    text = trans_tag("div style='text-align:center;'", "centered", text)
+    @known_tags.each do |html_val|
+      nov_val = @known_tags.index(html_val)
+      text = trans_tag(html_val, nov_val, text) 
+    end
     return text
   end
 

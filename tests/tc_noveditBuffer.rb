@@ -2,8 +2,11 @@ require 'test/unit/testcase'
 require 'test/unit/autorunner'
 
 require 'gtk2'
-require 'lib/novedit_textbuffer.rb'
-require 'lib/novedit_texttag.rb'
+require 'lib/novedit/lib/novedit_textbuffer.rb'
+require 'lib/novedit/lib/novedit_texttag.rb'
+
+#for 
+require 'lib/novedit/modules/io/novedit_io_html.rb'
 
 class TestNoveditBuffer < Test::Unit::TestCase
 
@@ -23,9 +26,20 @@ class TestNoveditBuffer < Test::Unit::TestCase
     return str
   end
 
+  def showTags(iomodule)
+    @buffer.tag_table.each do |tag|
+      puts "Tag : " + iomodule.known_tags.key?(tag.element_name).to_s + " : " + tag.element_name
+    end
+  end
+
   def test_serializer
     txtser = @buffer.serialize 
     assert(txtser == @txt, showdiff(@txt, txtser))
+  end
+
+  def test_iotags
+    iohtml = NoveditIOHtml.instance
+    showTags(iohtml)
   end
 
 end

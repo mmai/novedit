@@ -73,7 +73,7 @@ class ViewNovedit
     @appbar = @glade.get_object("statusbar")
     @appbar_context_id = @appbar.get_context_id('status_context')
     
-    #XXX Temporaire
+    #XXX Temporary
     @wordcount_value = @glade.get_object("labelNbWordsValue")
     
     #Arbre - composé de noeuds texte éditables
@@ -82,7 +82,7 @@ class ViewNovedit
     cellrenderer.editable=true
     cellrenderer.signal_connect("edited"){ |cell, path, newtext| @controler.on_cell_edited(path, newtext) }
 #    cellrenderer.signal_connect("editing-canceled") { |widget| @controler.on_cell_editing_canceled(widget)}  
-    col = Gtk::TreeViewColumn.new("élements", cellrenderer, :text=>0)
+    col = Gtk::TreeViewColumn.new("elements", cellrenderer, :text=>0)
     @treeview.append_column(col)
     
     #Treeview Drag and drop
