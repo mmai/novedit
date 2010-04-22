@@ -2,6 +2,7 @@ require 'test/unit/testcase'
 require 'test/unit/autorunner'
 
 require 'gtk2'
+require 'lib/novedit.rb'
 require 'lib/novedit/lib/novedit_textbuffer.rb'
 require 'lib/novedit/lib/novedit_texttag.rb'
 
@@ -26,20 +27,20 @@ class TestNoveditBuffer < Test::Unit::TestCase
     return str
   end
 
-  def showTags(iomodule)
-    @buffer.tag_table.each do |tag|
-      puts "Tag : " + iomodule.known_tags.key?(tag.element_name).to_s + " : " + tag.element_name
-    end
-  end
-
   def test_serializer
     txtser = @buffer.serialize 
     assert(txtser == @txt, showdiff(@txt, txtser))
   end
 
   def test_iotags
+    ignored = ['find-match']
+    # Check if io_html module knows all tags used in textbuffer
     iohtml = NoveditIOHtml.instance
-    showTags(iohtml)
+    @buffer.tag_table.each do |tag|
+      if not ignored.include?(tag.element_name) and not tag.instance_of?(DepthNoteTag)
+        assert iohtml.known_tags.key?(tag.element_name), "'" +tag.element_name + "' is not known by io_html"
+      end
+    end
   end
 
 end
