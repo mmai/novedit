@@ -248,7 +248,11 @@ class ViewNovedit
   def on_save_file(widget)
     @controler.on_save_file()
   end
-  
+
+  def on_print_activate(widget)
+     @controler.on_print()
+  end
+
   def on_notebook_switch_page(widget, page, page_num)
     @controler.on_notebook_switch_page(widget, page, page_num)
   end

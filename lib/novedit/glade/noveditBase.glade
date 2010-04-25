@@ -80,6 +80,16 @@
                       </object>
                     </child>
                     <child>
+                      <object class="GtkImageMenuItem" id="print">
+                        <property name="label">gtk-print</property>
+                        <property name="visible">True</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                        <property name="accel_group">accelgroup1</property>
+                        <signal name="activate" handler="on_print_activate"/>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkSeparatorMenuItem" id="separatormenuitem2">
                         <property name="visible">True</property>
                       </object>
@@ -586,7 +596,9 @@
                             <property name="can_focus">True</property>
                             <property name="can_default">True</property>
                             <property name="has_default">True</property>
+                            <property name="border_width">20</property>
                             <property name="wrap_mode">word</property>
+                            <property name="right_margin">25</property>
                             <signal name="focus_out_event" handler="on_textview_focus_out"/>
                           </object>
                         </child>
