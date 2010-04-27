@@ -7,7 +7,7 @@ class NoveditIOHtml < NoveditIOBase
     @ext = "html"
     @name = "HTML"
     @known_tags = {
-      't' =>"span class='text",
+      't' =>"span class='text'",
       'italic' =>"i",
       'bold' =>"b",
       'list' =>"ul",
@@ -16,7 +16,16 @@ class NoveditIOHtml < NoveditIOBase
       'highlight' =>"span style='background:yellow;'",
       'justify-right' =>"div style='text-align:right;'",
       'justify-left' =>"div style='text-align:left;'",
-      'centered' =>"div style='text-align:center;'"
+      'centered' =>"div style='text-align:center;'",
+      'size:small' => "div style='font-size:small;'",
+      'size:normal' => "div style='font-size:medium;'",
+      'size:large' => "div style='font-size:large;'",
+      'size:huge' => "div style='font-size:xx-large;'",
+      #Broken
+      'link:url' => "a href=''",
+      'link:internal' => "a href='#'",
+      #Not supported
+      'link:broken' => "span",
     }
   end
 
@@ -89,12 +98,17 @@ class NoveditIOHtml < NoveditIOBase
 
   def nov_to_html(text)
 #    text = del_tag("note-content version='[^']*'", text)
-    text = trans_tag("note-content version='[^']*'", "p", text)
-    @known_tags.each_index {|tag| text = trans_tag(tag, @know_tags[tag], text) }
+#    require 'ruby-debug';debugger
+    text.gsub!(/\n/, "<br />")
+    text = trans_tag("note-content [^>]*", "p", text)
+    @known_tags.each_key do |tag|
+        text = trans_tag(tag, @known_tags[tag], text)
+    end
     return text
   end
 
   def html_to_nov(text)
+    text.gsub!(/<br \/>/, "\n")
     text = trans_tag("p", "note-content", text)
     @known_tags.each do |html_val|
       nov_val = @known_tags.index(html_val)

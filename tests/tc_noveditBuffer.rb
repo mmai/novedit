@@ -21,15 +21,21 @@ class TestNoveditBuffer < Test::Unit::TestCase
 
   def showdiff(a, b)
     str = "-------Differents-------------"
-    str += "\n" + a.to_s
+    str += "\n" + a.to_s + "]"
     str += "\n-------------------------"
-    str += "\n" + b.to_s
+    str += "\n" + b.to_s + "]"
     return str
   end
 
   def test_serializer
     txtser = @buffer.serialize 
-    assert(txtser == @txt, showdiff(@txt, txtser))
+    assert(txtser.strip == @txt.strip, showdiff(@txt, txtser))
+  end
+
+  def test_html_trans
+    iohtml = NoveditIOHtml.instance
+    html = iohtml.nov_to_html(@buffer.serialize)
+    assert(html == "<p><span class='text'>sdf<br /></span><ul><li><span class='text'>fdqs</span></li><li><span class='text'>fsdq</span></li><ul><li><span class='text'>sfdq</span></li><li><span class='text'>fsqd</span></li></ul></ul><span class='text'>sdqf<br /></span><ul><li><span class='text'>fsqd</span></li><ul><ul><li><span class='text'>fqsd</span></li><li><span class='text'>qsfd</span></li></ul></ul><li><span class='text'>qfsd</span></li><li><span class='text'>fqsd</span></li></ul></p>", "Obtained HTML : [" + html + "]")
   end
 
   def test_iotags
