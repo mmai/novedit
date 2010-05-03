@@ -1048,7 +1048,7 @@ class ControlerNovedit < UndoRedo
       #textview.modify_font(Pango::FontDescription.new("Monospace 12"))
     else
       @view.appwindow.unfullscreen
-      @view.appwindow.border_width = 1
+      @view.appwindow.border_width = 0
       textview.border_width = @orig_textview_border_width
       font_desc.size = font_desc.size - 2*Pango::SCALE
       textview.modify_font(font_desc)
