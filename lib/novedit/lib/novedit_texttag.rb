@@ -1,15 +1,3 @@
-
-#using System
-#using System.Collections
-#using System.IO
-#using System.Xml
-#
-#namespace Tomboy
-#{
-#	def delegate bool TagActivatedHandler (NoteTag tag,
-#						  NoteEditor editor,
-#						  Gtk.TextIter start, 
-#						  Gtk.TextIter end)
 require 'singleton'
 
 class NoteTag < Gtk::TextTag
@@ -149,7 +137,6 @@ class NoteTag < Gtk::TextTag
     @element_name = ary[0]
   end
 
-  #		protected override bool OnTextEvent (GLib.Object  sender, Gdk.Event    ev, Gtk.TextIter iter)
   def OnTextEvent(sender, ev, iter)
     #NoteEditer editor
     editor = sender

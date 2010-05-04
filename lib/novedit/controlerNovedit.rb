@@ -8,8 +8,6 @@ require "novedit/lib/pluginsystem.rb"
 require "novedit/viewNovedit.rb"
 require "novedit/lib/settings.rb"
 
-require "novedit/modules/io/novedit_io_yaml.rb"
-require "novedit/modules/io/novedit_io_html.rb"
 require "novedit/lib/undo_redo.rb"
 require "novedit/lib/novedit_xml.rb"
 
@@ -30,6 +28,10 @@ class ControlerNovedit < UndoRedo
     @model = model
     @settings = Settings.new($SETTINGS_FILE)
 #    @mysettings['test'] =  'testvalue'
+    
+    # Load IO modules
+    Find.find($DIR_MODULES + "io") { |path| require path if File.basename(path) =~ /.*\.rb/ }
+
     #Saving mode
     @model.set_io(NoveditIOYaml.instance)
 #    @model.set_io(NoveditIOHtml.new)
@@ -152,6 +154,9 @@ class ControlerNovedit < UndoRedo
     #End keyboard shortcuts
 
     init_plugins
+  end
+
+  def load_io_modules()
   end
 
   def load_plugins(force=false)
@@ -942,6 +947,26 @@ class ControlerNovedit < UndoRedo
     redo_command
   end
 
+  #Printing
+  def on_print()
+    print_op = Gtk::PrintOperation.new
+    print_op.n_pages = 1
+    print_op.signal_connect("draw-page") { |operation, context, page_nbr| print_text(operation, context, page_nbr)}
+    res = print_op.run(Gtk::PrintOperation::ACTION_PRINT_DIALOG, nil)
+    puts "end printing"
+  end
+
+  def print_text(operation, context, page_nbr)
+
+    txt = @model.currentNode.text
+#    textview = @view.glade.get_object("textview")
+    pangolayout = context.create_pango_layout()
+    pangolayout.set_text(@view.buffer.text)
+    cairo_context = context.cairo_context
+    cairo_context.show_pango_layout(pangolayout)
+  end
+  #End printing
+  
   def on_toggle_fullscreen()
     if @view.is_fullscreen
       @view.appwindow.unfullscreen
@@ -1000,6 +1025,7 @@ class ControlerNovedit < UndoRedo
       @view.appwindow.fullscreen
       @view.appwindow.border_width = 0
 #      textview.left_margin = textview.right_margin = 30
+      @orig_textview_border_width = textview.border_width
       textview.border_width =  30
 
       # Sizing
@@ -1022,8 +1048,8 @@ class ControlerNovedit < UndoRedo
       #textview.modify_font(Pango::FontDescription.new("Monospace 12"))
     else
       @view.appwindow.unfullscreen
-      @view.appwindow.border_width = 1
-      textview.border_width = 0
+      @view.appwindow.border_width = 0
+      textview.border_width = @orig_textview_border_width
       font_desc.size = font_desc.size - 2*Pango::SCALE
       textview.modify_font(font_desc)
     end 
