@@ -1,10 +1,13 @@
 
-Plugin.define "automatic save" do
-  title "Automatic save"
-  description "Auto save document regularly"
+Plugin.define "750words" do
+  title "750 words"
+  description "Incite you to write three pages every day.Idea stolen from http://750words.com/. \"It's about writing, and getting into your brain\""
   author "Henri Bourcereau"
-  site "http://henri.websiteburo.com"
+  site "http://www.rhumbs.fr"
   version "0.1"
+  dependencies [
+    [:name =>'automatic_save', :version => 0.1]
+  ]
 
   @automatic_save_save = lambda do 
     if not @plugins_proxy.model.is_saved

@@ -30,7 +30,7 @@ class Plugin
   end
 
   extend PluginSugar
-  def_field :title, :author, :site, :version, :description
+  def_field :title, :author, :site, :version, :description, :dependencies
 end
 
 ### this under PLUGIN_DIR/
