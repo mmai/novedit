@@ -30,7 +30,7 @@ class ControlerNovedit < UndoRedo
 #    @mysettings['test'] =  'testvalue'
     
     # Load IO modules
-    Find.find($DIR_MODULES + "io") { |path| require path if File.basename(path) =~ /.*\.rb/ }
+    Find.find($DIR_MODULES + "io") { |path| require path if File.basename(path) =~ /.*\.rb$/ }
 
     #Saving mode
     @model.set_io(NoveditIOYaml.instance)
@@ -96,7 +96,11 @@ class ControlerNovedit < UndoRedo
     @about_dialog = @gladeDialogs.get_object("aboutdialog1")
     @about_dialog.program_name = $NAME
     @about_dialog.version = $VERSION
+    @about_dialog.website = $HOMEPAGE
+    @about_dialog.comments = $DESCRIPTION
+#    @about_dialog.license = $LICENSE
     @edit_plugins_dialog = @gladeDialogs.get_object("edit_plugins")
+    @edit_modes_dialog = @gladeDialogs.get_object("edit_modes")
     @preferences_dialog = @gladeDialogs.get_object("preferences_dialog")
     
     #Keyboard shortcuts : XXX ctrl-z and ctrl-y are not supported by glade menus (like ctrl-x for example) ?!?
@@ -406,6 +410,54 @@ class ControlerNovedit < UndoRedo
     end
     @settings.save
   end
+
+  #Redraw modes dialog window
+  def edit_modes_redraw()
+    vbox = @gladeDialogs.get_object("modes_checkbuttons_vbox")
+    vbox.children.each {|checkbutton| checkbutton.destroy}
+    first_done = false
+    @model.available_modes.each do |mode_name|
+      checkbutton = Gtk::CheckButton.new(mode_name)
+      checkbutton.active = @model.modes.include?(mode_name)
+      checkbutton.signal_connect("clicked") {
+        edit_modes_show_mode(mode_name)
+      }
+      vbox << checkbutton
+      if !first_done
+        edit_modes_show_mode(mode_name)
+        first_done = true
+      end
+    end
+    vbox.show_all
+  end
+
+  def edit_modes_show_mode(mode_name)
+    @gladeDialogs.get_object("mode_title_label").label = mode_name
+  end
+
+
+  #Edit modes Dialog
+  def on_edit_modes()
+    edit_modes_redraw() 
+    ret = @edit_modes_dialog.run
+    @edit_modes_dialog.hide
+  end
+
+  def on_edit_modes_ok()
+    #Save plugins status settings and enable / disable them
+    vbox = @gladeDialogs.get_object("modes_checkbuttons_vbox")
+    vbox.children.each do |checkbutton|
+      mode_name = checkbutton.label
+      if checkbutton.active?
+        if  not @model.modes.include?(mode_name)
+          @model.modes << mode_name
+        end
+      else
+        @model.modes.delete(mode_name)
+      end
+    end
+  end
+
 
   #Preferences Dialog
   def preferences_dialog_redraw

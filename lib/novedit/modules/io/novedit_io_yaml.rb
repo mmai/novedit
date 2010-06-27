@@ -3,6 +3,7 @@ require 'novedit/lib/novedit_io_base.rb'
 
 class NoveditIOYaml < NoveditIOBase
   def initialize
+    super
     @ext = "nov"
     @name = "Novedit"
   end
@@ -33,8 +34,10 @@ class NoveditIOYaml < NoveditIOBase
       #exemple in freedesktop.org.xml : <match value="Novedit" type="string" offset="5" />
       f.puts "#    Novedit"
       # version & file format 
-      f.puts "# " + $VERSION
-      f.puts "#    YAML"
+      f.puts "#    " + $VERSION #Must be on 2nd line
+      f.puts "#    YAML" #Must be on 3rd line
+      #Modes enabled for this document
+      f.puts "#    " + noveditModel.modes.join(",") #Must be on 4th line
       f.puts lightdoc.to_yaml
     end
   end

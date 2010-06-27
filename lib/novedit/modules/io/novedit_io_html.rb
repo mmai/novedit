@@ -4,6 +4,7 @@ class NoveditIOHtml < NoveditIOBase
   attr_reader :known_tags
 
   def initialize
+    super
     @ext = "html"
     @name = "HTML"
     @known_tags = {
@@ -137,11 +138,16 @@ class NoveditIOHtml < NoveditIOBase
       #
       f.puts "<!-- Novedit -->"
       # version & file format 
-      f.puts "<!-- " + $VERSION + " -->"
-      f.puts "<!-- HTML -->"
+      f.puts "<!-- " + $VERSION + " -->" #Must be on 2nd line
+      f.puts "<!-- HTML -->" #Must be on 3rd line
+      #Modes enabled for this document
+      f.puts "<!-- " + noveditModel.modes.join(",") + " />" #Must be on 4th line
       f.puts "<html>"
       f.puts "<head>"
       f.puts "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />"
+      # Modes enabled for this document
+#      f.puts "<link rel='schema.novedit' href='http://" + $HOMEPAGE +"schema/' />"
+#      f.puts "<meta name='novedit.modes' content='" + noveditModel.modes.join("'") + "' />"
       f.puts "</head>\n<body>\n"
       f.puts html
       f.puts "</body>\n</html>"

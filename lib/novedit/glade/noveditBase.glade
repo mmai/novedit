@@ -4,7 +4,6 @@
   <!-- interface-naming-policy toplevel-contextual -->
   <object class="GtkWindow" id="appwindow">
     <property name="visible">True</property>
-    <property name="border_width">0</property>
     <property name="title" translatable="yes">Novedit</property>
     <property name="window_position">mouse</property>
     <property name="default_width">800</property>
@@ -166,6 +165,16 @@
                         <property name="use_stock">True</property>
                         <property name="accel_group">accelgroup1</property>
                         <signal name="activate" handler="on_preferences_activate"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="modes">
+                        <property name="label" translatable="yes">Modes</property>
+                        <property name="visible">True</property>
+                        <property name="image">image3</property>
+                        <property name="use_stock">False</property>
+                        <property name="accel_group">accelgroup1</property>
+                        <signal name="activate" handler="on_edit_modes"/>
                       </object>
                     </child>
                   </object>
@@ -698,5 +707,9 @@
   <object class="GtkImage" id="heading_1">
     <property name="visible">True</property>
     <property name="pixbuf">text_heading_1.png</property>
+  </object>
+  <object class="GtkImage" id="image3">
+    <property name="visible">True</property>
+    <property name="pixbuf">plugin.png</property>
   </object>
 </interface>

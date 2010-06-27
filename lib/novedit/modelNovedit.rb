@@ -27,12 +27,14 @@ end
 class NoveditModel
   include Observable
   
-  attr_accessor :rootNode, :currentNode, :filename, :is_saved
+  attr_accessor :rootNode, :currentNode, :filename, :is_saved, :modes, :available_modes
     
   def initialize(filename)
     @novedit_io = NoveditIOBase.instance
     @filename = filename
     @is_saved = true
+    @available_modes = []
+    @modes = []
     fill_tree
   end
   
@@ -111,6 +113,8 @@ class NoveditModel
     if (not @filename.nil?)
       begin
         lu = @novedit_io.read(@filename)
+        parsed = @novedit_io.parse_file_head(@filename)
+        @modes = parsed['modes']
       rescue
         errmes=$!.to_s
         case errmes

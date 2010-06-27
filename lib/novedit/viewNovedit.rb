@@ -394,6 +394,10 @@ class ViewNovedit
   def on_edit_plugins(widget)
     @controler.on_edit_plugins
   end
+
+  def on_edit_modes(widget)
+    @controler.on_edit_modes
+  end
 end
 
 

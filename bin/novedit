@@ -3,6 +3,9 @@
 # Novedit
 #
 
+#For testing current code when a previous version has been installed
+$:.unshift('.')
+
 begin
   require 'rubygems'
 rescue LoadError
