@@ -5,6 +5,8 @@
 require "find" #For plugins detection
 require "novedit/lib/pluginsystem.rb"
 
+require "novedit/lib/noveditmodesystem.rb" #Novedit document modes
+
 require "novedit/viewNovedit.rb"
 require "novedit/lib/settings.rb"
 
@@ -80,6 +82,7 @@ class ControlerNovedit < UndoRedo
     #Load the file given as a parameter
     set_io_from_file(file) unless file.nil? 
     @model.open_file(file)
+    load_modes
 
     #Notebook
     @notebook_actions = Array.new
@@ -121,6 +124,7 @@ class ControlerNovedit < UndoRedo
     #Open file : Ctrl-O 
     ag.connect(Gdk::Keyval::GDK_O, Gdk::Window::CONTROL_MASK, Gtk::ACCEL_VISIBLE) {
      open_file
+     load_modes
     }
     #New file : Ctrl-N 
     ag.connect(Gdk::Keyval::GDK_N, Gdk::Window::CONTROL_MASK, Gtk::ACCEL_VISIBLE) {
@@ -228,6 +232,7 @@ class ControlerNovedit < UndoRedo
     if filename
       set_io_from_file(filename)
       @model.open_file(filename)
+      load_modes
       remember_file(filename)
     end
     @view.buffer.place_cursor(@view.buffer.start_iter)
@@ -301,6 +306,7 @@ class ControlerNovedit < UndoRedo
   
   def new_file()
     @model.open_file(nil)
+    load_modes
   end
   
   def on_save_file
@@ -451,13 +457,34 @@ class ControlerNovedit < UndoRedo
       if checkbutton.active?
         if  not @model.modes.include?(mode_name)
           @model.modes << mode_name
+          activate_mode(mode_name)
         end
       else
-        @model.modes.delete(mode_name)
+        if  @model.modes.include?(mode_name)
+          @model.modes.delete(mode_name)
+          desactivate_mode(mode_name)
+        end
       end
     end
   end
 
+  def desactivate_mode(mode_name)
+    NoveditMode.registered_modes[mode_name].disable(self)
+  end
+
+  def activate_mode(mode_name)
+    NoveditMode.registered_modes[mode_name].enable(self)
+  end
+
+  def load_modes
+    NoveditMode.registered_modes.keys.each do |mode_name|
+      NoveditMode.registered_modes[mode_name].disable(self) if NoveditMode.registered_modes[mode_name].enabled?
+    end
+
+    @model.modes.each do |mode_name|
+      NoveditMode.registered_modes[mode_name].enable(self)
+    end
+  end
 
   #Preferences Dialog
   def preferences_dialog_redraw
