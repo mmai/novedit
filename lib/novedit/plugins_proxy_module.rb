@@ -4,6 +4,10 @@
 module NoveditPluginsProxy
   attr_accessor :model, :view
 
+  def init_metas(metas)
+    @model.init_metas(metas)
+  end
+
   def schedule(function, interval=20)
     GLib::Timeout.add_seconds(interval){ function.call }
   end

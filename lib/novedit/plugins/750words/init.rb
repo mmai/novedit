@@ -8,6 +8,7 @@ NoveditMode.define "750words" do
   def enable(plugins_proxy)
     @enabled = true
     @rootMenu = plugins_proxy.addMenuContainer('750words')
+    plugins_proxy.init_metas({'750words' => {'start_time' =>DateTime.now}})
     plugins_proxy.addMenu(_('Stats'), nil, @rootMenu)
     plugins_proxy.addMenu(_('Begin'), nil, @rootMenu)
   end

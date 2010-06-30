@@ -8,12 +8,13 @@ require 'novedit/lib/tree'
 require 'novedit/lib/novedit_io_base'
 
 class NoveditNode < TreeNode
-  attr_accessor :name, :undopool, :redopool, :text, :is_open
+  attr_accessor :name, :undopool, :redopool, :text, :is_open, :metas
   
-  def initialize(name, text='', is_open=false) 
+  def initialize(name, text='', is_open=false, metas=Hash.new) 
     super()
     @name = name
     @text = text
+    @metas = metas
     @is_open = is_open
     @undopool = Array.new
     @redopool = Array.new
@@ -37,7 +38,35 @@ class NoveditModel
     @modes = []
     fill_tree
   end
-  
+ 
+  def metas=(metas)
+    @rootNode.metas = metas
+  end
+
+  def metas
+    @rootNode.metas
+  end 
+
+  def init_metas(metas)
+    metas.each_key do |metakey|
+      init_meta(@rootNode.metas, metakey, metas[metakey])
+    end
+  end
+
+  def init_meta(meta_root, metakey, meta)
+    if not meta_root.has_key?(metakey)
+      meta_root[metakey] = meta
+#    elsif meta.class == Hash
+    else
+      puts meta_root.inspect
+      puts metakey.inspect
+      puts meta.inspect
+      meta.each_key do |key|
+        init_meta(meta_root[metakey], key, meta[key])
+      end
+    end
+  end
+
   def fill_tree
     @rootNode = NoveditNode.new("root")
     if (not @filename.nil?)
