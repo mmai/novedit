@@ -56,11 +56,7 @@ class NoveditModel
   def init_meta(meta_root, metakey, meta)
     if not meta_root.has_key?(metakey)
       meta_root[metakey] = meta
-#    elsif meta.class == Hash
-    else
-      puts meta_root.inspect
-      puts metakey.inspect
-      puts meta.inspect
+    elsif meta.class == Hash
       meta.each_key do |key|
         init_meta(meta_root[metakey], key, meta[key])
       end
