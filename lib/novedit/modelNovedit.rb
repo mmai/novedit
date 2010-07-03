@@ -21,22 +21,17 @@ class NoveditNode < TreeNode
   end
   
   def to_s
-    @name + ": [" + childs.map{|child| child.to_s}.join(',') + "]"
+    @name + ": "+@text+" [" + childs.map{|child| child.to_s}.join(',') + "]"
   end
 end
 
-class NoveditModel
+class NoveditDocument
   include Observable
   
-  attr_accessor :rootNode, :currentNode, :filename, :is_saved, :modes, :available_modes
+  attr_accessor :rootNode, :modes
     
-  def initialize(filename)
-    @novedit_io = NoveditIOBase.instance
-    @filename = filename
-    @is_saved = true
-    @available_modes = []
+  def initialize()
     @modes = []
-    fill_tree
   end
  
   def metas=(metas)
@@ -63,49 +58,17 @@ class NoveditModel
     end
   end
 
-  def fill_tree
-    @rootNode = NoveditNode.new("root")
-    if (not @filename.nil?)
-      read_file
-    else
-      @rootNode.addNode(NoveditNode.new($DEFAULT_NODE_NAME))
-    end
-    @currentNode = @rootNode.getNode("0")
-    changed
-    
-    notify_observers()
-  end
-  
-  def set_io(novedit_io)
-    @novedit_io = novedit_io
-  end
-
-  def get_io
-    return @novedit_io
-  end
-  
-#  def addNode(nodeName = $DEFAULT_NODE_NAME)
-#    @rootNode.add
-#    @nodes << NoveditNode.new(nodeName)
-#    changed
-#    notify_observers
-#  end
-
-  def childs
-    @rootNode.childs
-  end
-
   def insert_brother_node(path, node)
-    @rootNode.getNode(path).add_rightbrother_node(node)
+    @rootNode.get_node(path).add_rightbrother_node(node)
   end
    
   def insert_node(parent_path, node)
-    @rootNode.getNode(parent_path).addNode(node)
+    @rootNode.get_node(parent_path).addNode(node)
   end
   
-  def getNode(pathNode)
+  def get_node(pathNode)
     node = self
-    node = @rootNode.getNode(pathNode) if not pathNode.nil?
+    node = @rootNode.get_node(pathNode) if not pathNode.nil?
     return node
   end
   
@@ -120,16 +83,79 @@ class NoveditModel
     changed
     notify_observers
   end
+end
+
+class NoveditModel
+  include Observable
+  
+  attr_accessor :filename, :is_saved, :current_node, :available_modes, :document
+    
+  def initialize(filename)
+    @document = NoveditDocument.new
+    @novedit_io = NoveditIOBase.instance
+    @filename = filename
+    @is_saved = true
+    @available_modes = []
+    fill_tree
+  end
+
+  def modes=(docmodes)
+    @document.modes = docmodes
+  end
+
+  def modes
+    @document.modes
+  end
+ 
+  def metas=(metas)
+    @document.rootNode.metas = metas
+  end
+
+  def metas
+    @document.rootNode.metas
+  end 
+
+  def init_metas(metas)
+    @document.init_metas(metas)
+  end
+
+  def get_node(path)
+    @document.get_node(path)
+  end
+
+  def insert_brother_node(path, node)
+    @document.insert_brother_node(path, node)
+  end
+
+  def childs
+    @document.rootNode.childs
+  end
+
+  def fill_tree
+    @document.rootNode = NoveditNode.new("root")
+    if (not @filename.nil?)
+      read_file
+    else
+      @document.rootNode.addNode(NoveditNode.new($DEFAULT_NODE_NAME))
+    end
+    @current_node = @document.rootNode.get_node("0")
+    changed
+    
+    notify_observers()
+  end
+  
+  def set_io(novedit_io)
+    @novedit_io = novedit_io
+  end
+
+  def get_io
+    return @novedit_io
+  end
   
   #
   # File access
   #
   def save_file
-#    File.open(@filename, "w")do|f|
-##      Marshal.dump(@rootNode, f) 
-#      f.puts @rootNode.to_yaml 
-#    end
-   
     @novedit_io.write(self, @filename)
     @is_saved = true
   end
@@ -139,7 +165,7 @@ class NoveditModel
       begin
         lu = @novedit_io.read(@filename)
         parsed = @novedit_io.parse_file_head(@filename)
-        @modes = parsed['modes']
+        @document.modes = parsed['modes']
       rescue
         errmes=$!.to_s
         case errmes
@@ -148,21 +174,10 @@ class NoveditModel
         end
       end
 
-      # Next condition commented out in order to allow the opening of new files at startup (resolve http://code.google.com/p/novedit/issues/detail?id=43)
-#      if lu.nil?
-#        dialog = Gtk::MessageDialog.new(@appwindow, Gtk::Dialog::MODAL, 
-#                                        Gtk::MessageDialog::ERROR, 
-#                                        Gtk::MessageDialog::BUTTONS_CLOSE, 
-#                                              "Cannot open " + @filename + ((err_message.nil?)?errmes:err_message))
-#        dialog.run
-#        dialog.destroy
-#
-#        raise("Cannot open " + @filename + ((err_message.nil?)?(errmes.to_s):err_message))
-#      end
-      @rootNode = lu
-      if not @rootNode
-        @rootNode = NoveditNode.new("root")
-        @rootNode = @rootNode.addNode(NoveditNode.new($DEFAULT_NODE_NAME))
+      @document.rootNode = lu
+      if not @document.rootNode
+        @document.rootNode = NoveditNode.new("root")
+        @document.rootNode = @document.rootNode.addNode(NoveditNode.new($DEFAULT_NODE_NAME))
       end
       @is_saved = true
     end

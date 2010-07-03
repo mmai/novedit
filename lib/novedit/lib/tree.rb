@@ -92,7 +92,7 @@ class TreeNode
   
   #Add a node to the node of path path
   def insert_node(path, node)
-    parentNode = getNode(path)
+    parentNode = get_node(path)
     parentNode.addNode(node)
   end
 
@@ -112,9 +112,9 @@ class TreeNode
     end
   
     #Noeud à déplacer
-    node = getNode(pathIni)
+    node = get_node(pathIni)
     #Noeud de destination
-    newParentNode = getNode(pathFin)
+    newParentNode = get_node(pathFin)
     
     #On détache le noeud de son emplacement actuel
     node.detach
@@ -124,19 +124,19 @@ class TreeNode
   end
   
   def remove(path)
-    node = getNode(path)
+    node = get_node(path)
     node.detach
     node = nil
   end
   
-  def getNode(pathNode)
-    currentNode = self
+  def get_node(pathNode)
+    current_node = self
     path = pathNode.split(':')
     path.each do |nodePos| 
-      currentNode = currentNode.leftchild
-      nodePos.to_i.times {currentNode = currentNode.rightbrother}
+      current_node = current_node.leftchild
+      nodePos.to_i.times {current_node = current_node.rightbrother}
     end
-    return currentNode
+    return current_node
   end
   
   def root

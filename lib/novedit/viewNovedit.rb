@@ -23,10 +23,10 @@ class ViewNovedit
     position = "Line: #{iter.line + 1}, Column: #{iter.line_offset + 1}"
 
     #Breadcrumb
-    breadcrumbs = @model.currentNode.ancestors.map {|ancestor| ancestor.name}
+    breadcrumbs = @model.current_node.ancestors.map {|ancestor| ancestor.name}
     breadcrumbs.pop
     breadcrumbs.reverse!
-    breadcrumbs << @model.currentNode.name
+    breadcrumbs << @model.current_node.name
     breadcrumb = breadcrumbs.join(' > ')
 
     @appbar.pop(@appbar_context_id)
@@ -216,10 +216,7 @@ class ViewNovedit
       insert_model_node(nil, modelNode)
       check_opened_nodes(modelNode)
     end
-#    @buffer.set_text(@model.currentNode.text)
-    @buffer.deserialize(@model.currentNode.text)
-    
-#    @tabs.set_tab_label(@tabs.children[@tabs.page], Gtk::Label.new(File.basename(@currentDocument.model.filename)))
+    @buffer.deserialize(@model.current_node.text)
   end
 
   def on_quit(*widget)
