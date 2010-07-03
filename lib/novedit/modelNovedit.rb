@@ -31,6 +31,7 @@ class NoveditDocument
   attr_accessor :rootNode, :modes
     
   def initialize()
+    @rootNode = NoveditNode.new("root")
     @modes = []
   end
  
@@ -91,7 +92,6 @@ class NoveditModel
   attr_accessor :filename, :is_saved, :current_node, :available_modes, :document
     
   def initialize(filename)
-    @document = NoveditDocument.new
     @novedit_io = NoveditIOBase.instance
     @filename = filename
     @is_saved = true
@@ -132,7 +132,7 @@ class NoveditModel
   end
 
   def fill_tree
-    @document.rootNode = NoveditNode.new("root")
+    @document = NoveditDocument.new
     if (not @filename.nil?)
       read_file
     else

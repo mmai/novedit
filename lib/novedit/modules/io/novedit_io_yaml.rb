@@ -21,7 +21,7 @@ class NoveditIOYaml < NoveditIOBase
 
   def write(noveditModel, location)
     #Deep copy of the document
-    lightdoc = Marshal.load(Marshal.dump(noveditModel.rootNode))
+    lightdoc = Marshal.load(Marshal.dump(noveditModel.document.rootNode))
     #Cleaning
     lightdoc.nodes_do do |node|
       node.undopool = []

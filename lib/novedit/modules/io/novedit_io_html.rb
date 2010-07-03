@@ -122,7 +122,7 @@ class NoveditIOHtml < NoveditIOBase
   def write(noveditModel, location)
     level = 1
     html = ""
-    noveditModel.rootNode.childs.each do |elementBase| 
+    noveditModel.document.rootNode.childs.each do |elementBase| 
       elementBase.nodes_do do |node|
         nodetext = node.text.dup
         level = node.path.split(':').size.to_s

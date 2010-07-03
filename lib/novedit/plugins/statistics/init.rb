@@ -19,9 +19,9 @@ Plugin.define "statistics" do
 
     # Function called when the 'statistics' tab is activated
     plugins_statistics_on_show_tabinfos = lambda {
-        plugins_proxy.model.currentNode.text = plugins_proxy.view.buffer.get_text
-        wordcount_label.label = tab_stats[0].to_s(plugins_proxy.model.currentNode)
-        charscount_label.label = tab_stats[1].to_s(plugins_proxy.model.currentNode)
+        plugins_proxy.model.current_node.text = plugins_proxy.view.buffer.get_text
+        wordcount_label.label = tab_stats[0].to_s(plugins_proxy.model.current_node)
+        charscount_label.label = tab_stats[1].to_s(plugins_proxy.model.current_node)
     }
 
     @tab_id = plugins_proxy.addTab(widget, 'Statistics', plugins_statistics_on_show_tabinfos)

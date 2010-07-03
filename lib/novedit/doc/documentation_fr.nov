@@ -1,6 +1,7 @@
 #    Novedit
 # 0.2.4
 #    YAML
+#
 --- &id001 !ruby/object:NoveditNode 
 childs_computed: false
 is_open: true
