@@ -4,8 +4,24 @@
 module NoveditPluginsProxy
   attr_accessor :model, :view
 
+  def update_last_metas(metas)
+    @model.document.update_last_metas(metas)
+  end
+
   def init_metas(metas)
     @model.init_metas(metas)
+  end
+
+  def get_metas(metas)
+    curr_metas = @model.document.metas
+    metas.each do |meta|
+      if not curr_metas.include?(meta)
+        return false
+      else
+        node_metas = curr_metas[meta]
+      end
+    end
+    return curr_metas
   end
 
   def schedule(function, interval=20)

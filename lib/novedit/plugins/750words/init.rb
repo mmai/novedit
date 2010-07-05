@@ -8,9 +8,27 @@ NoveditMode.define "750words" do
   def enable(plugins_proxy)
     @enabled = true
     @rootMenu = plugins_proxy.addMenuContainer('750words')
-    plugins_proxy.init_metas({'750words' => {'start_time' =>DateTime.now}})
+    @plugins_proxy = plugins_proxy
+
     plugins_proxy.addMenu(_('Stats'), nil, @rootMenu)
     plugins_proxy.addMenu(_('Begin'), nil, @rootMenu)
+    plugins_proxy.schedule(update_count, 30)
+  end
+
+  def update_count
+    now = DateTime.now
+    today = [now.year, now.month, now.day].join('-')
+    time = [now.hour, now.min, now.sec].join('-')
+    
+    count = @plugins_proxy.model.current_node.text.split.size.to_s
+
+    metas = @plugins_proxy.get_metas(['750words', today])
+    if metas
+      metas = {today => metas + ',' + time + ':' + count}
+    else
+      metas = {today => time + ':' + count}
+    end
+    @plugins_proxy.update_last_metas({'750words' => {today => metas}})
   end
 
   def disable(plugins_proxy)

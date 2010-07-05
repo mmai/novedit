@@ -43,6 +43,23 @@ class NoveditDocument
     @rootNode.metas
   end 
 
+  def update_last_metas(metas)
+    metas.each_key do |metakey|
+      update_last_meta(@rootNode.metas, metakey, metas[metakey])
+    end
+  end
+
+  def update_last_meta(meta_root, metakey, meta)
+    if meta.class == Hash
+      meta.each_key do |key|
+        update_last_meta(meta_root[metakey], key, meta[key])
+      end
+    else
+      meta_root[metakey] = meta
+    end
+  end
+
+
   def init_metas(metas)
     metas.each_key do |metakey|
       init_meta(@rootNode.metas, metakey, metas[metakey])
