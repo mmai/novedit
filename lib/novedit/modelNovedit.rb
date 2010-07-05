@@ -50,7 +50,9 @@ class NoveditDocument
   end
 
   def update_last_meta(meta_root, metakey, meta)
-    if meta.class == Hash
+    if not meta_root.has_key?(metakey)
+      meta_root[metakey] = meta
+    elsif meta.class == Hash
       meta.each_key do |key|
         update_last_meta(meta_root[metakey], key, meta[key])
       end

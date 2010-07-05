@@ -5,6 +5,24 @@ NoveditMode.define "750words" do
   site "http://www.rhumbs.fr"
   version "0.1"
 
+  @update_count = lambda do
+    now = DateTime.now
+    today = [now.year, now.month, now.day].join('-')
+    time = [now.hour, now.min, now.sec].join(':')
+    
+    wordcount = @plugins_proxy.view.buffer.serialize().split.size.to_s
+#    wordcount = @plugins_proxy.model.current_node.text.split.size.to_s
+
+    metas = @plugins_proxy.get_metas(['750words', today])
+    if metas
+      metas = {today => metas + ',' + time + '=' + wordcount}
+    else
+      metas = {today => time + '=' + wordcount}
+    end
+    puts time + " => " + wordcount
+    @plugins_proxy.update_last_metas({'750words' => metas})
+  end
+
   def enable(plugins_proxy)
     @enabled = true
     @rootMenu = plugins_proxy.addMenuContainer('750words')
@@ -12,23 +30,7 @@ NoveditMode.define "750words" do
 
     plugins_proxy.addMenu(_('Stats'), nil, @rootMenu)
     plugins_proxy.addMenu(_('Begin'), nil, @rootMenu)
-    plugins_proxy.schedule(update_count, 30)
-  end
-
-  def update_count
-    now = DateTime.now
-    today = [now.year, now.month, now.day].join('-')
-    time = [now.hour, now.min, now.sec].join('-')
-    
-    count = @plugins_proxy.model.current_node.text.split.size.to_s
-
-    metas = @plugins_proxy.get_metas(['750words', today])
-    if metas
-      metas = {today => metas + ',' + time + ':' + count}
-    else
-      metas = {today => time + ':' + count}
-    end
-    @plugins_proxy.update_last_metas({'750words' => {today => metas}})
+    plugins_proxy.schedule(@update_count, 60)
   end
 
   def disable(plugins_proxy)

@@ -18,7 +18,7 @@ module NoveditPluginsProxy
       if not curr_metas.include?(meta)
         return false
       else
-        node_metas = curr_metas[meta]
+        curr_metas = curr_metas[meta]
       end
     end
     return curr_metas
