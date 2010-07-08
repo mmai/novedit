@@ -4,6 +4,10 @@
 module NoveditPluginsProxy
   attr_accessor :model, :view
 
+  def add_status(status_func)
+    @model.status_funcs << status_func
+  end
+
   def update_last_metas(metas)
     @model.document.update_last_metas(metas)
   end
@@ -11,7 +15,7 @@ module NoveditPluginsProxy
   def init_metas(metas)
     @model.init_metas(metas)
   end
-
+  
   def get_metas(metas)
     curr_metas = @model.document.metas
     metas.each do |meta|

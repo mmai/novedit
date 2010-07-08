@@ -30,6 +30,12 @@ NoveditMode.define "750words" do
 
     plugins_proxy.addMenu(_('Stats'), nil, @rootMenu)
     plugins_proxy.addMenu(_('Begin'), nil, @rootMenu)
+
+    wordcountini = @plugins_proxy.view.buffer.serialize().split.size
+    plugins_proxy.add_status(lambda do
+      wordcount = @plugins_proxy.view.buffer.serialize().split.size
+      return (wordcount - wordcountini).to_s
+    end)
     plugins_proxy.schedule(@update_count, 60)
   end
 

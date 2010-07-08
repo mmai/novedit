@@ -29,8 +29,7 @@ class ViewNovedit
     breadcrumbs << @model.current_node.name
     breadcrumb = breadcrumbs.join(' > ')
 
-    @appbar.pop(@appbar_context_id)
-    @appbar.push(@appbar_context_id, position + "  [" + breadcrumb + "]")
+    write_appbar(position + "  [" + breadcrumb + "]" + @controler.status_text)
   end
   
   def write_appbar(text)
