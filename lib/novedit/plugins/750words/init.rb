@@ -19,7 +19,6 @@ NoveditMode.define "750words" do
     else
       metas = {today => time + '=' + wordcount}
     end
-    puts time + " => " + wordcount
     @plugins_proxy.update_last_metas({'750words' => metas})
   end
 
@@ -31,7 +30,15 @@ NoveditMode.define "750words" do
     plugins_proxy.addMenu(_('Stats'), nil, @rootMenu)
     plugins_proxy.addMenu(_('Begin'), nil, @rootMenu)
 
-    wordcountini = @plugins_proxy.view.buffer.serialize().split.size
+    #We call update_count a first time in order to insure the presence of initial metas for the day
+    @update_count.call
+
+    #Get the first wordcount for the day
+    now = DateTime.now
+    today = [now.year, now.month, now.day].join('-')
+    metas = @plugins_proxy.get_metas(['750words', today])
+    wordcountini = metas.split(',').first.split('=').last.to_i
+
     plugins_proxy.add_status(lambda do
       wordcount = @plugins_proxy.view.buffer.serialize().split.size
       return (wordcount - wordcountini).to_s
