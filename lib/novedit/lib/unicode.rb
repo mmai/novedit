@@ -23,4 +23,14 @@ module Unicode
   def self.string_length(str)
     return str.scan(/./).size + str.scan(/\n/).size
   end
+
+
+end
+
+class String
+ def delete_utf8!(c)
+      return self if c.empty?
+      r = %r{[#{c}]}mu
+      gsub!(r, '')
+  end
 end
