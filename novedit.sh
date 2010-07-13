@@ -7,10 +7,6 @@ current=$(pwd)
 
 param=$(readlink -f "$1")
 
-#echo "base: "$base
-#echo "self: "$self
-#echo "current: "$current
-
 if [ "$base" = "$self" ]
 then
   path=$current

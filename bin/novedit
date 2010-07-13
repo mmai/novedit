@@ -30,12 +30,27 @@ $TITLE = $NAME
 $DEFAULT_NODE_NAME = _("New node")
 
 $PROGNAME = File.basename(__FILE__) # Used by the recent files filter
-$DIR_PLUGINS =  $INSTALL_PATH + "/plugins/"
 $DIR_MODULES =  $INSTALL_PATH + "/modules/"
-$DIR_THEMES =  $INSTALL_PATH + "/themes/"
 $HELP_FILE =  $INSTALL_PATH + "/doc/documentation_fr.nov"
-$HOME = ENV["HOME"] || ENV["HOMEPATH"] || File::expand_path("~")
-$SETTINGS_FILE = File.join($HOME, '.novedit_settings.yaml')
+home = ENV["HOME"] || ENV["HOMEPATH"] || File::expand_path("~")
+$HOMEDIR = File.join(home, '.novedit')
+
+#Create homedir if needed
+Dir.mkdir($HOMEDIR) unless File.directory?($HOMEDIR)
+
+$DIR_PLUGINS =  File.join($HOMEDIR, "plugins")
+if not File.directory?($DIR_PLUGINS)
+  #Create plugins directory and copy default plugins
+  FileUtils.cp_r(File.join($INSTALL_PATH, 'plugins'),$HOMEDIR)
+end
+
+$DIR_THEMES =  File.join($HOMEDIR, "themes")
+if not File.directory?($DIR_THEMES)
+  #Create themes directory and copy default themes
+  FileUtils.cp_r(File.join($INSTALL_PATH, 'themes'),$HOMEDIR)
+end
+
+$SETTINGS_FILE = File.join($HOMEDIR, '.novedit_settings.yaml')
 
 require  "novedit/controlerNovedit"
 require  "novedit/modelNovedit"

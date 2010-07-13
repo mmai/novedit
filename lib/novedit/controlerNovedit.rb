@@ -1157,7 +1157,7 @@ class ControlerNovedit < UndoRedo
 #      puts 'font_desc : ' + @view.textview.style.font_desc()
 #    end
 
-    theme_file = $DIR_THEMES + theme + ".yaml"
+    theme_file = File.join($DIR_THEMES, theme + ".yaml")
     if File.exist? theme_file 
       theme_settings = YAML.load(File.open(theme_file))
 
