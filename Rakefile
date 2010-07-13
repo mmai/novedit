@@ -159,6 +159,10 @@ task :publish do
   # Update page with last last version
   system "sed -i 's/novedit-[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+\\.deb/#{pkg_name}-#$VERSION.deb/g' html/index.html"
   system "sed -i 's/last version : [0-9]\\+\\.[0-9]\\+\\.[0-9]\\+/last version : #$VERSION/g' html/index.html"
+  cd "html"
+  system "git commit -a -m'maj version'"
+  system "git push"
+  cd ".."
 
   # Upload package
   cd "pkg"
