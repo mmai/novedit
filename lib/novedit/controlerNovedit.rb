@@ -40,11 +40,8 @@ class ControlerNovedit < UndoRedo
     #Visual interface linking (MVC)
     @view = ViewNovedit.new(self, model)
 
-    if @settings['theme'].nil?
-      @settings['theme'] = 'white' #Default theme
-    else
-      load_theme(@settings['theme'])  
-    end
+    @settings['theme'] = 'white'  if @settings['theme'].nil? #Default theme
+    load_theme(@settings['theme'])  
 
     #Add a recent projects menu item
     manager = Gtk::RecentManager.default
