@@ -185,13 +185,17 @@ class NoveditModel
       begin
         lu = @novedit_io.read(@filename)
         parsed = @novedit_io.parse_file_head(@filename)
-        @document.modes = parsed['modes']
       rescue
         errmes=$!.to_s
         case errmes
         when "novedit:modules:io:Bad format"
           err_message = _("Bad file format")
         end
+      end
+
+      @document.modes = parsed['modes']
+      if not @document.modes
+        @document.modes = []
       end
 
       @document.rootNode = lu

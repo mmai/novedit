@@ -3,6 +3,9 @@
 # Novedit
 #
 
+#Dirty hack for a testing parameter
+$TEST = $*.include?('--test')
+
 #For testing current code when a previous version has been installed
 $:.unshift('.')
 
@@ -38,16 +41,21 @@ $HOMEDIR = File.join(home, '.novedit')
 #Create homedir if needed
 Dir.mkdir($HOMEDIR) unless File.directory?($HOMEDIR)
 
-$DIR_PLUGINS =  File.join($HOMEDIR, "plugins")
-if not File.directory?($DIR_PLUGINS)
-  #Create plugins directory and copy default plugins
-  FileUtils.cp_r(File.join($INSTALL_PATH, 'plugins'),$HOMEDIR)
-end
+if $TEST
+  $DIR_PLUGINS =  File.join($INSTALL_PATH, "plugins")
+  $DIR_THEMES =  File.join($INSTALL_PATH, "themes")
+else
+  $DIR_PLUGINS =  File.join($HOMEDIR, "plugins")
+  if not File.directory?($DIR_PLUGINS)
+    #Create plugins directory and copy default plugins
+    FileUtils.cp_r(File.join($INSTALL_PATH, 'plugins'),$HOMEDIR)
+  end
 
-$DIR_THEMES =  File.join($HOMEDIR, "themes")
-if not File.directory?($DIR_THEMES)
-  #Create themes directory and copy default themes
-  FileUtils.cp_r(File.join($INSTALL_PATH, 'themes'),$HOMEDIR)
+  $DIR_THEMES =  File.join($HOMEDIR, "themes")
+  if not File.directory?($DIR_THEMES)
+    #Create themes directory and copy default themes
+    FileUtils.cp_r(File.join($INSTALL_PATH, 'themes'),$HOMEDIR)
+  end
 end
 
 $SETTINGS_FILE = File.join($HOMEDIR, '.novedit_settings.yaml')

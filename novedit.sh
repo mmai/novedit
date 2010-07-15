@@ -15,5 +15,6 @@ else
 fi 
 
 cd $path/lib
-ruby ../bin/novedit $param
+#Quick hack : second parameter for a '--test' option
+ruby ../bin/novedit $param $2
 cd -
