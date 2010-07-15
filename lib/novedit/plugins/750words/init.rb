@@ -30,7 +30,6 @@ NoveditMode.define "750words" do
 
   def enable(plugins_proxy)
     @enabled = true
-    @rootMenu = plugins_proxy.addMenuContainer('750words')
     @plugins_proxy = plugins_proxy
 
     wordcountini = count_words
@@ -43,7 +42,6 @@ NoveditMode.define "750words" do
 
   def disable(plugins_proxy)
     @enabled = false
-    plugins_proxy.removeMenuContainer(@rootMenu)
   end
 
   def enabled?

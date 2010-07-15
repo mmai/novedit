@@ -30,9 +30,20 @@ class ViewNovedit
     breadcrumb = breadcrumbs.join(' > ')
 
 #    write_appbar(position + "  [" + breadcrumb + "]" + @controler.status_text)
-    write_appbar("  [" + breadcrumb + "]" + @controler.status_text)
+    write_appbar("  [" + breadcrumb + "]")
+    write_appbar_right(@controler.status_text)
   end
   
+  def write_appbar_center(text)
+    @appbar_center.pop(@appbar_center_context_id)
+    @appbar_center.push(@appbar_center_context_id, text)
+  end
+
+  def write_appbar_right(text)
+    @appbar_right.pop(@appbar_right_context_id)
+    @appbar_right.push(@appbar_right_context_id, text)
+  end
+
   def write_appbar(text)
     @appbar.pop(@appbar_context_id)
     @appbar.push(@appbar_context_id, text)
@@ -72,6 +83,12 @@ class ViewNovedit
     @appwindow = @glade.get_object("appwindow")
     @appbar = @glade.get_object("statusbar")
     @appbar_context_id = @appbar.get_context_id('status_context')
+
+    @appbar_center = @glade.get_object("statusbar_center")
+    @appbar_center_context_id = @appbar_center.get_context_id('status_context')
+
+    @appbar_right = @glade.get_object("statusbar_right")
+    @appbar_right_context_id = @appbar_right.get_context_id('status_context')
     
     #XXX Temporary
     @wordcount_value = @glade.get_object("labelNbWordsValue")

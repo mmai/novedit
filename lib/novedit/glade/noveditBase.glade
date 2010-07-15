@@ -449,7 +449,9 @@
         <child>
           <object class="GtkHPaned" id="hpaned1">
             <property name="visible">True</property>
-            <property name="position">180</property>
+            <property name="can_focus">True</property>
+            <property name="position">2</property>
+            <property name="position_set">True</property>
             <child>
               <object class="GtkTreeView" id="treeview">
                 <property name="visible">True</property>
@@ -468,6 +470,8 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="tab_border">4</property>
+                <property name="tab_hborder">4</property>
+                <property name="tab_vborder">4</property>
                 <signal name="switch_page" handler="on_notebook_switch_page"/>
                 <child>
                   <object class="GtkVBox" id="vboxtext">
@@ -482,6 +486,7 @@
                             <property name="border_width">1</property>
                             <property name="toolbar_style">icons</property>
                             <property name="icon_size">1</property>
+                            <property name="icon_size_set">True</property>
                             <child>
                               <object class="GtkToolButton" id="button_bold">
                                 <property name="visible">True</property>
@@ -647,8 +652,38 @@
           </packing>
         </child>
         <child>
-          <object class="GtkStatusbar" id="statusbar">
+          <object class="GtkHBox" id="hbox2">
             <property name="visible">True</property>
+            <child>
+              <object class="GtkStatusbar" id="statusbar">
+                <property name="visible">True</property>
+                <property name="spacing">2</property>
+                <property name="has_resize_grip">False</property>
+              </object>
+              <packing>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkStatusbar" id="statusbar_center">
+                <property name="visible">True</property>
+                <property name="spacing">2</property>
+                <property name="has_resize_grip">False</property>
+              </object>
+              <packing>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkStatusbar" id="statusbar_right">
+                <property name="visible">True</property>
+                <property name="spacing">2</property>
+              </object>
+              <packing>
+                <property name="pack_type">end</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -671,6 +706,10 @@
   <object class="GtkImage" id="list_bullets_image1">
     <property name="visible">True</property>
     <property name="pixbuf">text_list_bullets.png</property>
+  </object>
+  <object class="GtkImage" id="image3">
+    <property name="visible">True</property>
+    <property name="pixbuf">plugin.png</property>
   </object>
   <object class="GtkImage" id="bold_image">
     <property name="visible">True</property>
@@ -707,9 +746,5 @@
   <object class="GtkImage" id="heading_1">
     <property name="visible">True</property>
     <property name="pixbuf">text_heading_1.png</property>
-  </object>
-  <object class="GtkImage" id="image3">
-    <property name="visible">True</property>
-    <property name="pixbuf">plugin.png</property>
   </object>
 </interface>
