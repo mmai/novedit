@@ -35,7 +35,8 @@ NoveditMode.define "750words" do
     wordcountini = count_words
     plugins_proxy.add_status(lambda do
       wordcount = count_words - wordcountini
-      color = (wordcount < 750) ? 'red' : 'green'
+      color_code = (wordcount < 750) ? '65535-0-0' : '0-65535-0'
+      color = Gdk::Color.new(*color_code.split('-').map{|c| c.to_i})
       status = {'text' => wordcount.to_s, 'position' => 'right', 'color' => color}
       return status
     end)

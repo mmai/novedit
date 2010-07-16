@@ -42,6 +42,7 @@ class ViewNovedit
     @model.status_funcs.each do |status_func|
       status = status_func.call
       label = Gtk::Label.new(status['text'])
+      label.modify_fg(Gtk::STATE_NORMAL, status['color'])
       case status['position']
       when 'left'
       when 'center'
