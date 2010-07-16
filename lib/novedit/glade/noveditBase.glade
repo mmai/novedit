@@ -16,7 +16,6 @@
     <child>
       <object class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
         <child>
           <object class="GtkMenuBar" id="menubar">
             <property name="visible">True</property>
@@ -450,7 +449,7 @@
           <object class="GtkHPaned" id="hpaned1">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="position">2</property>
+            <property name="position">180</property>
             <property name="position_set">True</property>
             <child>
               <object class="GtkTreeView" id="treeview">
@@ -476,7 +475,6 @@
                 <child>
                   <object class="GtkVBox" id="vboxtext">
                     <property name="visible">True</property>
-                    <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkHBox" id="hbox1">
                         <property name="visible">True</property>
@@ -675,12 +673,13 @@
               </packing>
             </child>
             <child>
-              <object class="GtkStatusbar" id="statusbar_right">
+              <object class="GtkHBox" id="statusbox_right">
                 <property name="visible">True</property>
-                <property name="spacing">2</property>
+                <child>
+                  <placeholder/>
+                </child>
               </object>
               <packing>
-                <property name="pack_type">end</property>
                 <property name="position">2</property>
               </packing>
             </child>

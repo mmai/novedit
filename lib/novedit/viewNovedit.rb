@@ -17,6 +17,7 @@ class ViewNovedit
     @textview.scroll_mark_onscreen(@buffer.get_mark(mark_str))
   end
 
+
   def update_appbar
     #Cursor position
 #    iter = @buffer.get_iter_at_mark(@buffer.get_mark("insert"))
@@ -31,7 +32,25 @@ class ViewNovedit
 
 #    write_appbar(position + "  [" + breadcrumb + "]" + @controler.status_text)
     write_appbar("  [" + breadcrumb + "]")
-    write_appbar_right(@controler.status_text)
+
+
+    #Delete current status labels
+    @appbar_right.each do |child|
+      @appbar_right.remove(child)
+    end
+
+    @model.status_funcs.each do |status_func|
+      status = status_func.call
+      label = Gtk::Label.new(status['text'])
+      case status['position']
+      when 'left'
+      when 'center'
+      when 'right'
+        @appbar_right.add(label)
+        label.show
+      end
+    end
+
   end
   
   def write_appbar_center(text)
@@ -40,8 +59,9 @@ class ViewNovedit
   end
 
   def write_appbar_right(text)
-    @appbar_right.pop(@appbar_right_context_id)
-    @appbar_right.push(@appbar_right_context_id, text)
+#    @appbar_right.pop(@appbar_right_context_id)
+#    @appbar_right.push(@appbar_right_context_id, text)
+    @appbar_right_label.text = text
   end
 
   def write_appbar(text)
@@ -81,14 +101,17 @@ class ViewNovedit
 
 #    @glade = GladeXML.new(@pathglade) {|handler| method(handler)}
     @appwindow = @glade.get_object("appwindow")
+    @hbox = @glade.get_object("hbox2")
     @appbar = @glade.get_object("statusbar")
     @appbar_context_id = @appbar.get_context_id('status_context')
 
     @appbar_center = @glade.get_object("statusbar_center")
     @appbar_center_context_id = @appbar_center.get_context_id('status_context')
 
-    @appbar_right = @glade.get_object("statusbar_right")
-    @appbar_right_context_id = @appbar_right.get_context_id('status_context')
+#    @appbar_right = @glade.get_object("statusbar_right")
+#    @appbar_right_context_id = @appbar_right.get_context_id('status_context')
+
+    @appbar_right = @glade.get_object("statusbox_right")
     
     #XXX Temporary
     @wordcount_value = @glade.get_object("labelNbWordsValue")

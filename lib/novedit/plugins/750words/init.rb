@@ -34,8 +34,10 @@ NoveditMode.define "750words" do
 
     wordcountini = count_words
     plugins_proxy.add_status(lambda do
-      wordcount = count_words
-      return (wordcount - wordcountini).to_s
+      wordcount = count_words - wordcountini
+      color = (wordcount < 750) ? 'red' : 'green'
+      status = {'text' => wordcount.to_s, 'position' => 'right', 'color' => color}
+      return status
     end)
     plugins_proxy.schedule(@update_count, 60)
   end

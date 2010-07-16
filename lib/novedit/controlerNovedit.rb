@@ -161,12 +161,6 @@ class ControlerNovedit < UndoRedo
     init_plugins
   end
 
-  def status_text
-    text = ''
-    @model.status_funcs.each {|status_func| text = text + status_func.call}
-    return text
-  end
-
   def load_io_modules()
   end
 
