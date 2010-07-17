@@ -10,7 +10,7 @@ NoveditMode.define "750words" do
     today = [now.year, now.month, now.day].join('-')
     time = [now.hour, now.min, now.sec].join(':')
     
-    wordcount = count_words
+    wordcount = count_words.to_s
 
     metas = @plugins_proxy.get_metas(['750words', today])
     if metas

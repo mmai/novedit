@@ -38,7 +38,7 @@ msgstr "Sans titre"
 
 #: controlerNovedit.rb:1027
 msgid "Save changes to "
-msgstr "Enregistrer les changement de "
+msgstr "Enregistrer les changements de "
 
 #: controlerNovedit.rb:1117 controlerNovedit.rb:1145
 msgid "End of file"
