@@ -21,6 +21,7 @@ NoveditMode.define "750words" do
     @plugins_proxy.update_last_metas({'750words' => metas})
   end
 
+  #TODO Count words for ALL nodes or set 750words metas by node instead of by document
   def count_words
     rawtext = @plugins_proxy.view.buffer.text
     #Remove bullets

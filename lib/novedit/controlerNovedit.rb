@@ -79,7 +79,6 @@ class ControlerNovedit < UndoRedo
     #Load the file given as a parameter
     set_io_from_file(file) unless file.nil? 
     @model.open_file(file)
-    load_modes
 
     #Notebook
     @notebook_actions = Array.new
@@ -159,6 +158,7 @@ class ControlerNovedit < UndoRedo
     #End keyboard shortcuts
 
     init_plugins
+    load_modes
   end
 
   def load_io_modules()
@@ -475,11 +475,11 @@ class ControlerNovedit < UndoRedo
 
   def load_modes
     NoveditMode.registered_modes.keys.each do |mode_name|
-      NoveditMode.registered_modes[mode_name].disable(self) if NoveditMode.registered_modes[mode_name].enabled?
+      desactivate_mode(mode_name) if NoveditMode.registered_modes[mode_name].enabled?
     end
 
     @model.modes.each do |mode_name|
-      NoveditMode.registered_modes[mode_name].enable(self)
+      activate_mode(mode_name)
     end
   end
 
