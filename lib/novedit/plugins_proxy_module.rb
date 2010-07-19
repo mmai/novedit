@@ -47,6 +47,18 @@ module NoveditPluginsProxy
   end
 
   #Menu
+  #
+  #Example, in a plugin :
+#  def enable(plugins_proxy)
+#    @rootMenu = plugins_proxy.addMenuContainer('My beautiful menu')
+#    plugins_proxy.addMenu(_('Load'), nil, @rootMenu)
+#    plugins_proxy.addMenu(_('Save'), nil, @rootMenu)
+#  end
+#
+#  def disable(plugins_proxy)
+#    plugins_proxy.removeMenuContainer(@rootMenu)
+#  end
+
   #Add a menu entry leading to an action :
   # can't contain submenus (use addMenuContainer instead)
   def addMenu(name, function=nil, parent=nil)
