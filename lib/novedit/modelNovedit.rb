@@ -23,6 +23,25 @@ class NoveditNode < TreeNode
   def to_s
     @name + ": "+@text+" [" + childs.map{|child| child.to_s}.join(',') + "]"
   end
+
+  def update_last_metas(metas)
+    metas.each_key do |metakey|
+      update_last_meta(@metas, metakey, metas[metakey])
+    end
+  end
+
+  def update_last_meta(meta_root, metakey, meta)
+    if not meta_root.has_key?(metakey)
+      meta_root[metakey] = meta
+    elsif meta.class == Hash
+      meta.each_key do |key|
+        update_last_meta(meta_root[metakey], key, meta[key])
+      end
+    else
+      meta_root[metakey] = meta
+    end
+  end
+
 end
 
 class NoveditDocument
@@ -44,39 +63,40 @@ class NoveditDocument
   end 
 
   def update_last_metas(metas)
-    metas.each_key do |metakey|
-      update_last_meta(@rootNode.metas, metakey, metas[metakey])
-    end
+#    metas.each_key do |metakey|
+#      update_last_meta(@rootNode.metas, metakey, metas[metakey])
+#    end
+    @rootNode.update_last_metas(metas)
   end
 
-  def update_last_meta(meta_root, metakey, meta)
-    if not meta_root.has_key?(metakey)
-      meta_root[metakey] = meta
-    elsif meta.class == Hash
-      meta.each_key do |key|
-        update_last_meta(meta_root[metakey], key, meta[key])
-      end
-    else
-      meta_root[metakey] = meta
-    end
-  end
+#  def update_last_meta(meta_root, metakey, meta)
+#    if not meta_root.has_key?(metakey)
+#      meta_root[metakey] = meta
+#    elsif meta.class == Hash
+#      meta.each_key do |key|
+#        update_last_meta(meta_root[metakey], key, meta[key])
+#      end
+#    else
+#      meta_root[metakey] = meta
+#    end
+#  end
+#
 
+#  def init_metas(metas)
+#    metas.each_key do |metakey|
+#      init_meta(@rootNode.metas, metakey, metas[metakey])
+#    end
+#  end
 
-  def init_metas(metas)
-    metas.each_key do |metakey|
-      init_meta(@rootNode.metas, metakey, metas[metakey])
-    end
-  end
-
-  def init_meta(meta_root, metakey, meta)
-    if not meta_root.has_key?(metakey)
-      meta_root[metakey] = meta
-    elsif meta.class == Hash
-      meta.each_key do |key|
-        init_meta(meta_root[metakey], key, meta[key])
-      end
-    end
-  end
+#  def init_meta(meta_root, metakey, meta)
+#    if not meta_root.has_key?(metakey)
+#      meta_root[metakey] = meta
+#    elsif meta.class == Hash
+#      meta.each_key do |key|
+#        init_meta(meta_root[metakey], key, meta[key])
+#      end
+#    end
+#  end
 
   def insert_brother_node(path, node)
     @rootNode.get_node(path).add_rightbrother_node(node)
@@ -135,9 +155,9 @@ class NoveditModel
     @document.rootNode.metas
   end 
 
-  def init_metas(metas)
-    @document.init_metas(metas)
-  end
+#  def init_metas(metas)
+#    @document.init_metas(metas)
+#  end
 
   def get_node(path)
     @document.get_node(path)

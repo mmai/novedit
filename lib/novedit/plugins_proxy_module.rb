@@ -8,16 +8,24 @@ module NoveditPluginsProxy
     @model.status_funcs << status_func
   end
 
-  def update_last_metas(metas)
-    @model.document.update_last_metas(metas)
+  def update_last_metas(metas, node = nil)
+    if node.nil? 
+      @model.document.update_last_metas(metas)
+    else
+      node.update_last_metas(metas)
+    end
   end
 
-  def init_metas(metas)
-    @model.init_metas(metas)
-  end
+#  def init_metas(metas)
+#    @model.init_metas(metas)
+#  end
   
-  def get_metas(metas)
-    curr_metas = @model.document.metas
+  def get_metas(metas, node = nil)
+    if node.nil? 
+      curr_metas = @model.document.metas
+    else
+      curr_metas = node.metas
+    end
     metas.each do |meta|
       if not curr_metas.include?(meta)
         return false

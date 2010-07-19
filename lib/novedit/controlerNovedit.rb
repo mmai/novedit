@@ -1204,7 +1204,7 @@ class ControlerNovedit < UndoRedo
       puts "Theme file does not exists"
     end
   end
-  
+
   def on_find()
     @find_dialog.show
   end
@@ -1217,8 +1217,17 @@ class ControlerNovedit < UndoRedo
     memorize_current_node
   end
 
+  def count_view_words
+    rawtext = @view.buffer.text
+    #Remove bullets
+    rawtext.delete_utf8!([Unicode::U2022, Unicode::U2218, Unicode::U2023])
+    return rawtext.split.size
+  end
+
   def memorize_current_node
     @model.current_node.text = @view.buffer.serialize() unless @model.current_node.nil?
+    #Set node metas
+    @model.current_node.metas['words_count'] = count_view_words
   end
 
   def on_text_bold
