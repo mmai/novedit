@@ -24,6 +24,8 @@ NoveditMode.define "750words" do
 
   def get_day_count(node)
     count = 0
+    now = DateTime.now
+    today = [now.year, now.month, now.day].join('-')
     metas = @plugins_proxy.get_metas(['750words', today], node)
     if metas
        count = metas.split(',').first.split('=').last.to_i - metas.split(',').last.split('=').last.to_i
@@ -43,16 +45,27 @@ NoveditMode.define "750words" do
     return wordcountini
   end
 
+  def wordcount_total_meta
+    total = 0
+    curnode = @plugins_proxy.model.document.rootNode
+    while curnode != false do
+      total = total + get_day_count(curnode)
+      curnode = curnode.next
+    end
+    return total
+  end
+
   def enable(plugins_proxy)
     @enabled = true
     @plugins_proxy = plugins_proxy
 
     wordcountini = init_current_node
     plugins_proxy.add_status(lambda do
-      wordcount_total_meta = @plugin_proxy.model.nodes.inject(0) do |sum, node|
-        sum + get_day_count(node)
-      end
-      wordcount = wordcount_total_meta - get_day_count(@plugins_proxy.model.current_node) + @plugins_proxy.count_view_words - wordcountini
+      wordcount = wordcount_total_meta() - get_day_count(@plugins_proxy.model.current_node) + @plugins_proxy.count_view_words - wordcountini
+      p wordcount_total_meta()
+      p  get_day_count(@plugins_proxy.model.current_node) 
+      p @plugins_proxy.count_view_words 
+      p wordcountini
       color_code = (wordcount < 750) ? '65535-0-0' : '0-65535-0'
       color = Gdk::Color.new(*color_code.split('-').map{|c| c.to_i})
       status = {'text' => wordcount.to_s, 'position' => 'right', 'color' => color}
