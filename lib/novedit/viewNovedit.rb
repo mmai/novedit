@@ -19,39 +19,41 @@ class ViewNovedit
 
 
   def update_appbar
-    #Cursor position
-#    iter = @buffer.get_iter_at_mark(@buffer.get_mark("insert"))
-#    position = "Line: #{iter.line + 1}, Column: #{iter.line_offset + 1}"
+    #We ensure that the buffer operations occuring in the deserialization do not execute this code
+    if not $DESERIALIZING
+      #Cursor position
+      #    iter = @buffer.get_iter_at_mark(@buffer.get_mark("insert"))
+      #    position = "Line: #{iter.line + 1}, Column: #{iter.line_offset + 1}"
 
-    #Breadcrumb
-    breadcrumbs = @model.current_node.ancestors.map {|ancestor| ancestor.name}
-    breadcrumbs.pop
-    breadcrumbs.reverse!
-    breadcrumbs << @model.current_node.name
-    breadcrumb = breadcrumbs.join(' > ')
+      #Breadcrumb
+      breadcrumbs = @model.current_node.ancestors.map {|ancestor| ancestor.name}
+      breadcrumbs.pop
+      breadcrumbs.reverse!
+      breadcrumbs << @model.current_node.name
+      breadcrumb = breadcrumbs.join(' > ')
 
-#    write_appbar(position + "  [" + breadcrumb + "]" + @controler.status_text)
-    write_appbar("  [" + breadcrumb + "]")
+      #    write_appbar(position + "  [" + breadcrumb + "]" + @controler.status_text)
+      write_appbar("  [" + breadcrumb + "]")
 
 
-    #Delete current status labels
-    @appbar_right.each do |child|
-      @appbar_right.remove(child)
-    end
+      #Delete current status labels
+      @appbar_right.each do |child|
+        @appbar_right.remove(child)
+      end
 
-    @model.status_funcs.each do |status_func|
-      status = status_func.call
-      label = Gtk::Label.new(status['text'])
-      label.modify_fg(Gtk::STATE_NORMAL, status['color'])
-      case status['position']
-      when 'left'
-      when 'center'
-      when 'right'
-        @appbar_right.add(label)
-        label.show
+      @model.status_funcs.each do |status_func|
+        status = status_func.call
+        label = Gtk::Label.new(status['text'])
+        label.modify_fg(Gtk::STATE_NORMAL, status['color'])
+        case status['position']
+        when 'left'
+        when 'center'
+        when 'right'
+          @appbar_right.add(label)
+          label.show
+        end
       end
     end
-
   end
   
   def write_appbar_center(text)

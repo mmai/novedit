@@ -3,6 +3,11 @@
 # Novedit
 #
 
+#Hack to detect hard to find debugging 'puts'
+#def puts(str)
+#  raise "puts found"
+#end
+
 #Dirty hack for a testing parameter
 $TEST = $*.include?('--test')
 

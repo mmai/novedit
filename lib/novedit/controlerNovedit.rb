@@ -1342,7 +1342,10 @@ class ControlerNovedit < UndoRedo
  
   def select_node(iter)
     @model.current_node = @model.get_node(iter.path.to_s)
+    $DESERIALIZING = true
     @view.buffer.deserialize(@model.current_node.text)
+    $DESERIALIZING = false
+    @view.update_appbar
   end
 
   def style_text(style)
