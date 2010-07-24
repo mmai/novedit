@@ -128,7 +128,7 @@ end
 class NoveditModel
   include Observable
   
-  attr_accessor :filename, :is_saved, :current_node, :available_modes, :document, :status_funcs
+  attr_accessor :filename, :is_saved, :current_node, :available_modes, :document, :status_funcs, :loadnode_funcs
     
   def initialize(filename)
     @novedit_io = NoveditIOBase.instance
@@ -136,6 +136,7 @@ class NoveditModel
     @is_saved = true
     @available_modes = []
     @status_funcs = []
+    @loadnode_funcs = []
     fill_tree
   end
 

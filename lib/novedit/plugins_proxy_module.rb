@@ -8,6 +8,10 @@ module NoveditPluginsProxy
     @model.status_funcs << status_func
   end
 
+  def add_loadnode(loadnode_func)
+    @model.loadnode_funcs << loadnode_func
+  end
+
   def update_last_metas(metas, node = nil)
     if node.nil? 
       @model.document.update_last_metas(metas)

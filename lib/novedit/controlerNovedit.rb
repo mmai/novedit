@@ -665,6 +665,7 @@ class ControlerNovedit < UndoRedo
   #Tree node selection
   def on_select_node(selectionWidget)
     memorize_current_node
+    @model.loadnode_funcs.each {|func| func.call}
     iter = selectionWidget.selected
     select_node(iter) if not iter.nil?
   end
@@ -1226,8 +1227,6 @@ class ControlerNovedit < UndoRedo
 
   def memorize_current_node
     @model.current_node.text = @view.buffer.serialize() unless @model.current_node.nil?
-    #Set node metas
-    @model.current_node.metas['words_count'] = count_view_words
   end
 
   def on_text_bold
