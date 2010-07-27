@@ -8,8 +8,8 @@ module NoveditPluginsProxy
     @model.status_funcs << status_func
   end
 
-  def add_loadnode(loadnode_func)
-    @model.loadnode_funcs << loadnode_func
+  def before_nodeload(before_nodeload_func)
+    @model.before_nodeload_funcs << before_nodeload_func
   end
 
   def update_last_metas(metas, node = nil)

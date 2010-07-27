@@ -414,57 +414,6 @@ class ControlerNovedit < UndoRedo
     @settings.save
   end
 
-  #Redraw modes dialog window
-  def edit_modes_redraw()
-    vbox = @gladeDialogs.get_object("modes_checkbuttons_vbox")
-    vbox.children.each {|checkbutton| checkbutton.destroy}
-    first_done = false
-    @model.available_modes.each do |mode_name|
-      checkbutton = Gtk::CheckButton.new(mode_name)
-      checkbutton.active = @model.modes.include?(mode_name)
-      checkbutton.signal_connect("clicked") {
-        edit_modes_show_mode(mode_name)
-      }
-      vbox << checkbutton
-      if !first_done
-        edit_modes_show_mode(mode_name)
-        first_done = true
-      end
-    end
-    vbox.show_all
-  end
-
-  def edit_modes_show_mode(mode_name)
-    @gladeDialogs.get_object("mode_title_label").label = mode_name
-  end
-
-
-  #Edit modes Dialog
-  def on_edit_modes()
-    edit_modes_redraw() 
-    ret = @edit_modes_dialog.run
-    @edit_modes_dialog.hide
-  end
-
-  def on_edit_modes_ok()
-    #Save plugins status settings and enable / disable them
-    vbox = @gladeDialogs.get_object("modes_checkbuttons_vbox")
-    vbox.children.each do |checkbutton|
-      mode_name = checkbutton.label
-      if checkbutton.active?
-        if  not @model.modes.include?(mode_name)
-          @model.modes << mode_name
-          activate_mode(mode_name)
-        end
-      else
-        if  @model.modes.include?(mode_name)
-          @model.modes.delete(mode_name)
-          desactivate_mode(mode_name)
-        end
-      end
-    end
-  end
-
   def desactivate_mode(mode_name)
     NoveditMode.registered_modes[mode_name].disable(self)
   end
@@ -481,6 +430,8 @@ class ControlerNovedit < UndoRedo
     @model.modes.each do |mode_name|
       activate_mode(mode_name)
     end
+
+    @view.update_modes_menu
   end
 
   #Preferences Dialog
@@ -665,7 +616,7 @@ class ControlerNovedit < UndoRedo
   #Tree node selection
   def on_select_node(selectionWidget)
     memorize_current_node
-    @model.loadnode_funcs.each {|func| func.call}
+    @model.before_nodeload_funcs.each {|func| func.call}
     iter = selectionWidget.selected
     select_node(iter) if not iter.nil?
   end

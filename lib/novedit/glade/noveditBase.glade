@@ -112,7 +112,7 @@
                 <property name="label" translatable="yes">_Edit</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">
-                  <object class="GtkMenu" id="menu2">
+                  <object class="GtkMenu" id="edit_menu">
                     <child>
                       <object class="GtkImageMenuItem" id="couper1">
                         <property name="label">gtk-cut</property>
@@ -167,13 +167,12 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="modes">
+                      <object class="GtkImageMenuItem" id="modes_menu">
                         <property name="label" translatable="yes">Modes</property>
                         <property name="visible">True</property>
-                        <property name="image">image3</property>
+                        <property name="image">image4</property>
                         <property name="use_stock">False</property>
                         <property name="accel_group">accelgroup1</property>
-                        <signal name="activate" handler="on_edit_modes"/>
                       </object>
                     </child>
                   </object>
@@ -706,10 +705,6 @@
     <property name="visible">True</property>
     <property name="pixbuf">text_list_bullets.png</property>
   </object>
-  <object class="GtkImage" id="image3">
-    <property name="visible">True</property>
-    <property name="pixbuf">plugin.png</property>
-  </object>
   <object class="GtkImage" id="bold_image">
     <property name="visible">True</property>
     <property name="pixbuf">text_bold.png</property>
@@ -745,5 +740,9 @@
   <object class="GtkImage" id="heading_1">
     <property name="visible">True</property>
     <property name="pixbuf">text_heading_1.png</property>
+  </object>
+  <object class="GtkImage" id="image4">
+    <property name="visible">True</property>
+    <property name="pixbuf">plugin.png</property>
   </object>
 </interface>

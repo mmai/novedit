@@ -72,6 +72,33 @@ class ViewNovedit
     @appbar.push(@appbar_context_id, text)
   end
 
+  def update_modes_menu
+    parent = @glade.get_object("modes_menu")
+    menu = Gtk::Menu.new
+    parent.set_submenu( menu )
+
+    @model.available_modes.each do |mode_name|
+      mode_menu = Gtk::CheckMenuItem.new(mode_name)
+      mode_menu.active = @model.modes.include?(mode_name)
+      mode_menu.signal_connect("toggled") {
+        if mode_menu.active?
+          if  not @model.modes.include?(mode_name)
+            @model.modes << mode_name
+            @controler.activate_mode(mode_name)
+          end
+        else
+          if  @model.modes.include?(mode_name)
+            @model.modes.delete(mode_name)
+            @controler.desactivate_mode(mode_name)
+          end
+        end
+      }
+      menu << mode_menu
+    end
+
+    parent.show_all
+  end
+
   def initialize(controler, model)
     @is_fullscreen = false
     @is_writeroom = false
@@ -433,10 +460,6 @@ class ViewNovedit
 
   def on_edit_plugins(widget)
     @controler.on_edit_plugins
-  end
-
-  def on_edit_modes(widget)
-    @controler.on_edit_modes
   end
 end
 

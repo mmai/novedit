@@ -68,7 +68,7 @@ NoveditMode.define "750words" do
       return status
     end)
 
-    plugins_proxy.add_loadnode(@update_count)
+    plugins_proxy.before_nodeload(@update_count)
     plugins_proxy.schedule(@update_count, 60)
   end
 
