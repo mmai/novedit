@@ -41,7 +41,7 @@ class ViewNovedit
         @appbar_right.remove(child)
       end
 
-      @model.status_funcs.each do |status_func|
+      @model.status_funcs.each_value do |status_func|
         status = status_func.call
         label = Gtk::Label.new(status['text'])
         label.modify_fg(Gtk::STATE_NORMAL, status['color'])

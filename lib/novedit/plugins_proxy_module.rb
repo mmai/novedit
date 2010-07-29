@@ -4,12 +4,20 @@
 module NoveditPluginsProxy
   attr_accessor :model, :view
 
-  def add_status(status_func)
-    @model.status_funcs << status_func
+  def status_add(name, status_func)
+    @model.status_funcs[name] = status_func
   end
 
-  def before_nodeload(before_nodeload_func)
-    @model.before_nodeload_funcs << before_nodeload_func
+  def status_delete(name)
+    @model.status_funcs.delete(name)
+  end
+
+  def before_nodeload_add(name, before_nodeload_func)
+    @model.before_nodeload_funcs[name] = before_nodeload_func
+  end
+
+  def before_nodeload_delete(name)
+    @model.before_nodeload_funcs.delete(name)
   end
 
   def update_last_metas(metas, node = nil)

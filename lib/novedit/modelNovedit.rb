@@ -135,8 +135,8 @@ class NoveditModel
     @filename = filename
     @is_saved = true
     @available_modes = []
-    @status_funcs = []
-    @before_nodeload_funcs = []
+    @status_funcs = {}
+    @before_nodeload_funcs = {} 
     fill_tree
   end
 

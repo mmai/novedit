@@ -20,6 +20,15 @@ NoveditMode.define "750words" do
       metas = {today => time + '=' + wordcount}
     end
     @plugins_proxy.update_last_metas({'750words' => metas}, @plugins_proxy.model.current_node)
+    return @enabled 
+  end
+
+  @status_func = lambda do
+    wordcount = wordcount_total_meta() - get_day_count(@plugins_proxy.model.current_node) + (@plugins_proxy.count_view_words - wordcount_yesterday)
+    color_code = (wordcount < 750) ? '65535-0-0' : '0-65535-0'
+    color = Gdk::Color.new(*color_code.split('-').map{|c| c.to_i})
+    status = {'text' => wordcount.to_s, 'position' => 'right', 'color' => color}
+    return status
   end
 
   def get_day_count(node)
@@ -57,22 +66,18 @@ NoveditMode.define "750words" do
   end
 
   def enable(plugins_proxy)
-    @enabled = true
     @plugins_proxy = plugins_proxy
+    @enabled = true
 
-    plugins_proxy.add_status(lambda do
-      wordcount = wordcount_total_meta() - get_day_count(@plugins_proxy.model.current_node) + (@plugins_proxy.count_view_words - wordcount_yesterday)
-      color_code = (wordcount < 750) ? '65535-0-0' : '0-65535-0'
-      color = Gdk::Color.new(*color_code.split('-').map{|c| c.to_i})
-      status = {'text' => wordcount.to_s, 'position' => 'right', 'color' => color}
-      return status
-    end)
+    plugins_proxy.status_add('mode_'+title, @status_func)
 
-    plugins_proxy.before_nodeload(@update_count)
-    plugins_proxy.schedule(@update_count, 60)
+    plugins_proxy.before_nodeload_add('mode_'+title, @update_count)
+    @schedule_handler = plugins_proxy.schedule(@update_count, 6)
   end
 
   def disable(plugins_proxy)
+    plugins_proxy.before_nodeload_delete('mode_'+title)
+    plugins_proxy.status_delete('mode_'+title)
     @enabled = false
   end
 
