@@ -13,7 +13,11 @@ class NoveditIOBase
       f.readline #1st line
       parsed['version'] = f.readline[5..-1].split()[0] #2nd line = version
       parsed['format'] = f.readline[5..-1].split()[0] #3rd line = format
-      parsed['modes'] = f.readline[5..-1].split()[0].split(",") #4th line = modes
+
+      if (parsed['version'] > '0.4')
+        modes = f.readline[5..-1].split() #4th line = modes
+        parsed['modes'] = modes[0].split(",") if modes.count > 0
+      end
       f.close
     end
     return parsed
