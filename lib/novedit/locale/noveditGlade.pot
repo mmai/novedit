@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-12-30 17:37+0100\n"
+"POT-Creation-Date: 2010-07-29 21:44+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: glade/noveditBase.glade:8
+#: glade/noveditBase.glade:7
 msgid "Novedit"
 msgstr ""
 
@@ -28,70 +28,63 @@ msgstr ""
 msgid "Recently opened"
 msgstr ""
 
-#: glade/noveditBase.glade:102
+#: glade/noveditBase.glade:112
 msgid "_Edit"
 msgstr ""
 
-#: glade/noveditBase.glade:141 glade/noveditDialogs.glade:301
+#: glade/noveditBase.glade:151 glade/noveditDialogs.glade:303
 msgid "Plugins"
 msgstr ""
 
-#: glade/noveditBase.glade:166
+#: glade/noveditBase.glade:171
+msgid "Modes"
+msgstr ""
+
+#: glade/noveditBase.glade:185
 msgid "_Apparence"
 msgstr ""
 
-#: glade/noveditBase.glade:187
+#: glade/noveditBase.glade:218
 msgid "Search"
 msgstr ""
 
-#: glade/noveditBase.glade:218
+#: glade/noveditBase.glade:249
 msgid "_Help"
 msgstr ""
 
-#: glade/noveditBase.glade:262
+#: glade/noveditBase.glade:293
 msgid "Create a new document"
 msgstr ""
 
-#: glade/noveditBase.glade:274
+#: glade/noveditBase.glade:305
 msgid "Open a document"
 msgstr ""
 
-#: glade/noveditBase.glade:286
+#: glade/noveditBase.glade:317
 msgid "Save the document"
 msgstr ""
 
-#: glade/noveditBase.glade:312
+#: glade/noveditBase.glade:343
 msgid "Search for a string"
 msgstr ""
 
-#: glade/noveditBase.glade:324
+#: glade/noveditBase.glade:355
 msgid "Search and replace a string"
 msgstr ""
 
-#: glade/noveditBase.glade:350
+#: glade/noveditBase.glade:381
 msgid "Undo previous changes"
 msgstr ""
 
-#: glade/noveditBase.glade:362
+#: glade/noveditBase.glade:393
 msgid "Redo previous changes"
 msgstr ""
 
-#: glade/noveditBase.glade:388
+#: glade/noveditBase.glade:419
 msgid "Exit"
 msgstr ""
 
-#: glade/noveditBase.glade:451
-msgid "Bold"
-msgstr ""
-
-#: glade/noveditBase.glade:463 glade/noveditBase.glade:475
-#: glade/noveditBase.glade:487 glade/noveditBase.glade:499
-#: glade/noveditBase.glade:511 glade/noveditBase.glade:523
-#: glade/noveditBase.glade:535
-msgid "Italic"
-msgstr ""
-
-#: glade/noveditBase.glade:579
+#: glade/noveditBase.glade:628
 msgid "Main"
 msgstr ""
 
@@ -111,37 +104,37 @@ msgstr ""
 msgid "Replace with:"
 msgstr ""
 
-#: glade/noveditDialogs.glade:280
+#: glade/noveditDialogs.glade:282
 msgid ""
 "The primary goal of Novedit is to be a clone of notes taking editors like "
 "Keynote or WikidPad wich are only available on Windows. It is written in "
 "Ruby / Gtk and should run on Linux, Mac and Windows."
 msgstr ""
 
-#: glade/noveditDialogs.glade:282
+#: glade/noveditDialogs.glade:284
 msgid "GNU General Public License 2.0"
 msgstr ""
 
-#: glade/noveditDialogs.glade:284
+#: glade/noveditDialogs.glade:286
 msgid "translator-credits"
 msgstr ""
 
-#: glade/noveditDialogs.glade:371
+#: glade/noveditDialogs.glade:373
 msgid "<b>Description</b>"
 msgstr ""
 
-#: glade/noveditDialogs.glade:401
+#: glade/noveditDialogs.glade:403
 msgid "<b>Authors</b>"
 msgstr ""
 
-#: glade/noveditDialogs.glade:430
+#: glade/noveditDialogs.glade:432
 msgid "<b>Version</b>"
 msgstr ""
 
-#: glade/noveditDialogs.glade:459
+#: glade/noveditDialogs.glade:461
 msgid "<b>Site</b>"
 msgstr ""
 
-#: glade/noveditDialogs.glade:574
+#: glade/noveditDialogs.glade:576
 msgid "Theme"
 msgstr ""

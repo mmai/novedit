@@ -2,6 +2,7 @@
 # buildgem : build the rubygem
 # builddeb : build the Debian package
 # buildsrc : build the source archive
+# publish : publish packages on github and update page
 
 require 'lib/novedit'
 require 'date'
