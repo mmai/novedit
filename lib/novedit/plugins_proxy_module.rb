@@ -81,11 +81,13 @@ module NoveditPluginsProxy
 
   #Add a menu entry leading to an action :
   # can't contain submenus (use addMenuContainer instead)
-  def addMenu(name, function=nil, parent=nil)
+  def addMenu(name, action=nil, parent=nil)
     if parent.class == Gtk::MenuItem
       parent = parent.submenu
     end
     newmenu = Gtk::MenuItem.new(name)
+    newmenu.signal_connect( "activate" ) { action.call }
+
     parent << newmenu
     parent.show_all
   end

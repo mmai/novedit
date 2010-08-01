@@ -386,6 +386,12 @@ class ControlerNovedit < UndoRedo
     @gladeDialogs.get_object("plugin_site_text").label = plugin.site
     @gladeDialogs.get_object("plugin_description_text").label = plugin.description
     @gladeDialogs.get_object("plugin_version_text").label = plugin.version
+    if not plugin.settings.nil?
+      @gladeDialogs.get_object("configure_button").visible = true
+      plugin.settings.each_key do |setting|
+        puts setting
+      end
+    end
   end
 
   #Edit plugins Dialog

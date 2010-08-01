@@ -228,8 +228,8 @@ class NoveditModel
     end
   end
   
-  def open_file(filename)
-    if @filename != filename
+  def open_file(filename, force = false)
+    if @filename != filename or force
       @filename = filename
       fill_tree
     end

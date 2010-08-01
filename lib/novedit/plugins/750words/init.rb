@@ -72,7 +72,7 @@ NoveditMode.define "750words" do
     plugins_proxy.status_add('mode_'+title, @status_func)
 
     plugins_proxy.before_nodeload_add('mode_'+title, @update_count)
-    @schedule_handler = plugins_proxy.schedule(@update_count, 6)
+    @schedule_handler = plugins_proxy.schedule(@update_count, 60)
   end
 
   def disable(plugins_proxy)
