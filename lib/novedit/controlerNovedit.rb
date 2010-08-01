@@ -622,7 +622,7 @@ class ControlerNovedit < UndoRedo
   #Tree node selection
   def on_select_node(selectionWidget)
     memorize_current_node
-    @model.before_nodeload_funcs.each {|func| func.call}
+    @model.before_nodeload_funcs.each_value {|func| func.call}
     iter = selectionWidget.selected
     select_node(iter) if not iter.nil?
   end
