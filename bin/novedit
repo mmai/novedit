@@ -24,6 +24,7 @@ end
 #require "ruby-debug"
 
 require "novedit"
+require "fileutils"
 
 require 'gettext'
 include GetText
